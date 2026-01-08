@@ -1,0 +1,46 @@
+name: Draft Release
+run-name: Draft release for ${{ github.ref_name }}
+
+permissions:
+  contents: write
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  draft_release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Setup common environment
+        uses: ./.github/actions/setup-common-env
+
+      - name: Build
+        run: ./gradlew build
+
+      - name: Upload artifacts
+        uses: ./.github/actions/build-and-upload-artifacts
+
+      - name: Create draft release and upload assets
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="${{ github.ref_name }}"
+
+          gh release create "$TAG" \
+            --draft \
+            --title "[] $TAG" \
+            --generate-notes
+
+          gh release upload "$TAG" build/libs/* --clobber

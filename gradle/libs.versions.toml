@@ -1,0 +1,83 @@
+[versions]
+plugin-kotlin = "2.2.20"
+plugin-moddev = "2.0.137"
+plugin-modPublishPlugin = "1.1.0"
+plugin-dokka= "2.1.0"
+
+
+minecraft = "1.21.1"
+neoforge = "21.1.217"
+kotlinForForge = "5.10.0"
+parchmentmc = "2024.11.17"
+
+junit = "6.0.1"
+
+jei = "19.21.0.247"
+ae2 = "19.2.17"
+ae2JeiIntegration = "5748513" # 1.2.0
+titanium = "1.21-4.0.32"
+replication = "7331983" # 1.21.1-1.2.6
+megaCells = "6853076" # 4.10.1
+
+
+[libraries]
+kotlinForForge = { module = "thedarkcolour:kotlinforforge-neoforge", version.ref = "kotlinForForge" }
+
+junit = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
+junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }
+junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
+testframework = { module = "net.neoforged:testframework", version.ref = "neoforge" }
+dokka-versioning = { module = "org.jetbrains.dokka:versioning-plugin", version.ref = "plugin_dokka" }
+
+jei = { module = "mezz.jei:jei-1.21.1-neoforge", version.ref = "jei" }
+jei-api = { module = "mezz.jei:jei-1.21.1-neoforge-api", version.ref = "jei" }
+ae2 = { module = "org.appliedenergistics:appliedenergistics2", version.ref = "ae2" }
+ae2JeiIntegration = { module = "curse.maven:ae2-jei-integration-1074338", version.ref = "ae2JeiIntegration" }
+titanium = { module = "com.hrznstudio:titanium", version.ref = "titanium" }
+replication = { module = "curse.maven:replication-638351", version.ref = "replication" }
+megaCells = { module = "curse.maven:mega-cells-622112", version.ref = "megaCells" }
+
+
+[plugins]
+kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "plugin-kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "plugin-kotlin" }
+moddev = { id = "net.neoforged.moddev", version.ref = "plugin-moddev" }
+modPublishPlugin = { id = "me.modmuss50.mod-publish-plugin", version.ref = "plugin-modPublishPlugin" }
+dokka = { id = "org.jetbrains.dokka", version.ref = "plugin-dokka" }
+dokka-javadoc = { id = "org.jetbrains.dokka-javadoc", version.ref = "plugin-dokka" }
+
+
+[bundles]
+implementation = [
+    "kotlinForForge",
+    "ae2",
+    "titanium",
+    "replication"
+]
+
+runtimeOnly = [
+    "jei",
+    "ae2JeiIntegration"
+]
+
+integrationImplementation = [
+    "megaCells",
+]
+
+integrationCompileOnly = [
+    "jei-api",
+    "ae2JeiIntegration"
+]
+
+optionalModsRuntimeOnly = [
+]
+
+testImplementation = [
+    "junit",
+    "testframework"
+]
+
+testRuntimeOnly = [
+    "junit-platform-launcher",
+    "junit-jupiter-engine"
+]

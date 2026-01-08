@@ -1,0 +1,37 @@
+name: Build
+
+on:
+  push:
+    tags-ignore:
+      - "**"
+    branches:
+      - "**"
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+    run:
+        shell: bash
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Setup common environment
+        uses: ./.github/actions/setup-common-env
+
+      - name: Build
+        run: ./gradlew build
+
+      - name: Upload artifacts
+        uses: ./.github/actions/build-and-upload-artifacts

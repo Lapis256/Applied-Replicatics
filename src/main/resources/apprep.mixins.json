@@ -1,0 +1,19 @@
+{
+    "required": true,
+    "minVersion": "0.8",
+    "mixinextras": {
+        "minVersion": "0.5.0"
+    },
+    "package": "dev.lapis256.apprep.mixin",
+    "refmap": "apprep.refmap.json",
+    "compatibilityLevel": "JAVA_21",
+    "mixins": [
+    ],
+    "client": [
+    ],
+    "server": [
+    ],
+    "injectors": {
+        "defaultRequire": 1
+  }
+}
