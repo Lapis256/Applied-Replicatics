@@ -1,4 +1,4 @@
-package dev.lapis256.apprep.common.ae2
+package dev.lapis256.apprep.common.ae2.strategies
 
 import appeng.api.config.Actionable
 import appeng.api.stacks.AEKey

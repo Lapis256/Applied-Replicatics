@@ -1,4 +1,4 @@
-package dev.lapis256.apprep.common.ae2
+package dev.lapis256.apprep.common.ae2.strategies
 
 import appeng.api.behaviors.ExternalStorageStrategy
 import appeng.api.storage.MEStorage

@@ -3,7 +3,7 @@ package dev.lapis256.apprep.common.init
 import appeng.core.definitions.BlockDefinition
 import dev.lapis256.apprep.api.AppliedReplicaticsAPI
 import dev.lapis256.apprep.api.extension.register
-import dev.lapis256.apprep.common.block.MEReplicationConnectorBlock
+import dev.lapis256.apprep.common.block.ReplicationConnectorBlock
 import net.minecraft.world.item.BlockItem
 import net.minecraft.world.item.Item
 import net.minecraft.world.level.block.Block
@@ -17,7 +17,7 @@ object AppRepBlocks {
     val BLOCKS = mutableListOf<BlockDefinition<*>>()
 
 
-    val ME_REPLICATION_CONNECTOR = register("ME Replication Connector", "me_replication_connector", ::MEReplicationConnectorBlock)
+    val REPLICATION_CONNECTOR = register("ME Replication Connector", "replication_connector", ::ReplicationConnectorBlock)
 
 
     private fun <BLOCK : Block> register(

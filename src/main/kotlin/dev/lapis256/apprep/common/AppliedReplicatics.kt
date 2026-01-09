@@ -4,9 +4,11 @@ import appeng.api.AECapabilities
 import appeng.api.behaviors.ContainerItemStrategy
 import appeng.api.behaviors.GenericSlotCapacities
 import appeng.api.client.StorageCellModels
+import appeng.api.networking.IInWorldGridNodeHost
 import appeng.api.stacks.AEKeyTypes
 import appeng.api.upgrades.Upgrades
 import appeng.core.definitions.AEItems
+import appeng.core.definitions.DeferredBlockEntityType
 import appeng.core.localization.GuiText
 import appeng.parts.automation.StackWorldBehaviors
 import com.buuz135.replication.ReplicationRegistry
@@ -14,14 +16,11 @@ import com.buuz135.replication.block.MatterPipeBlock
 import dev.lapis256.apprep.api.AppliedReplicaticsAPI
 import dev.lapis256.apprep.api.ae2.MatterKey
 import dev.lapis256.apprep.api.ae2.MatterKeyType
-import dev.lapis256.apprep.common.ae2.GenericStackMatterStorage
-import dev.lapis256.apprep.common.ae2.MatterHandlerExternalStorageStrategy
-import dev.lapis256.apprep.common.ae2.MatterTankItemStrategy
-import dev.lapis256.apprep.common.block.MEReplicationConnectorBlock
-import dev.lapis256.apprep.common.init.AppRepBlockEntities
-import dev.lapis256.apprep.common.init.AppRepBlocks
-import dev.lapis256.apprep.common.init.AppRepCreativeTab
-import dev.lapis256.apprep.common.init.AppRepItems
+import dev.lapis256.apprep.common.ae2.strategies.GenericStackMatterStorage
+import dev.lapis256.apprep.common.ae2.strategies.MatterHandlerExternalStorageStrategy
+import dev.lapis256.apprep.common.ae2.strategies.MatterTankItemStrategy
+import dev.lapis256.apprep.common.block.ReplicationConnectorBlock
+import dev.lapis256.apprep.common.init.*
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.core.registries.Registries
 import net.neoforged.bus.api.IEventBus
@@ -35,15 +34,17 @@ import net.neoforged.neoforge.registries.RegisterEvent
 class AppliedReplicatics(eventBus: IEventBus) {
 
     init {
+        AppRepParts.init()
         AppRepBlockEntities.REGISTRY.register(eventBus)
         AppRepBlocks.REGISTRY.register(eventBus)
         AppRepItems.REGISTRY.register(eventBus)
         AppRepCreativeTab.REGISTRY.register(eventBus)
 
-        MatterPipeBlock.ALLOWED_CONNECTION_BLOCKS.add { it is MEReplicationConnectorBlock }
+        MatterPipeBlock.ALLOWED_CONNECTION_BLOCKS.add { it is ReplicationConnectorBlock }
 
         eventBus.addListener(::onCommonSetup)
         eventBus.addListener(::onRegister)
+        eventBus.addListener(::registerCapabilities)
         eventBus.addListener(::registerGenericAdapters)
 
         @Suppress("UnstableApiUsage")
@@ -81,6 +82,18 @@ class AppliedReplicatics(eventBus: IEventBus) {
         }
 
         AEKeyTypes.register(MatterKeyType)
+    }
+
+    private fun registerCapabilities(event: RegisterCapabilitiesEvent) {
+        AppRepBlockEntities.BLOCK_ENTITY_TYPES
+            .asSequence()
+            .filter { IInWorldGridNodeHost::class.java.isAssignableFrom(it.blockEntityClass) }
+            .map(DeferredBlockEntityType<*>::get)
+            .forEach { type ->
+                event.registerBlockEntity(AECapabilities.IN_WORLD_GRID_NODE_HOST, type) { blockEntity, _ ->
+                    blockEntity as IInWorldGridNodeHost
+                }
+            }
     }
 
     @Suppress("UnstableApiUsage")

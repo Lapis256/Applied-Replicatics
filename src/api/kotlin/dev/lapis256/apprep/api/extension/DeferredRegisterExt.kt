@@ -7,6 +7,7 @@ import appeng.blockentity.AEBaseBlockEntity
 import appeng.blockentity.ClientTickingBlockEntity
 import appeng.blockentity.ServerTickingBlockEntity
 import appeng.core.definitions.BlockDefinition
+import appeng.core.definitions.DeferredBlockEntityType
 import appeng.core.definitions.ItemDefinition
 import net.minecraft.core.BlockPos
 import net.minecraft.world.item.BlockItem
@@ -15,7 +16,6 @@ import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.entity.BlockEntityTicker
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
-import net.neoforged.neoforge.registries.DeferredHolder
 import net.neoforged.neoforge.registries.DeferredRegister
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.reflect.KClass
@@ -52,12 +52,12 @@ inline fun <reified ENTITY : AEBaseBlockEntity, BLOCK : AEBaseEntityBlock<ENTITY
     name: String,
     crossinline factory: (BlockEntityType<ENTITY>, BlockPos, BlockState) -> ENTITY,
     vararg deferredBlocks: BlockDefinition<BLOCK>
-): DeferredHolder<BlockEntityType<*>, BlockEntityType<ENTITY>> {
+): DeferredBlockEntityType<ENTITY> {
     if (deferredBlocks.isEmpty()) {
         error("At least one block must be provided to register a block entity type")
     }
 
-    return register(name) { ->
+    val deferred = register(name) { ->
         val blocks = deferredBlocks.map(BlockDefinition<BLOCK>::block).toTypedArray()
         val typeHolder = AtomicReference<BlockEntityType<ENTITY>>()
 
@@ -78,6 +78,8 @@ inline fun <reified ENTITY : AEBaseBlockEntity, BLOCK : AEBaseEntityBlock<ENTITY
                 }
             }
     }
+
+    return DeferredBlockEntityType(ENTITY::class.java, deferred)
 }
 
 inline fun <reified ENTITY : AEBaseBlockEntity, reified TICKING : Any> makeTicker(
