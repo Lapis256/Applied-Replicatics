@@ -8,6 +8,8 @@
     "refmap": "apprep.refmap.json",
     "compatibilityLevel": "JAVA_21",
     "mixins": [
+        "replication.MixinMatterNetwork",
+        "titanium.MixinNetworkElement"
     ],
     "client": [
     ],

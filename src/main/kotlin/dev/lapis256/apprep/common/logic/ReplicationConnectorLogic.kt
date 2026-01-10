@@ -6,33 +6,49 @@ import appeng.api.networking.IManagedGridNode
 import appeng.api.networking.ticking.IGridTickable
 import appeng.api.networking.ticking.TickRateModulation
 import appeng.api.networking.ticking.TickingRequest
+import appeng.api.storage.IStorageMounts
+import appeng.api.storage.IStorageProvider
 import appeng.api.util.AECableType
+import appeng.me.storage.DelegatingMEInventory
+import appeng.me.storage.NullInventory
 import com.buuz135.replication.api.matter_fluid.IMatterTank
 import com.buuz135.replication.api.network.IMatterTanksConsumer
 import com.buuz135.replication.api.network.IMatterTanksSupplier
-import dev.lapis256.apprep.api.AppliedReplicaticsAPI
+import com.buuz135.replication.network.MatterNetwork
+import com.hrznstudio.titanium.block_network.Network
+import com.hrznstudio.titanium.block_network.element.NetworkElement
+import com.mojang.logging.LogUtils
+import dev.lapis256.apprep.api.replication.matter_network.MatterNetworkListener
+import dev.lapis256.apprep.api.replication.matter_network.addListener
+import dev.lapis256.apprep.api.replication.matter_network.removeListener
+import dev.lapis256.apprep.api.titanium.network_element.NetworkElementListener
+import dev.lapis256.apprep.api.titanium.network_element.addListener
+import dev.lapis256.apprep.api.titanium.network_element.removeListener
+import dev.lapis256.apprep.common.ae2.MatterNetworkStorage
 import net.minecraft.core.Direction
 import net.minecraft.core.HolderLookup
 import net.minecraft.nbt.CompoundTag
+import org.slf4j.Logger
 
 
 class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: ReplicationConnectorLogicHost) :
     IMatterTanksConsumer,
     IMatterTanksSupplier {
 
+    companion object {
+        val LOGGER: Logger = LogUtils.getLogger()
+    }
+
     private var _priority: Int = 0
         set(value) {
             field = value
             host.saveChanges()
+            remountMatterNetworkStorage()
         }
 
     fun setPriority(newValue: Int) {
         _priority = newValue
     }
-
-    val mainNode: IManagedGridNode = gridNode
-        .setFlags(GridFlags.REQUIRE_CHANNEL)
-        .addService(IGridTickable::class.java, Ticker())
 
     private class Ticker : IGridTickable {
         override fun getTickingRequest(node: IGridNode): TickingRequest {
@@ -40,37 +56,138 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
         }
 
         override fun tickingRequest(node: IGridNode?, ticksSinceLastCall: Int): TickRateModulation {
-            AppliedReplicaticsAPI.LOGGER.debug("Replication Connector Ticker called: ticksSinceLastCall=$ticksSinceLastCall")
-            return TickRateModulation.FASTER
+            return TickRateModulation.SLEEP
         }
     }
 
-    fun getCableConnectionType(dir: Direction?): AECableType {
+    private inner class StorageProvider : IStorageProvider {
+        override fun mountInventories(storageMounts: IStorageMounts) {
+            LOGGER.debug("Mounting inventories for ReplicationConnectorLogic with priority $priority")
+            if (mainNode.isOnline) {
+                LOGGER.debug("Mounting MatterNetworkStorage with priority $priority")
+                storageMounts.mount(delegatingStorage, priority)
+            }
+        }
+    }
+
+    val mainNode: IManagedGridNode = gridNode
+        .setFlags(GridFlags.REQUIRE_CHANNEL)
+        .addService(IGridTickable::class.java, Ticker())
+        .addService(IStorageProvider::class.java, StorageProvider())
+
+    inner class MatterNetworkListenerImpl : MatterNetworkListener {
+        override fun onAddedTanksSupplier() {
+            LOGGER.debug("Tank supplier added to MatterNetwork, invalidating cache")
+            delegatingStorage.storage?.invalidateCache()
+        }
+
+        override fun onRemovedTanksSupplier() {
+            LOGGER.debug("Tank supplier removed from MatterNetwork, invalidating cache")
+            delegatingStorage.storage?.invalidateCache()
+        }
+
+        override fun onTankValueChanged() {
+            LOGGER.debug("Tank value changed in MatterNetwork, invalidating cache")
+            delegatingStorage.storage?.invalidateCache()
+        }
+    }
+
+    val matterNetworkListener by lazy { MatterNetworkListenerImpl() }
+
+    inner class NetworkElementListenerImpl : NetworkElementListener {
+        override fun onAddedNetwork(network: Network) {
+            val matterNetwork = network as? MatterNetwork
+                ?: return LOGGER.error("Connected network is not MatterNetwork: {}", network)
+
+            delegatingStorage.storage = MatterNetworkStorage(matterNetwork)
+            LOGGER.debug("Connected to MatterNetwork: {}", matterNetwork)
+
+            matterNetwork.addListener(matterNetworkListener)
+        }
+
+        override fun onRemoveNetwork(network: Network) {
+            delegatingStorage.storage = null
+
+            LOGGER.debug("Disconnected from MatterNetwork")
+
+            val matterNetwork = network as? MatterNetwork
+                ?: return LOGGER.error("Disconnected network is not MatterNetwork: {}", network)
+
+            removeMatterNetworkListener(matterNetwork)
+        }
+    }
+
+    val networkElementListener by lazy { NetworkElementListenerImpl() }
+
+    fun addNetworkElementListener(element: NetworkElement) {
+        LOGGER.debug("Adding NetworkElementListener to NetworkElement ({})", element)
+
+        element.addListener(networkElementListener)
+    }
+
+    fun removeNetworkElementListener(element: NetworkElement) {
+        LOGGER.debug("Removing NetworkElementListener from NetworkElement ({})", element)
+
+        element.removeListener(networkElementListener)
+    }
+
+    fun removeMatterNetworkListener(network: MatterNetwork) {
+        LOGGER.debug("Removing MatterNetworkListener from MatterNetwork ({})", network)
+
+        network.removeListener(matterNetworkListener)
+    }
+
+    fun getCableConnectionType(@Suppress("unused") dir: Direction?): AECableType {
         return AECableType.SMART
     }
 
     fun notifyNeighbors() {
-        if (this.mainNode.isActive) {
-            this.mainNode.ifPresent { grid, node ->
+        if (mainNode.isActive) {
+            mainNode.ifPresent { grid, node ->
                 grid.tickManager.wakeDevice(node)
             }
         }
 
-        this.host.getBlockEntity().invalidateCapabilities()
+        host.getBlockEntity()?.invalidateCapabilities()
     }
 
     fun gridChanged() {
-        this.notifyNeighbors()
-    }
-
-    fun writeToNBT(tag: CompoundTag, registries: HolderLookup.Provider) {
-        tag.putInt("priority", this.priority)
-    }
-
-    fun readFromNBT(tag: CompoundTag, registries: HolderLookup.Provider) {
         notifyNeighbors()
-        this.priority = tag.getInt("priority")
     }
+
+    fun writeToNBT(tag: CompoundTag, @Suppress("unused") registries: HolderLookup.Provider) {
+        tag.putInt("priority", priority)
+    }
+
+    fun readFromNBT(tag: CompoundTag, @Suppress("unused") registries: HolderLookup.Provider) {
+        notifyNeighbors()
+        priority = tag.getInt("priority")
+    }
+
+    private fun remountMatterNetworkStorage() {
+        IStorageProvider.requestUpdate(mainNode)
+    }
+
+    var wasOnline = false
+
+    fun onMainNodeStateChanged() {
+        val currentOnline: Boolean = mainNode.isOnline
+        if (wasOnline != currentOnline) {
+            wasOnline = currentOnline
+            host.saveChanges()
+            remountMatterNetworkStorage()
+        }
+    }
+
+    class DelegatingMatterNetworkStorage : DelegatingMEInventory(NullInventory.of()) {
+        var storage: MatterNetworkStorage?
+            get() = delegate as? MatterNetworkStorage
+            set(value) {
+                delegate = value ?: NullInventory.of()
+            }
+    }
+
+    val delegatingStorage = DelegatingMatterNetworkStorage()
 
     // IMatterTanksConsumer / IMatterTanksSupplier
 

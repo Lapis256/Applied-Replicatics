@@ -10,7 +10,7 @@ object AppliedReplicaticsAPI {
     const val MOD_ID = "apprep"
 
     @JvmField
-    val LOGGER: Logger = LogUtils.getLogger();
+    val LOGGER: Logger = LogUtils.getLogger()
 
     @JvmStatic
     fun rl(path: String): ResourceLocation =

@@ -6,5 +6,5 @@ import com.buuz135.replication.api.matter_fluid.MatterStack
 
 fun MatterStack.toGenericStackOrNull(): GenericStack? {
     val key = MatterKey.of(this) ?: return null
-    return GenericStack(key, this.amount.toLong())
+    return GenericStack(key, amount.toLong())
 }

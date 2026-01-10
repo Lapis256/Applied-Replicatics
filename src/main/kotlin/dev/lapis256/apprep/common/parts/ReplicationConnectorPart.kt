@@ -38,9 +38,10 @@ class ReplicationConnectorPart(partItem: IPartItem<*>) : AEBasePart(partItem), R
     override fun getCableConnectionLength(cable: AECableType?): Float = 4.0F
 
     override fun onMainNodeStateChanged(reason: IGridNodeListener.State?) {
-        super.onMainNodeStateChanged(reason)
+        super<AEBasePart>.onMainNodeStateChanged(reason)
+        super<ReplicationConnectorLogicHost>.onMainNodeStateChanged()
         if (mainNode.hasGridBooted()) {
-            this.logic.notifyNeighbors()
+            logic.notifyNeighbors()
         }
     }
 
