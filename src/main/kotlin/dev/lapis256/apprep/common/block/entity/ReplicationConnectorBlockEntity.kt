@@ -33,11 +33,13 @@ class ReplicationConnectorBlockEntity(type: BlockEntityType<*>, pos: BlockPos, s
         val level = level.takeIfServer() ?: return
 
         val networkManager = NetworkManager.get(level)
-        val element = networkManager.getElement(worldPosition)
-            ?: DefaultMatterNetworkElement(level, worldPosition)
-
-        logic.addNetworkElementListener(element)
-        networkManager.addElement(element)
+        val existing = networkManager.getElement(worldPosition)
+        if (existing != null) {
+            logic.addNetworkElementListener(existing)
+        } else {
+            val newElement = DefaultMatterNetworkElement(level, worldPosition)
+            logic.addNetworkElementListener(newElement)
+        }
     }
 
     private var isChunkUnloaded = false
