@@ -24,7 +24,7 @@ import dev.lapis256.apprep.api.replication.matter_network.removeListener
 import dev.lapis256.apprep.api.titanium.network_element.NetworkElementListener
 import dev.lapis256.apprep.api.titanium.network_element.addListener
 import dev.lapis256.apprep.api.titanium.network_element.removeListener
-import dev.lapis256.apprep.common.ae2.MatterNetworkStorage
+import dev.lapis256.apprep.common.ae2.storage.MatterNetworkStorage
 import net.minecraft.core.Direction
 import net.minecraft.core.HolderLookup
 import net.minecraft.nbt.CompoundTag
@@ -62,9 +62,7 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
 
     private inner class StorageProvider : IStorageProvider {
         override fun mountInventories(storageMounts: IStorageMounts) {
-            LOGGER.debug("Mounting inventories for ReplicationConnectorLogic with priority $priority")
             if (mainNode.isOnline) {
-                LOGGER.debug("Mounting MatterNetworkStorage with priority $priority")
                 storageMounts.mount(delegatingStorage, priority)
             }
         }
@@ -77,22 +75,27 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
 
     inner class MatterNetworkListenerImpl : MatterNetworkListener {
         override fun onAddedTanksSupplier() {
-            LOGGER.debug("Tank supplier added to MatterNetwork, invalidating cache")
-            delegatingStorage.storage?.invalidateCache()
+            delegatingStorage.storage?.invalidateAll()
         }
 
         override fun onRemovedTanksSupplier() {
-            LOGGER.debug("Tank supplier removed from MatterNetwork, invalidating cache")
-            delegatingStorage.storage?.invalidateCache()
+            delegatingStorage.storage?.invalidateAll()
         }
 
         override fun onTankValueChanged() {
-            LOGGER.debug("Tank value changed in MatterNetwork, invalidating cache")
-            delegatingStorage.storage?.invalidateCache()
+            delegatingStorage.storage?.invalidateStacks()
         }
     }
 
-    val matterNetworkListener by lazy { MatterNetworkListenerImpl() }
+    private val matterNetworkListener by lazy { MatterNetworkListenerImpl() }
+
+    fun addMatterNetworkListener(network: MatterNetwork) {
+        network.addListener(matterNetworkListener)
+    }
+
+    fun removeMatterNetworkListener(network: MatterNetwork) {
+        network.removeListener(matterNetworkListener)
+    }
 
     inner class NetworkElementListenerImpl : NetworkElementListener {
         override fun onAddedNetwork(network: Network) {
@@ -100,15 +103,11 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
                 ?: return LOGGER.error("Connected network is not MatterNetwork: {}", network)
 
             delegatingStorage.storage = MatterNetworkStorage(matterNetwork)
-            LOGGER.debug("Connected to MatterNetwork: {}", matterNetwork)
-
-            matterNetwork.addListener(matterNetworkListener)
+            addMatterNetworkListener(matterNetwork)
         }
 
         override fun onRemoveNetwork(network: Network) {
             delegatingStorage.storage = null
-
-            LOGGER.debug("Disconnected from MatterNetwork")
 
             val matterNetwork = network as? MatterNetwork
                 ?: return LOGGER.error("Disconnected network is not MatterNetwork: {}", network)
@@ -117,24 +116,14 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
         }
     }
 
-    val networkElementListener by lazy { NetworkElementListenerImpl() }
+    private val networkElementListener by lazy { NetworkElementListenerImpl() }
 
     fun addNetworkElementListener(element: NetworkElement) {
-        LOGGER.debug("Adding NetworkElementListener to NetworkElement ({})", element)
-
         element.addListener(networkElementListener)
     }
 
     fun removeNetworkElementListener(element: NetworkElement) {
-        LOGGER.debug("Removing NetworkElementListener from NetworkElement ({})", element)
-
         element.removeListener(networkElementListener)
-    }
-
-    fun removeMatterNetworkListener(network: MatterNetwork) {
-        LOGGER.debug("Removing MatterNetworkListener from MatterNetwork ({})", network)
-
-        network.removeListener(matterNetworkListener)
     }
 
     fun getCableConnectionType(@Suppress("unused") dir: Direction?): AECableType {

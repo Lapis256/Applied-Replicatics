@@ -39,6 +39,7 @@ class ReplicationConnectorBlockEntity(type: BlockEntityType<*>, pos: BlockPos, s
         } else {
             val newElement = DefaultMatterNetworkElement(level, worldPosition)
             logic.addNetworkElementListener(newElement)
+            networkManager.addElement(newElement)
         }
     }
 

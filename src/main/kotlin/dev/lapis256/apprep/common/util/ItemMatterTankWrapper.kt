@@ -10,6 +10,9 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler
 
 
 class ItemMatterTankWrapper private constructor(private val stack: ItemStack, private val isCreative: Boolean) {
+    // TODO: クリエイティブで NBT をコピーしたタンクにも対応する
+    // TODO: 空のタンクがタンクとして認識されない問題の修正
+
     companion object {
         fun isMatterTank(stack: ItemStack): Boolean {
             val tileData = stack.get(ReplicationAttachments.TILE) ?: return false
