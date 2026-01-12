@@ -1,7 +1,6 @@
-package dev.lapis256.template
+package dev.lapis256.apprep
 
 import org.junit.jupiter.api.Test
-import java.util.*
 
 
 class JUnitTest {

@@ -1,12 +1,13 @@
 package dev.lapis256.apprep.api.ae2
 
 import appeng.api.stacks.AEKey
-import com.buuz135.replication.ReplicationRegistry
 import com.buuz135.replication.api.IMatterType
 import com.buuz135.replication.api.matter_fluid.MatterStack
 import com.mojang.serialization.Codec
 import com.mojang.serialization.MapCodec
 import com.mojang.serialization.codecs.RecordCodecBuilder
+import dev.lapis256.apprep.api.replication.util.MATTER_TYPE_NAME_CODEC
+import dev.lapis256.apprep.api.replication.util.getMatterId
 import net.minecraft.core.BlockPos
 import net.minecraft.core.HolderLookup
 import net.minecraft.nbt.CompoundTag
@@ -26,7 +27,7 @@ class MatterKey private constructor(val stack: MatterStack) : AEKey() {
     companion object {
         val MAP_CODEC: MapCodec<MatterKey> = RecordCodecBuilder.mapCodec { builder ->
             builder.group(
-                ReplicationRegistry.MATTER_TYPES_REGISTRY.byNameCodec().fieldOf("type").forGetter { it.stack.matterType }
+                MATTER_TYPE_NAME_CODEC.fieldOf("type").forGetter(MatterKey::type)
             ).apply(builder, ::MatterKey)
         }
 
@@ -51,12 +52,14 @@ class MatterKey private constructor(val stack: MatterStack) : AEKey() {
         }
     }
 
+    val type: IMatterType = stack.matterType
+
     fun toStack(amount: Long): MatterStack {
         return MatterStack(stack.matterType, amount.toDouble())
     }
 
     override fun toTag(registries: HolderLookup.Provider): CompoundTag {
-        val ops = registries.createSerializationContext(NbtOps.INSTANCE);
+        val ops = registries.createSerializationContext(NbtOps.INSTANCE)
         return CODEC.encodeStart(ops, this).getOrThrow() as? CompoundTag ?: error("Failed to serialize MatterKey to NBT")
     }
 
@@ -68,9 +71,7 @@ class MatterKey private constructor(val stack: MatterStack) : AEKey() {
         // No-op
     }
 
-    val location: ResourceLocation by lazy {
-        ReplicationRegistry.MATTER_TYPES_REGISTRY.getKey(stack.matterType) ?: error("Unknown matter type: ${stack.matterType}")
-    }
+    val location: ResourceLocation by lazy { getMatterId(stack.matterType) }
     override fun getId(): ResourceLocation = location
 
     override fun equals(other: Any?): Boolean {

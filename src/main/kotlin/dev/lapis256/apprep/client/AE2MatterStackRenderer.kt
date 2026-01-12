@@ -4,7 +4,7 @@ import appeng.api.client.AEKeyRenderHandler
 import com.buuz135.replication.Replication
 import com.mojang.blaze3d.vertex.PoseStack
 import dev.lapis256.apprep.api.ae2.MatterKey
-import dev.lapis256.apprep.api.util.renderMatterTypeOnGui
+import dev.lapis256.apprep.api.replication.util.renderMatterTypeOnGui
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.renderer.MultiBufferSource

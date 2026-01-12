@@ -68,7 +68,7 @@ class AppliedReplicatics(eventBus: IEventBus) {
     }
 
     private fun initUpgrades() {
-        val storageCellGroup = GuiText.StorageCells.translationKey;
+        val storageCellGroup = GuiText.StorageCells.translationKey
         AppRepItems.CELLS.forEach {
             Upgrades.add(AEItems.INVERTER_CARD, it::get, 1, storageCellGroup)
             Upgrades.add(AEItems.EQUAL_DISTRIBUTION_CARD, it::get, 1, storageCellGroup)

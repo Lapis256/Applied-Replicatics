@@ -1,11 +1,11 @@
 package dev.lapis256.apprep.common.logic
 
 import appeng.api.networking.GridFlags
-import appeng.api.networking.IGridNode
 import appeng.api.networking.IManagedGridNode
-import appeng.api.networking.ticking.IGridTickable
-import appeng.api.networking.ticking.TickRateModulation
-import appeng.api.networking.ticking.TickingRequest
+import appeng.api.networking.IStackWatcher
+import appeng.api.networking.security.IActionSource
+import appeng.api.networking.storage.IStorageWatcherNode
+import appeng.api.stacks.AEKey
 import appeng.api.storage.IStorageMounts
 import appeng.api.storage.IStorageProvider
 import appeng.api.util.AECableType
@@ -18,13 +18,17 @@ import com.buuz135.replication.network.MatterNetwork
 import com.hrznstudio.titanium.block_network.Network
 import com.hrznstudio.titanium.block_network.element.NetworkElement
 import com.mojang.logging.LogUtils
+import dev.lapis256.apprep.api.ae2.MatterKey
 import dev.lapis256.apprep.api.replication.matter_network.MatterNetworkListener
 import dev.lapis256.apprep.api.replication.matter_network.addListener
 import dev.lapis256.apprep.api.replication.matter_network.removeListener
+import dev.lapis256.apprep.api.replication.util.MATTER_TYPES
 import dev.lapis256.apprep.api.titanium.network_element.NetworkElementListener
 import dev.lapis256.apprep.api.titanium.network_element.addListener
 import dev.lapis256.apprep.api.titanium.network_element.removeListener
+import dev.lapis256.apprep.api.util.ResettableLazy
 import dev.lapis256.apprep.common.ae2.storage.MatterNetworkStorage
+import dev.lapis256.apprep.common.replication.MENetworkMatterTankList
 import net.minecraft.core.Direction
 import net.minecraft.core.HolderLookup
 import net.minecraft.nbt.CompoundTag
@@ -50,15 +54,15 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
         _priority = newValue
     }
 
-    private class Ticker : IGridTickable {
-        override fun getTickingRequest(node: IGridNode): TickingRequest {
-            return TickingRequest(5, 120, true) // TODO: 調整する
-        }
-
-        override fun tickingRequest(node: IGridNode?, ticksSinceLastCall: Int): TickRateModulation {
-            return TickRateModulation.SLEEP
-        }
+    class DelegatingMatterNetworkStorage : DelegatingMEInventory(NullInventory.of()) {
+        var storage: MatterNetworkStorage?
+            get() = delegate as? MatterNetworkStorage
+            set(value) {
+                delegate = value ?: NullInventory.of()
+            }
     }
+
+    val delegatingStorage = DelegatingMatterNetworkStorage()
 
     private inner class StorageProvider : IStorageProvider {
         override fun mountInventories(storageMounts: IStorageMounts) {
@@ -68,10 +72,26 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
         }
     }
 
+    private lateinit var stackWatcher: IStackWatcher
+    inner class StackWatcher : IStorageWatcherNode {
+        override fun updateWatcher(newWatcher: IStackWatcher) {
+            stackWatcher = newWatcher
+
+            MATTER_TYPES.forEach {
+                val what = MatterKey.of(it)
+                stackWatcher.add(what)
+            }
+        }
+
+        override fun onStackChange(what: AEKey, amount: Long) {
+            tanks.updateCache(what, amount)
+        }
+    }
+
     val mainNode: IManagedGridNode = gridNode
         .setFlags(GridFlags.REQUIRE_CHANNEL)
-        .addService(IGridTickable::class.java, Ticker())
         .addService(IStorageProvider::class.java, StorageProvider())
+        .addService(IStorageWatcherNode::class.java, StackWatcher())
 
     inner class MatterNetworkListenerImpl : MatterNetworkListener {
         override fun onAddedTanksSupplier() {
@@ -141,6 +161,7 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
     }
 
     fun gridChanged() {
+        _tanks.reset()
         notifyNeighbors()
     }
 
@@ -168,20 +189,18 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
         }
     }
 
-    class DelegatingMatterNetworkStorage : DelegatingMEInventory(NullInventory.of()) {
-        var storage: MatterNetworkStorage?
-            get() = delegate as? MatterNetworkStorage
-            set(value) {
-                delegate = value ?: NullInventory.of()
-            }
-    }
-
-    val delegatingStorage = DelegatingMatterNetworkStorage()
-
     // IMatterTanksConsumer / IMatterTanksSupplier
 
+    private val _tanks = ResettableLazy {
+        val grid = mainNode.grid ?: return@ResettableLazy MENetworkMatterTankList.empty()
+        val inventory = grid.storageService.cachedInventory
+        val cachedMatters = MATTER_TYPES.associateWith { inventory[MatterKey.of(it)] }
+        MENetworkMatterTankList(cachedMatters, grid.storageService.inventory, IActionSource.ofMachine(mainNode::getNode))
+    }
+    private val tanks by _tanks
+
     override fun getTanks(): List<IMatterTank> {
-        return listOf() // MaterTankWrapperList() TODO: 実装する
+        return tanks
     }
 
     override fun getPriority(): Int = _priority

@@ -4,6 +4,7 @@ import com.buuz135.replication.ReplicationAttachments
 import com.buuz135.replication.ReplicationConfig
 import com.buuz135.replication.ReplicationRegistry
 import com.buuz135.replication.api.matter_fluid.MatterStack
+import dev.lapis256.apprep.api.replication.util.getMatterId
 import mezz.jei.api.ingredients.IIngredientHelper
 import mezz.jei.api.ingredients.subtypes.UidContext
 import net.minecraft.nbt.CompoundTag
@@ -36,8 +37,7 @@ object MatterStackHelper : IIngredientHelper<MatterStack> {
         "matter:${ingredient.matterType.name}"
 
     override fun getResourceLocation(ingredient: MatterStack): ResourceLocation =
-        ReplicationRegistry.MATTER_TYPES_REGISTRY.getKey(ingredient.matterType)
-            ?: error("Unknown MatterType: ${ingredient.matterType}")
+        getMatterId(ingredient.matterType)
 
     override fun getColors(ingredient: MatterStack): Iterable<Int> =
         ingredient.matterType.color.get().map { i -> (i * 255).roundToInt() }

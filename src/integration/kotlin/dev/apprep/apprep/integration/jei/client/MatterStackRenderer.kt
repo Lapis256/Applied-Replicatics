@@ -1,7 +1,7 @@
 package dev.apprep.apprep.integration.jei.client
 
 import com.buuz135.replication.api.matter_fluid.MatterStack
-import dev.lapis256.apprep.api.util.renderMatterTypeOnGui
+import dev.lapis256.apprep.api.replication.util.renderMatterTypeOnGui
 import mezz.jei.api.gui.builder.ITooltipBuilder
 import mezz.jei.api.ingredients.IIngredientRenderer
 import net.minecraft.client.gui.GuiGraphics

@@ -1,15 +1,15 @@
 package dev.apprep.apprep.integration.jei.client
 
-import com.buuz135.replication.ReplicationRegistry
 import com.buuz135.replication.api.matter_fluid.MatterStack
 import dev.lapis256.apprep.api.AppliedReplicaticsAPI
+import dev.lapis256.apprep.api.replication.util.MATTER_TYPES
+import dev.lapis256.apprep.api.replication.util.MATTER_TYPE_NAME_CODEC
 import mezz.jei.api.IModPlugin
 import mezz.jei.api.JeiPlugin
 import mezz.jei.api.ingredients.IIngredientType
 import mezz.jei.api.registration.IModIngredientRegistration
 import net.neoforged.fml.ModList
 import tamaized.ae2jeiintegration.api.integrations.jei.IngredientConverters
-import kotlin.streams.asSequence
 
 
 @JeiPlugin
@@ -27,18 +27,13 @@ class AppRepJEI : IModPlugin {
     override fun getPluginUid() = AppliedReplicaticsAPI.rl("jei_plugin")
 
     override fun registerIngredients(registry: IModIngredientRegistration) {
-        val types = ReplicationRegistry.MATTER_TYPES_REGISTRY.holders()
-            .asSequence()
-            .filterNot(ReplicationRegistry.Matter.EMPTY::equals)
-            .map { MatterStack(it.value(), 1.0) }
-            .toList()
-
+        val types = MATTER_TYPES.map { MatterStack(it, 1.0) }
         registry.register(
             TYPE_MATTER,
             types,
             MatterStackHelper,
             MatterStackRenderer(),
-            ReplicationRegistry.MATTER_TYPES_REGISTRY.byNameCodec().xmap({ MatterStack(it, 1.0) }, MatterStack::getMatterType),
+            MATTER_TYPE_NAME_CODEC.xmap({ MatterStack(it, 1.0) }, MatterStack::getMatterType),
         )
     }
 }

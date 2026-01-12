@@ -40,7 +40,7 @@ class GroupedMatterTanks(
     }
 
     fun insert(key: MatterKey, amount: Long, mode: Actionable): Long {
-        val type = key.stack.matterType
+        val type = key.type
         var remaining = amount
 
         groupedTanks[type]?.forEach { tank ->
@@ -67,8 +67,7 @@ class GroupedMatterTanks(
     }
 
     fun extract(key: MatterKey, amount: Long, mode: Actionable): Long {
-        val type = key.stack.matterType
-        val tanks = groupedTanks[type] ?: return 0L
+        val tanks = groupedTanks[key.type] ?: return 0L
 
         var remaining = amount
         val iterator = tanks.iterator()

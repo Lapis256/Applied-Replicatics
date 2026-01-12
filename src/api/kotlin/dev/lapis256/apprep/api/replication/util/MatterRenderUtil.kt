@@ -1,4 +1,4 @@
-package dev.lapis256.apprep.api.util
+package dev.lapis256.apprep.api.replication.util
 
 import com.buuz135.replication.Replication
 import com.buuz135.replication.api.IMatterType

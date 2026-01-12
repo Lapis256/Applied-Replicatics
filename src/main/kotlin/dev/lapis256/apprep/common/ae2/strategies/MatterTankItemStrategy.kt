@@ -63,11 +63,11 @@ object MatterTankItemStrategy : ContainerItemStrategy<MatterKey, MatterTankItemS
     }
 
     override fun playFillSound(player: Player, what: MatterKey) {
-        player.playNotifySound(SoundEvents.BUCKET_FILL, SoundSource.PLAYERS, 1.0F, 1.0F);
+        player.playNotifySound(SoundEvents.BUCKET_FILL, SoundSource.PLAYERS, 1.0F, 1.0F)
     }
 
     override fun playEmptySound(player: Player, what: MatterKey) {
-        player.playNotifySound(SoundEvents.BUCKET_EMPTY, SoundSource.PLAYERS, 1.0F, 1.0F);
+        player.playNotifySound(SoundEvents.BUCKET_EMPTY, SoundSource.PLAYERS, 1.0F, 1.0F)
     }
 
     override fun getExtractableContent(context: Context): GenericStack? {
