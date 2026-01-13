@@ -4,8 +4,8 @@ import appeng.api.behaviors.GenericInternalInventory
 import appeng.api.config.Actionable
 import com.buuz135.replication.api.matter_fluid.IMatterHandler
 import com.buuz135.replication.api.matter_fluid.MatterStack
-import dev.lapis256.apprep.api.ae2.MatterKey
-import dev.lapis256.apprep.api.ae2.MatterKeyType
+import dev.lapis256.apprep.api.ae2.stack.MatterKey
+import dev.lapis256.apprep.api.ae2.stack.MatterKeyType
 import net.neoforged.neoforge.fluids.capability.IFluidHandler
 
 

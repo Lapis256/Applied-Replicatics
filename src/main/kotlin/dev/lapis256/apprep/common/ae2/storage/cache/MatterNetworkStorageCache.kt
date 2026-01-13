@@ -4,7 +4,7 @@ import appeng.api.stacks.KeyCounter
 import com.buuz135.replication.api.matter_fluid.MatterTank
 import com.buuz135.replication.api.network.IMatterTanksSupplier
 import com.buuz135.replication.network.MatterNetwork
-import dev.lapis256.apprep.api.ae2.MatterKey
+import dev.lapis256.apprep.api.ae2.stack.MatterKey
 import dev.lapis256.apprep.api.util.ResettableLazy
 import dev.lapis256.apprep.common.logic.ReplicationConnectorLogicHost
 import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet

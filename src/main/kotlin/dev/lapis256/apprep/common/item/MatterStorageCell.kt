@@ -2,7 +2,7 @@ package dev.lapis256.apprep.common.item
 
 import appeng.items.storage.BasicStorageCell
 import appeng.items.storage.StorageTier
-import dev.lapis256.apprep.api.ae2.MatterKeyType
+import dev.lapis256.apprep.api.ae2.stack.MatterKeyType
 
 
 class MatterStorageCell(properties: Properties, tier: StorageTier) :

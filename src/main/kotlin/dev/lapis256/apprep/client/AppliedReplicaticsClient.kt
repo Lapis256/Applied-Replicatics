@@ -3,8 +3,8 @@ package dev.lapis256.apprep.client
 import appeng.api.client.AEKeyRendering
 import appeng.items.storage.BasicStorageCell
 import dev.lapis256.apprep.api.AppliedReplicaticsAPI
-import dev.lapis256.apprep.api.ae2.MatterKey
-import dev.lapis256.apprep.api.ae2.MatterKeyType
+import dev.lapis256.apprep.api.ae2.stack.MatterKey
+import dev.lapis256.apprep.api.ae2.stack.MatterKeyType
 import dev.lapis256.apprep.common.init.AppRepItems
 import net.neoforged.api.distmarker.Dist
 import net.neoforged.bus.api.IEventBus

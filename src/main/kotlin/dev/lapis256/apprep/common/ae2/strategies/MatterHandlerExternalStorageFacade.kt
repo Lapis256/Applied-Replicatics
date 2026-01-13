@@ -5,8 +5,8 @@ import appeng.api.stacks.AEKey
 import appeng.api.stacks.GenericStack
 import appeng.me.storage.ExternalStorageFacade
 import com.buuz135.replication.api.matter_fluid.IMatterHandler
-import dev.lapis256.apprep.api.ae2.MatterKeyType
-import dev.lapis256.apprep.api.ae2.toGenericStackOrNull
+import dev.lapis256.apprep.api.ae2.stack.MatterKeyType
+import dev.lapis256.apprep.api.ae2.util.toGenericStackOrNull
 
 
 class MatterHandlerExternalStorageFacade(private val handler: IMatterHandler) : ExternalStorageFacade() {

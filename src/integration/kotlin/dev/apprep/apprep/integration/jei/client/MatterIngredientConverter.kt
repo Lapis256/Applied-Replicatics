@@ -2,8 +2,8 @@ package dev.apprep.apprep.integration.jei.client
 
 import appeng.api.stacks.GenericStack
 import com.buuz135.replication.api.matter_fluid.MatterStack
-import dev.lapis256.apprep.api.ae2.MatterKey
-import dev.lapis256.apprep.api.ae2.toGenericStackOrNull
+import dev.lapis256.apprep.api.ae2.stack.MatterKey
+import dev.lapis256.apprep.api.ae2.util.toGenericStackOrNull
 import tamaized.ae2jeiintegration.api.integrations.jei.IngredientConverter
 import kotlin.math.max
 

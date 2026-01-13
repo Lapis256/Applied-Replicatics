@@ -1,4 +1,4 @@
-package dev.lapis256.apprep.api.ae2
+package dev.lapis256.apprep.api.ae2.stack
 
 import appeng.api.stacks.AEKey
 import com.buuz135.replication.api.IMatterType

@@ -6,7 +6,7 @@ import appeng.api.stacks.AEKey
 import appeng.api.stacks.KeyCounter
 import appeng.api.storage.MEStorage
 import com.buuz135.replication.network.MatterNetwork
-import dev.lapis256.apprep.api.ae2.MatterKey
+import dev.lapis256.apprep.api.ae2.stack.MatterKey
 import dev.lapis256.apprep.api.text.AppRepGuiText
 import dev.lapis256.apprep.common.ae2.storage.cache.MatterNetworkStorageCache
 import net.minecraft.network.chat.Component

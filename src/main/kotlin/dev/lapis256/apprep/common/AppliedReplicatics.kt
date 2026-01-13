@@ -14,8 +14,8 @@ import appeng.parts.automation.StackWorldBehaviors
 import com.buuz135.replication.ReplicationRegistry
 import com.buuz135.replication.block.MatterPipeBlock
 import dev.lapis256.apprep.api.AppliedReplicaticsAPI
-import dev.lapis256.apprep.api.ae2.MatterKey
-import dev.lapis256.apprep.api.ae2.MatterKeyType
+import dev.lapis256.apprep.api.ae2.stack.MatterKey
+import dev.lapis256.apprep.api.ae2.stack.MatterKeyType
 import dev.lapis256.apprep.common.ae2.strategies.GenericStackMatterStorage
 import dev.lapis256.apprep.common.ae2.strategies.MatterHandlerExternalStorageStrategy
 import dev.lapis256.apprep.common.ae2.strategies.MatterTankItemStrategy

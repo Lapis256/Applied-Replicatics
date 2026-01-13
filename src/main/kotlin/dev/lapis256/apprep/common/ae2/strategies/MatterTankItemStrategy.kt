@@ -3,8 +3,8 @@ package dev.lapis256.apprep.common.ae2.strategies
 import appeng.api.behaviors.ContainerItemStrategy
 import appeng.api.config.Actionable
 import appeng.api.stacks.GenericStack
-import dev.lapis256.apprep.api.ae2.MatterKey
-import dev.lapis256.apprep.api.ae2.toGenericStackOrNull
+import dev.lapis256.apprep.api.ae2.stack.MatterKey
+import dev.lapis256.apprep.api.ae2.util.toGenericStackOrNull
 import dev.lapis256.apprep.common.util.ItemMatterTankWrapper
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource

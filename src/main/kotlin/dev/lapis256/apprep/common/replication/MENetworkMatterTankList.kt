@@ -6,7 +6,7 @@ import appeng.api.storage.MEStorage
 import appeng.me.storage.NullInventory
 import com.buuz135.replication.api.IMatterType
 import com.buuz135.replication.api.matter_fluid.MatterStack
-import dev.lapis256.apprep.api.ae2.MatterKey
+import dev.lapis256.apprep.api.ae2.stack.MatterKey
 import dev.lapis256.apprep.api.util.ResettableLazy
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
 

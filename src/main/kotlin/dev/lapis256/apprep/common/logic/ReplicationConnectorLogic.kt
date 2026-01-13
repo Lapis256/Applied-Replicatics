@@ -18,7 +18,7 @@ import com.buuz135.replication.network.MatterNetwork
 import com.hrznstudio.titanium.block_network.Network
 import com.hrznstudio.titanium.block_network.element.NetworkElement
 import com.mojang.logging.LogUtils
-import dev.lapis256.apprep.api.ae2.MatterKey
+import dev.lapis256.apprep.api.ae2.stack.MatterKey
 import dev.lapis256.apprep.api.replication.matter_network.MatterNetworkListener
 import dev.lapis256.apprep.api.replication.matter_network.addListener
 import dev.lapis256.apprep.api.replication.matter_network.removeListener

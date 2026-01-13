@@ -6,7 +6,7 @@ import appeng.api.storage.MEStorage
 import com.buuz135.replication.api.IMatterType
 import com.buuz135.replication.api.matter_fluid.IMatterTank
 import com.buuz135.replication.api.matter_fluid.MatterStack
-import dev.lapis256.apprep.api.ae2.MatterKey
+import dev.lapis256.apprep.api.ae2.stack.MatterKey
 import net.neoforged.neoforge.fluids.capability.IFluidHandler
 
 
