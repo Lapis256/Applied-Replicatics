@@ -9,6 +9,8 @@
     "compatibilityLevel": "JAVA_21",
     "mixins": [
         "replication.MixinMatterNetwork",
+        "replication.MixinReplicationTask",
+        "replication.MixinReplicatorBlockEntity",
         "titanium.MixinNetworkElement"
     ],
     "client": [

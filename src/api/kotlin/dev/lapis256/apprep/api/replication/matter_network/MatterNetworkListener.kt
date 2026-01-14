@@ -4,7 +4,11 @@ import dev.lapis256.apprep.api.asm.HookListener
 
 
 interface MatterNetworkListener : HookListener {
-    fun onAddedTanksSupplier()
-    fun onRemovedTanksSupplier()
-    fun onTankValueChanged()
+    fun onAddedTanksSupplier() {}
+    fun onRemovedTanksSupplier() {}
+    fun onTankValueChanged() {}
+
+    fun onAddedChipSupplier() {}
+    fun onRemovedChipSupplier() {}
+    fun onChipValuesChanged() {}
 }

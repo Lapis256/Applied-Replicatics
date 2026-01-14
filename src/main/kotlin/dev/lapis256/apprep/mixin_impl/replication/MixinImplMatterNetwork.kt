@@ -18,4 +18,18 @@ class MixinImplMatterNetwork : HookListenerHolderForImpl<MatterNetworkListener>(
     fun onTankValueChanged() {
         fire { it.onTankValueChanged() }
     }
+
+    fun onAddedChipSupplier() {
+        fire { it.onAddedChipSupplier() }
+    }
+
+    fun onRemovedChipSupplier(removed: Boolean) {
+        if (removed) {
+            fire { it.onRemovedChipSupplier() }
+        }
+    }
+
+    fun onChipValuesChanged() {
+        fire { it.onChipValuesChanged() }
+    }
 }

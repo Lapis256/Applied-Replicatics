@@ -1,38 +1,60 @@
 package dev.lapis256.apprep.common.logic
 
+import appeng.api.config.Actionable
+import appeng.api.crafting.IPatternDetails
 import appeng.api.networking.GridFlags
+import appeng.api.networking.IGridNode
 import appeng.api.networking.IManagedGridNode
 import appeng.api.networking.IStackWatcher
+import appeng.api.networking.crafting.ICraftingProvider
 import appeng.api.networking.security.IActionSource
 import appeng.api.networking.storage.IStorageWatcherNode
+import appeng.api.networking.ticking.IGridTickable
+import appeng.api.networking.ticking.TickRateModulation
+import appeng.api.networking.ticking.TickingRequest
+import appeng.api.stacks.AEItemKey
 import appeng.api.stacks.AEKey
+import appeng.api.stacks.KeyCounter
 import appeng.api.storage.IStorageMounts
 import appeng.api.storage.IStorageProvider
 import appeng.api.util.AECableType
-import appeng.me.storage.DelegatingMEInventory
-import appeng.me.storage.NullInventory
+import com.buuz135.replication.api.IMatterType
 import com.buuz135.replication.api.matter_fluid.IMatterTank
 import com.buuz135.replication.api.network.IMatterTanksConsumer
 import com.buuz135.replication.api.network.IMatterTanksSupplier
+import com.buuz135.replication.api.pattern.IMatterPatternHolder
 import com.buuz135.replication.network.MatterNetwork
 import com.hrznstudio.titanium.block_network.Network
 import com.hrznstudio.titanium.block_network.element.NetworkElement
 import com.mojang.logging.LogUtils
+import com.mojang.serialization.Codec
 import dev.lapis256.apprep.api.ae2.stack.MatterKey
+import dev.lapis256.apprep.api.extension.getCodec
+import dev.lapis256.apprep.api.extension.putCodec
 import dev.lapis256.apprep.api.replication.matter_network.MatterNetworkListener
 import dev.lapis256.apprep.api.replication.matter_network.addListener
 import dev.lapis256.apprep.api.replication.matter_network.removeListener
+import dev.lapis256.apprep.api.replication.task.MEReplicationTask
 import dev.lapis256.apprep.api.replication.util.MATTER_TYPES
+import dev.lapis256.apprep.api.replication.util.addTask
 import dev.lapis256.apprep.api.titanium.network_element.NetworkElementListener
 import dev.lapis256.apprep.api.titanium.network_element.addListener
 import dev.lapis256.apprep.api.titanium.network_element.removeListener
 import dev.lapis256.apprep.api.util.ResettableLazy
+import dev.lapis256.apprep.common.ae2.crafting.ReplicationPattern
+import dev.lapis256.apprep.common.ae2.storage.DelegatingMatterNetworkStorage
 import dev.lapis256.apprep.common.ae2.storage.MatterNetworkStorage
 import dev.lapis256.apprep.common.replication.MENetworkMatterTankList
+import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap
 import net.minecraft.core.Direction
 import net.minecraft.core.HolderLookup
+import net.minecraft.core.UUIDUtil
 import net.minecraft.nbt.CompoundTag
+import net.minecraft.server.level.ServerLevel
+import net.minecraft.world.item.ItemStack
+import net.minecraft.world.level.block.entity.BlockEntity
 import org.slf4j.Logger
+import java.util.*
 
 
 class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: ReplicationConnectorLogicHost) :
@@ -41,6 +63,11 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
 
     companion object {
         val LOGGER: Logger = LogUtils.getLogger()
+
+        val PUSHED_REPLICATION_TASK_CODEC: Codec<UUID> =
+            UUIDUtil.CODEC.fieldOf("pushed_replication_task").codec()
+
+        val PENDING_TASK_CODEC: Codec<PendingTask> = PendingTask.CODEC.fieldOf("pending_task").codec()
     }
 
     private var _priority: Int = 0
@@ -54,13 +81,8 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
         _priority = newValue
     }
 
-    class DelegatingMatterNetworkStorage : DelegatingMEInventory(NullInventory.of()) {
-        var storage: MatterNetworkStorage?
-            get() = delegate as? MatterNetworkStorage
-            set(value) {
-                delegate = value ?: NullInventory.of()
-            }
-    }
+    private var pendingTask: PendingTask? = null
+    private var pushedReplicationTask: UUID? = null
 
     val delegatingStorage = DelegatingMatterNetworkStorage()
 
@@ -73,6 +95,7 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
     }
 
     private lateinit var stackWatcher: IStackWatcher
+
     inner class StackWatcher : IStorageWatcherNode {
         override fun updateWatcher(newWatcher: IStackWatcher) {
             stackWatcher = newWatcher
@@ -88,10 +111,119 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
         }
     }
 
+    private val source: IActionSource get() = IActionSource.ofMachine(mainNode::getNode)
+
+    fun insertReplicatorResult(itemStack: ItemStack): Long {
+        val grid = mainNode.grid ?: return 0L
+        return grid.storageService.inventory.insert(
+            AEItemKey.of(itemStack),
+            itemStack.count.toLong(),
+            Actionable.MODULATE,
+            source
+        )
+    }
+
+    private val _chips = ResettableLazy {
+        val matterNetwork = host.matterNetwork ?: return@ResettableLazy emptyList()
+        matterNetwork.chipSuppliers
+            .filter { it.level.isLoaded(it.pos) }
+            .mapNotNull { it.level.getBlockEntity(it.pos) }
+            .flatMap {
+                val level = it.level ?: return@flatMap emptyList()
+                if (it is IMatterPatternHolder<*>) {
+                    @Suppress("UNCHECKED_CAST")
+                    (it as IMatterPatternHolder<BlockEntity>).getPatterns(level, it).toList()
+                } else {
+                    emptyList()
+                }
+            }.map { ReplicationPattern(it.stack) }
+    }
+    private val chips by _chips
+
+    private fun updateChips() {
+        _chips.reset()
+        ICraftingProvider.requestUpdate(mainNode)
+    }
+
+    inner class CraftingProvider : ICraftingProvider {
+        private fun canPushNextPattern(): Boolean {
+            val uuid = pushedReplicationTask ?: return true
+
+            val matterNetwork = host.matterNetwork ?: return false
+            val taskManager = matterNetwork.taskManager
+
+            if (taskManager.pendingTasks.containsKey(uuid.toString())) {
+                return false
+            }
+
+            pushedReplicationTask = null
+            return true
+        }
+
+        override fun getAvailablePatterns(): List<IPatternDetails> = chips
+
+        override fun pushPattern(patternDetails: IPatternDetails, inputHolder: Array<KeyCounter>): Boolean {
+            if (!canPushNextPattern()) {
+                return false
+            }
+
+            val output = patternDetails.outputs[0] ?: return false
+            val item = output.what as? AEItemKey ?: return false
+
+            if (pendingTask != null && pendingTask?.output != item) {
+                return false
+            }
+
+            if (pendingTask == null) {
+                pendingTask = PendingTask(inputHolder, item)
+            }
+            pendingTask!!.increaseProcessingCount()
+
+            wakeDevice()
+
+            return true
+        }
+
+        override fun isBusy(): Boolean {
+            return !canPushNextPattern()
+        }
+    }
+
+    inner class Ticker : IGridTickable {
+        override fun getTickingRequest(node: IGridNode) =
+            TickingRequest(5, 120, true)
+
+        override fun tickingRequest(node: IGridNode, ticksSinceLastCall: Int): TickRateModulation {
+            val toPushTask = pendingTask ?: return TickRateModulation.SLEEP
+
+            val matterNetwork = host.matterNetwork ?: return TickRateModulation.FASTER
+            val level = host.matterNetworkElement?.level as? ServerLevel ?: return TickRateModulation.FASTER
+            val pos = host.matterNetworkElement?.pos ?: return TickRateModulation.FASTER
+
+            val extracted = Object2LongOpenHashMap<IMatterType>()
+            toPushTask.input.forEach {
+                val what = it.key as? MatterKey ?: return@forEach
+                extracted[what.type] = it.longValue * toPushTask.count
+            }
+
+            val task = MEReplicationTask.create(extracted, toPushTask.output, toPushTask.count, pos)
+
+            matterNetwork.taskManager.addTask(task)
+            matterNetwork.onTaskValueChanged(task, level)
+
+            pushedReplicationTask = task.uuid
+            pendingTask = null
+
+            return TickRateModulation.SLEEP
+        }
+    }
+
     val mainNode: IManagedGridNode = gridNode
         .setFlags(GridFlags.REQUIRE_CHANNEL)
         .addService(IStorageProvider::class.java, StorageProvider())
         .addService(IStorageWatcherNode::class.java, StackWatcher())
+        .addService(ICraftingProvider::class.java, CraftingProvider())
+        .addService(IGridTickable::class.java, Ticker())
 
     inner class MatterNetworkListenerImpl : MatterNetworkListener {
         override fun onAddedTanksSupplier() {
@@ -104,6 +236,18 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
 
         override fun onTankValueChanged() {
             delegatingStorage.storage?.invalidateStacks()
+        }
+
+        override fun onAddedChipSupplier() {
+            updateChips()
+        }
+
+        override fun onRemovedChipSupplier() {
+            updateChips()
+        }
+
+        override fun onChipValuesChanged() {
+            updateChips()
         }
     }
 
@@ -150,28 +294,39 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
         return AECableType.SMART
     }
 
-    fun notifyNeighbors() {
+    private fun wakeDevice() {
         if (mainNode.isActive) {
             mainNode.ifPresent { grid, node ->
                 grid.tickManager.wakeDevice(node)
             }
         }
+    }
 
+    fun notifyNeighbors() {
         host.getBlockEntity()?.invalidateCapabilities()
     }
 
     fun gridChanged() {
         _tanks.reset()
+        updateChips()
         notifyNeighbors()
     }
 
+
+
     fun writeToNBT(tag: CompoundTag, @Suppress("unused") registries: HolderLookup.Provider) {
         tag.putInt("priority", priority)
+
+        pendingTask?.let { tag.putCodec(PENDING_TASK_CODEC, it) }
+        pushedReplicationTask?.let { tag.putCodec(PUSHED_REPLICATION_TASK_CODEC, it) }
     }
 
     fun readFromNBT(tag: CompoundTag, @Suppress("unused") registries: HolderLookup.Provider) {
         notifyNeighbors()
         priority = tag.getInt("priority")
+
+        pendingTask = tag.getCodec(PENDING_TASK_CODEC)
+        pushedReplicationTask = tag.getCodec(PUSHED_REPLICATION_TASK_CODEC)
     }
 
     private fun remountMatterNetworkStorage() {
@@ -195,7 +350,7 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
         val grid = mainNode.grid ?: return@ResettableLazy MENetworkMatterTankList.empty()
         val inventory = grid.storageService.cachedInventory
         val cachedMatters = MATTER_TYPES.associateWith { inventory[MatterKey.of(it)] }
-        MENetworkMatterTankList(cachedMatters, grid.storageService.inventory, IActionSource.ofMachine(mainNode::getNode))
+        MENetworkMatterTankList(cachedMatters, grid.storageService.inventory, source)
     }
     private val tanks by _tanks
 

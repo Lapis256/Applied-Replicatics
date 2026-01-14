@@ -58,11 +58,6 @@ public class MixinMatterNetwork implements MatterNetworkListenerHolder {
         return added;
     }
 
-    @Inject(method = "onTankValueChanged", at = @At("TAIL"))
-    private void apprep$onTankValueChanged(IMatterType matterType, CallbackInfo ci) {
-        apprep$impl.onTankValueChanged();
-    }
-
     @Definition(id = "remove", method = "Ljava/util/List;remove(Ljava/lang/Object;)Z")
     @Definition(id = "matterStacksHolders", field = "Lcom/buuz135/replication/network/MatterNetwork;matterStacksHolders:Ljava/util/List;")
     @Expression("this.matterStacksHolders.remove(?)")
@@ -88,5 +83,33 @@ public class MixinMatterNetwork implements MatterNetworkListenerHolder {
     private boolean apprep$onMatterStackConsumerRemoved(boolean removed) {
         apprep$impl.onRemovedTanksSupplier(removed);
         return removed;
+    }
+
+    @Inject(method = "onTankValueChanged", at = @At("TAIL"))
+    private void apprep$onTankValueChanged(IMatterType matterType, CallbackInfo ci) {
+        apprep$impl.onTankValueChanged();
+    }
+
+    @Definition(id = "add", method = "Ljava/util/List;add(Ljava/lang/Object;)Z")
+    @Definition(id = "chipSuppliers", field = "Lcom/buuz135/replication/network/MatterNetwork;chipSuppliers:Ljava/util/List;")
+    @Expression("this.chipSuppliers.add(?)")
+    @ModifyExpressionValue(method = "update", at = @At(value = "MIXINEXTRAS:EXPRESSION"))
+    private boolean apprep$onChipSupplierAdded(boolean added) {
+        apprep$impl.onAddedChipSupplier();
+        return added;
+    }
+
+    @Definition(id = "remove", method = "Ljava/util/List;remove(Ljava/lang/Object;)Z")
+    @Definition(id = "chipSuppliers", field = "Lcom/buuz135/replication/network/MatterNetwork;chipSuppliers:Ljava/util/List;")
+    @Expression("this.chipSuppliers.remove(?)")
+    @ModifyExpressionValue(method = "removeElement", at = @At("MIXINEXTRAS:EXPRESSION"))
+    private boolean apprep$onChipSupplierRemoved(boolean removed) {
+        apprep$impl.onRemovedChipSupplier(removed);
+        return removed;
+    }
+
+    @Inject(method = "onChipValuesChanged", at = @At("TAIL"))
+    private void apprep$onChipValuesChanged(CallbackInfo ci) {
+        apprep$impl.onChipValuesChanged();
     }
 }

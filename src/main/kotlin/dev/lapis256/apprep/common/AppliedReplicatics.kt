@@ -4,6 +4,7 @@ import appeng.api.AECapabilities
 import appeng.api.behaviors.ContainerItemStrategy
 import appeng.api.behaviors.GenericSlotCapacities
 import appeng.api.client.StorageCellModels
+import appeng.api.crafting.PatternDetailsHelper
 import appeng.api.networking.IInWorldGridNodeHost
 import appeng.api.stacks.AEKeyTypes
 import appeng.api.upgrades.Upgrades
@@ -16,6 +17,7 @@ import com.buuz135.replication.block.MatterPipeBlock
 import dev.lapis256.apprep.api.AppliedReplicaticsAPI
 import dev.lapis256.apprep.api.ae2.stack.MatterKey
 import dev.lapis256.apprep.api.ae2.stack.MatterKeyType
+import dev.lapis256.apprep.common.ae2.crafting.ReplicationPatternDecoder
 import dev.lapis256.apprep.common.ae2.strategies.GenericStackMatterStorage
 import dev.lapis256.apprep.common.ae2.strategies.MatterHandlerExternalStorageStrategy
 import dev.lapis256.apprep.common.ae2.strategies.MatterTankItemStrategy
@@ -37,6 +39,7 @@ class AppliedReplicatics(eventBus: IEventBus) {
         AppRepParts.init()
         AppRepBlockEntities.REGISTRY.register(eventBus)
         AppRepBlocks.REGISTRY.register(eventBus)
+        AppRepComponents.REGISTRY.register(eventBus)
         AppRepItems.REGISTRY.register(eventBus)
         AppRepCreativeTab.REGISTRY.register(eventBus)
 
@@ -46,6 +49,8 @@ class AppliedReplicatics(eventBus: IEventBus) {
         eventBus.addListener(::onRegister)
         eventBus.addListener(::registerCapabilities)
         eventBus.addListener(::registerGenericAdapters)
+
+        PatternDetailsHelper.registerDecoder(ReplicationPatternDecoder)
 
         @Suppress("UnstableApiUsage")
         run {
