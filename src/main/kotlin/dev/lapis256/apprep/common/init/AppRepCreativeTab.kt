@@ -38,7 +38,7 @@ object AppRepCreativeTab {
     val MAIN: DeferredHolder<CreativeModeTab, CreativeModeTab> = REGISTRY.register("main") { ->
         CreativeModeTab.builder()
             .title(AppRepGuiText.CREATIVE_TAB.text())
-            .icon { ItemStack(AppRepItems.MATTER_CELL_256k.get()) }
+            .icon { ItemStack(AppRepItems.MATTER_CELL_256K) }
             .withTabsBefore(AECreativeTabIds.MAIN, ResourceKey.create(Registries.CREATIVE_MODE_TAB, Replication.TAB.resourceLocation))
             .displayItems { parameters, output ->
                 for (entry in displayEntries) {

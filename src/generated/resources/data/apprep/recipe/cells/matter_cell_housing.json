@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "a": {
+      "item": "ae2:quartz_glass"
+    },
+    "b": {
+      "tag": "c:dusts/redstone"
+    },
+    "d": {
+      "tag": "c:ingots/replica"
+    }
+  },
+  "pattern": [
+    "aba",
+    "b b",
+    "ddd"
+  ],
+  "result": {
+    "count": 1,
+    "id": "apprep:matter_cell_housing"
+  }
+}

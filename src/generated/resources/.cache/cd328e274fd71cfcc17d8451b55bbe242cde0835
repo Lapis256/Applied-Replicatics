@@ -1,0 +1,4 @@
+// 1.21.1	2026-01-19T03:12:28.0121865	Tags for minecraft:block mod id apprep
+b65fdb90b7ee9bf83151c3a0e8abf78d514b9f7a data/c/tags/block/storage_blocks.json
+b65fdb90b7ee9bf83151c3a0e8abf78d514b9f7a data/c/tags/block/storage_blocks/sky_replica.json
+ecef26e455088dc0c81c7286df60021fca6bd96e data/minecraft/tags/block/mineable/pickaxe.json

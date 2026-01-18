@@ -3,7 +3,6 @@ package dev.lapis256.apprep.common
 import appeng.api.AECapabilities
 import appeng.api.behaviors.ContainerItemStrategy
 import appeng.api.behaviors.GenericSlotCapacities
-import appeng.api.client.StorageCellModels
 import appeng.api.crafting.PatternDetailsHelper
 import appeng.api.networking.IInWorldGridNodeHost
 import appeng.api.stacks.AEKeyTypes
@@ -62,22 +61,17 @@ class AppliedReplicatics(eventBus: IEventBus) {
     }
 
     private fun onCommonSetup(event: FMLCommonSetupEvent) {
-        event.enqueueWork(::initUpgrades)
-//        event.enqueueWork(::initModels) TODO: モデルを用意する
-    }
-
-    private fun initModels() {
-        AppRepItems.CELLS.forEach { cell ->
-            StorageCellModels.registerModel(cell.get(), AppliedReplicaticsAPI.rl("block/drive/cells/${cell.id().path}"))
+        event.enqueueWork {
+            initUpgrades()
         }
     }
 
     private fun initUpgrades() {
         val storageCellGroup = GuiText.StorageCells.translationKey
         AppRepItems.CELLS.forEach {
-            Upgrades.add(AEItems.INVERTER_CARD, it::get, 1, storageCellGroup)
-            Upgrades.add(AEItems.EQUAL_DISTRIBUTION_CARD, it::get, 1, storageCellGroup)
-            Upgrades.add(AEItems.VOID_CARD, it::get, 1, storageCellGroup)
+            Upgrades.add(AEItems.INVERTER_CARD, it, 1, storageCellGroup)
+            Upgrades.add(AEItems.EQUAL_DISTRIBUTION_CARD, it, 1, storageCellGroup)
+            Upgrades.add(AEItems.VOID_CARD, it, 1, storageCellGroup)
         }
     }
 

@@ -6,14 +6,13 @@ import appeng.api.parts.PartModels
 import appeng.core.definitions.ItemDefinition
 import appeng.items.parts.PartItem
 import appeng.items.parts.PartModelsHelper
-import dev.lapis256.apprep.common.parts.ReplicationConnectorPart
 
 
 @Suppress("Unused")
 object AppRepParts {
 
 
-    val REPLICATION_CONNECTOR = registerPart("ME Replication Connector", "cable_replication_connector", ::ReplicationConnectorPart)
+//    val REPLICATION_CONNECTOR = registerPart("ME Replication Connector", "cable_replication_connector", ::ReplicationConnectorPart)
 
 
     private inline fun <reified PART : IPart> registerPart(

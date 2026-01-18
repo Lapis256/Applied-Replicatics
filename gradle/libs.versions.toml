@@ -12,12 +12,17 @@ parchmentmc = "2024.11.17"
 
 junit = "6.0.1"
 
+spark = "6225208" # 1.10.124
 jei = "19.21.0.247"
 ae2 = "19.2.17"
 ae2JeiIntegration = "5748513" # 1.2.0
 titanium = "1.21-4.0.32"
 replication = "7331983" # 1.21.1-1.2.6
 megaCells = "6853076" # 4.10.1
+goldium = "5821676" # 1.21-2.2-neoforge
+extendedAE = "7478960" # 1.21-2.2.28-neoforge
+geckolib = "7415496" # 4.8.3
+advancedAE = "7374386" # 1.6.9-1.21.1
 
 
 [libraries]
@@ -27,8 +32,9 @@ junit = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
 junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }
 junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
 testframework = { module = "net.neoforged:testframework", version.ref = "neoforge" }
-dokka-versioning = { module = "org.jetbrains.dokka:versioning-plugin", version.ref = "plugin_dokka" }
+dokka-versioning = { module = "org.jetbrains.dokka:versioning-plugin", version.ref = "plugin-dokka" }
 
+spark = { module = "curse.maven:spark-361579", version.ref = "spark" }
 jei = { module = "mezz.jei:jei-1.21.1-neoforge", version.ref = "jei" }
 jei-api = { module = "mezz.jei:jei-1.21.1-neoforge-api", version.ref = "jei" }
 ae2 = { module = "org.appliedenergistics:appliedenergistics2", version.ref = "ae2" }
@@ -36,6 +42,10 @@ ae2JeiIntegration = { module = "curse.maven:ae2-jei-integration-1074338", versio
 titanium = { module = "com.hrznstudio:titanium", version.ref = "titanium" }
 replication = { module = "curse.maven:replication-638351", version.ref = "replication" }
 megaCells = { module = "curse.maven:mega-cells-622112", version.ref = "megaCells" }
+goldium = { module = "curse.maven:glodium-957920", version.ref = "goldium" }
+extendedAE = { module = "curse.maven:extended-ae-892005", version.ref = "extendedAE" }
+geckolib = { module = "curse.maven:geckolib-388172", version.ref = "geckolib" }
+advancedAE = { module = "curse.maven:advancedae-1084104", version.ref = "advancedAE" }
 
 
 [plugins]
@@ -56,12 +66,17 @@ implementation = [
 ]
 
 runtimeOnly = [
+    "spark",
     "jei",
     "ae2JeiIntegration"
 ]
 
 integrationImplementation = [
     "megaCells",
+    "goldium",
+    "extendedAE",
+    "geckolib",
+    "advancedAE"
 ]
 
 integrationCompileOnly = [

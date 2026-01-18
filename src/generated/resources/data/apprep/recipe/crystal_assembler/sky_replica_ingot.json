@@ -1,0 +1,43 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "megacells"
+    },
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "extendedae"
+    }
+  ],
+  "type": "extendedae:crystal_assembler",
+  "input_fluid": {
+    "amount": 100,
+    "ingredient": {
+      "tag": "minecraft:lava"
+    }
+  },
+  "input_items": [
+    {
+      "amount": 4,
+      "ingredient": {
+        "item": "ae2:charged_certus_quartz_crystal"
+      }
+    },
+    {
+      "amount": 4,
+      "ingredient": {
+        "tag": "c:ingots/replica"
+      }
+    },
+    {
+      "amount": 4,
+      "ingredient": {
+        "item": "ae2:sky_stone_block"
+      }
+    }
+  ],
+  "output": {
+    "count": 8,
+    "id": "apprep:sky_replica_ingot"
+  }
+}

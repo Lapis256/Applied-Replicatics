@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "a": {
+      "tag": "c:storage_blocks/replica"
+    },
+    "b": {
+      "tag": "ae2:pattern_provider"
+    },
+    "c": {
+      "item": "replication:matter_tank"
+    },
+    "d": {
+      "item": "ae2:storage_bus"
+    },
+    "e": {
+      "item": "ae2:engineering_processor"
+    }
+  },
+  "pattern": [
+    "aea",
+    "bcd",
+    "aea"
+  ],
+  "result": {
+    "count": 1,
+    "id": "apprep:replication_connector"
+  }
+}

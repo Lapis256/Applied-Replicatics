@@ -31,7 +31,6 @@ plugins {
 
 val modId = Constants.Mod.ID
 val mcVersion: String = libs.versions.minecraft.get()
-val kffVersion: String = libs.versions.kotlinForForge.get()
 
 val jdkVersion = Constants.Dev.JDK_VERSION
 val jvmVendor = Constants.Dev.JVM_VENDOR
@@ -69,7 +68,10 @@ val mainSourceSet by sourceSets.named("main") {
     runtimeClasspath += apiSourceSet.output
 
     resources {
-        srcDir(generateModMetadata.get().outputs.files)
+        srcDirs(
+            "src/generated/resources",
+            generateModMetadata.get().outputs.files
+        )
         exclude("**/.cache")
     }
 }
@@ -82,6 +84,11 @@ val optionalModsSourceSet by sourceSets.register("optionalMods") {
 val integrationSourceSet by sourceSets.register("integration") {
     compileClasspath += mainSourceSet.output + mainSourceSet.compileClasspath
     runtimeClasspath += mainSourceSet.output + mainSourceSet.runtimeClasspath
+}
+
+val dataSourceSet by sourceSets.register("data") {
+    compileClasspath += integrationSourceSet.output + integrationSourceSet.compileClasspath
+    runtimeClasspath += integrationSourceSet.output + integrationSourceSet.runtimeClasspath
 }
 
 dependencies {
@@ -140,6 +147,20 @@ neoForge {
             gameDirectory.set(rootProject.file("run-server"))
         }
 
+        register("data") {
+            data()
+            sourceSet = dataSourceSet
+            gameDirectory.set(rootProject.file("run-data"))
+            programArguments.addAll(
+                "--mod",
+                modId,
+                "--all",
+                "--output", file("src/generated/resources/").absolutePath,
+                "--existing", file("src/main/resources/").absolutePath,
+                "--existing-mod", "ae2",
+            )
+        }
+
         configureEach {
             systemProperty("forge.logging.markers", "REGISTRIES")
             logLevel = Level.DEBUG
@@ -179,16 +200,15 @@ neoForge {
                 }
             }
         }
+    }
 
-        mods {
-            register(modId) {
-                sourceSet(mainSourceSet)
-                sourceSet(apiSourceSet)
-                sourceSet(integrationSourceSet)
-            }
+    mods {
+        register(modId) {
+            sourceSet(mainSourceSet)
+            sourceSet(apiSourceSet)
+            sourceSet(integrationSourceSet)
+            sourceSet(dataSourceSet)
         }
-
-        ideSyncTask(generateModMetadata)
     }
 
     unitTest {
@@ -196,6 +216,8 @@ neoForge {
 
         testedMod = mods[modId]
     }
+
+    ideSyncTask(generateModMetadata)
 }
 
 val mixin = arrayOf(
@@ -203,9 +225,9 @@ val mixin = arrayOf(
 )
 
 val modDependencies = listOf(
-    ModDep("neoforge", libs.versions.neoforge.get()..<"21.2"),
+    ModDep("neoforge", libs.versions.neoforge..<"21.2"),
     ModDep("minecraft", mcVersion.eq()),
-    ModDep("kotlinforforge", kffVersion.gte()),
+    ModDep("kotlinforforge", libs.versions.kotlinForForge.gte()),
     ModDep("ae2", libs.versions.ae2.gte()),
     ModDep("replication", "1.21.1-1.2.6".gte()),
     ModDep.optional("megacells", "4.10.1".gte()),
@@ -389,8 +411,8 @@ tasks {
             "version" to Constants.Mod.VERSION,
             "group" to Constants.Mod.GROUP,
             "minecraft_version" to mcVersion,
-            "mod_loader" to "kotlinforforge",
-            "mod_loader_version_range" to "${kffVersion.gte()}",
+            "mod_loader" to "javafml",
+            "mod_loader_version_range" to "1",
             "mod_name" to Constants.Mod.NAME,
             "mod_author" to Constants.Mod.AUTHOR,
             "mod_id" to modId,

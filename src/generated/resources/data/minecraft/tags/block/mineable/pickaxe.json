@@ -1,0 +1,9 @@
+{
+  "values": [
+    "apprep:replication_connector",
+    {
+      "id": "apprep:sky_replica_block",
+      "required": false
+    }
+  ]
+}

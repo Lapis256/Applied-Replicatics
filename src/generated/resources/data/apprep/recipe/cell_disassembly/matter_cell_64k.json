@@ -1,0 +1,14 @@
+{
+  "type": "ae2:storage_cell_disassembly",
+  "cell": "apprep:matter_cell_64k",
+  "cell_disassembly_items": [
+    {
+      "count": 1,
+      "id": "ae2:cell_component_64k"
+    },
+    {
+      "count": 1,
+      "id": "apprep:matter_cell_housing"
+    }
+  ]
+}

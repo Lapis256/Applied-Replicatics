@@ -1,0 +1,13 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "megacells"
+    }
+  ],
+  "type": "ae2:storage_cell_upgrade",
+  "input_cell": "apprep:matter_cell_16m",
+  "input_component": "megacells:cell_component_64m",
+  "result_cell": "apprep:matter_cell_64m",
+  "result_component": "megacells:cell_component_16m"
+}
