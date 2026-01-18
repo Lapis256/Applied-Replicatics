@@ -1,5 +1,5 @@
 [versions]
-plugin-kotlin = "2.2.20"
+plugin-kotlin = "2.3.0"
 plugin-moddev = "2.0.137"
 plugin-modPublishPlugin = "1.1.0"
 plugin-dokka= "2.1.0"
@@ -7,7 +7,7 @@ plugin-dokka= "2.1.0"
 
 minecraft = "1.21.1"
 neoforge = "21.1.217"
-kotlinForForge = "5.10.0"
+kotlinForForge = "5.11.0"
 parchmentmc = "2024.11.17"
 
 junit = "6.0.1"
