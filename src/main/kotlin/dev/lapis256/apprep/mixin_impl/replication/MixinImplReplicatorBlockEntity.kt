@@ -24,6 +24,5 @@ fun insertResultToConnector(host: ReplicationConnectorLogicHost?, task: IReplica
     if (host == null) {
         return false
     }
-    host.logic.insertReplicatorResult(task.replicatingStack.copyWithCount(1))
-    return true
+    return host.logic.insertReplicatorResult(task.replicatingStack.copyWithCount(1)) == 1L
 }
