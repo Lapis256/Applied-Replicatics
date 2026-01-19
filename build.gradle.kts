@@ -4,6 +4,7 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import net.neoforged.moddev.shadow.org.apache.maven.artifact.versioning.DefaultArtifactVersion
 import net.neoforged.moddevgradle.dsl.InternalModelHelper
+import net.neoforged.moddevgradle.dsl.RunModel
 import net.neoforged.moddevgradle.internal.RunGameTask
 import org.apache.tools.ant.filters.ReplaceTokens
 import org.jetbrains.dokka.gradle.engine.parameters.VisibilityModifier
@@ -130,9 +131,19 @@ neoForge {
     }
 
     runs {
+        val mainResources = file("src/main/resources/").absolutePath
+
+        fun RunModel.setupGuideMELivePreview() {
+            systemProperty("guideme.ae2.guide.sources", "$mainResources/assets/$modId/ae2guide")
+            systemProperty("guideme.ae2.guide.sourcesNamespace", modId)
+            jvmArgument("--add-modules jdk.incubator.vector")
+        }
+
         register("client") {
             client()
             gameDirectory.set(rootProject.file("run"))
+
+            setupGuideMELivePreview()
         }
 
         register("clientWithOptionalMods") {
@@ -140,6 +151,8 @@ neoForge {
             gameDirectory.set(rootProject.file("run"))
 
             sourceSet = optionalModsSourceSet
+
+            setupGuideMELivePreview()
         }
 
         register("server") {
@@ -156,7 +169,7 @@ neoForge {
                 modId,
                 "--all",
                 "--output", file("src/generated/resources/").absolutePath,
-                "--existing", file("src/main/resources/").absolutePath,
+                "--existing", mainResources,
                 "--existing-mod", "ae2",
             )
         }

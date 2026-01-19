@@ -12,5 +12,9 @@ max_line_length = 150
 [*.{yaml,yml}]
 indent_size = 2
 
+[*.{json,jsonc,mcmeta}]
+indent_size = 2
+ij_json_array_wrapping = on_every_item
+
 [*.md]
 trim_trailing_whitespace = false

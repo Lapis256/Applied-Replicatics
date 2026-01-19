@@ -1,23 +1,23 @@
 {
-    "required": true,
-    "minVersion": "0.8",
-    "mixinextras": {
-        "minVersion": "0.5.0"
-    },
-    "package": "dev.lapis256.apprep.mixin",
-    "refmap": "apprep.refmap.json",
-    "compatibilityLevel": "JAVA_21",
-    "mixins": [
-        "replication.MixinMatterNetwork",
-        "replication.MixinReplicationTask",
-        "replication.MixinReplicatorBlockEntity",
-        "titanium.MixinNetworkElement"
-    ],
-    "client": [
-    ],
-    "server": [
-    ],
-    "injectors": {
-        "defaultRequire": 1
+  "required": true,
+  "minVersion": "0.8",
+  "mixinextras": {
+    "minVersion": "0.5.0"
+  },
+  "package": "dev.lapis256.apprep.mixin",
+  "refmap": "apprep.refmap.json",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "replication.MixinMatterNetwork",
+    "replication.MixinReplicationTask",
+    "replication.MixinReplicatorBlockEntity",
+    "titanium.MixinNetworkElement"
+  ],
+  "client": [
+  ],
+  "server": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
   }
 }
