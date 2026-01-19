@@ -1,5 +1,6 @@
 package dev.lapis256.apprep.data.provider.client
 
+import dev.apprep.apprep.integration.megacells.common.init.AppRepMEGABlocks
 import dev.apprep.apprep.integration.megacells.common.init.AppRepMEGAItems
 import dev.lapis256.apprep.api.AppliedReplicaticsAPI
 import dev.lapis256.apprep.api.text.AppRepGuiText
@@ -15,7 +16,7 @@ class AppRepLanguageProvider(output: PackOutput) : LanguageProvider(output, Appl
             add(item.asItem(), item.englishName)
         }
 
-        for (block in AppRepBlocks.BLOCKS) {
+        for (block in AppRepBlocks.BLOCKS + AppRepMEGABlocks.BLOCKS) {
             add(block.asItem(), block.englishName)
         }
 

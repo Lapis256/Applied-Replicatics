@@ -1,5 +1,6 @@
 {
   "block.apprep.replication_connector": "ME Replication Connector",
+  "block.apprep.sky_replica_block": "Sky Replica Block",
   "gui.apprep.creative_tab": "Applied Replicatics",
   "gui.apprep.matter": "Matter",
   "gui.apprep.matter_network_storage": "Matter Network Storage",

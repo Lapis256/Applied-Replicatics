@@ -1,0 +1,20 @@
+{
+  "block.apprep.replication_connector": "ME Replication Connector",
+  "block.apprep.sky_replica_block": "スカイレプリカブロック",
+  "gui.apprep.creative_tab": "Applied Replicatics",
+  "gui.apprep.matter": "マター",
+  "gui.apprep.matter_network_storage": "マターネットワークストレージ",
+  "item.apprep.matter_cell_16k": "16k MEマターストレージセル",
+  "item.apprep.matter_cell_16m": "16M MEGAマターストレージセル",
+  "item.apprep.matter_cell_1k": "1k MEマターストレージセル",
+  "item.apprep.matter_cell_1m": "1M MEGAマターストレージセル",
+  "item.apprep.matter_cell_256k": "256k MEマターストレージセル",
+  "item.apprep.matter_cell_256m": "256M MEGAマターストレージセル",
+  "item.apprep.matter_cell_4k": "4k MEマターストレージセル",
+  "item.apprep.matter_cell_4m": "4M MEGAマターストレージセル",
+  "item.apprep.matter_cell_64k": "64k MEマターストレージセル",
+  "item.apprep.matter_cell_64m": "64M MEGAマターストレージセル",
+  "item.apprep.matter_cell_housing": "MEマターセル筐体",
+  "item.apprep.mega_matter_cell_housing": "MEGAマターセル筐体",
+  "item.apprep.sky_replica_ingot": "スカイレプリカインゴット"
+}
