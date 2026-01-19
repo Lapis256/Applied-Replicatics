@@ -45,13 +45,17 @@ import dev.lapis256.apprep.common.ae2.crafting.ReplicationPattern
 import dev.lapis256.apprep.common.ae2.storage.DelegatingMatterNetworkStorage
 import dev.lapis256.apprep.common.ae2.storage.MatterNetworkStorage
 import dev.lapis256.apprep.common.replication.MENetworkMatterTankList
+import dev.lapis256.apprep.common.storage.ReplicationConnectorReturnInventory
 import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap
+import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.core.HolderLookup
 import net.minecraft.core.UUIDUtil
 import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.Tag
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.entity.BlockEntity
 import org.slf4j.Logger
 import java.util.*
@@ -113,9 +117,13 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
 
     private val source: IActionSource get() = IActionSource.ofMachine(mainNode::getNode)
 
+    val returnInventory = ReplicationConnectorReturnInventory {
+        wakeDevice()
+        host.saveChanges()
+    }
+
     fun insertReplicatorResult(itemStack: ItemStack): Long {
-        val grid = mainNode.grid ?: return 0L
-        return grid.storageService.inventory.insert(
+        return returnInventory.insert(
             AEItemKey.of(itemStack),
             itemStack.count.toLong(),
             Actionable.MODULATE,
@@ -123,9 +131,18 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
         )
     }
 
-    private val _chips = ResettableLazy {
+    fun addDrops(level: Level, pos: BlockPos, drops: MutableList<ItemStack>) {
+        returnInventory.addDrops(level, pos, drops)
+    }
+
+    fun clearContent() {
+        returnInventory.clear()
+    }
+
+    private val _patterns = ResettableLazy {
         val matterNetwork = host.matterNetwork ?: return@ResettableLazy emptyList()
         matterNetwork.chipSuppliers
+            .asSequence()
             .filter { it.level.isLoaded(it.pos) }
             .mapNotNull { it.level.getBlockEntity(it.pos) }
             .flatMap {
@@ -136,16 +153,20 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
                 } else {
                     emptyList()
                 }
-            }.map { ReplicationPattern(it.stack) }
+            }
+            .map { ReplicationPattern(it.stack) }
+            .toList()
     }
-    private val chips by _chips
+    private val patterns by _patterns
 
-    private fun updateChips() {
-        _chips.reset()
+    private fun updatePatterns() {
+        _patterns.reset()
         ICraftingProvider.requestUpdate(mainNode)
     }
 
     inner class CraftingProvider : ICraftingProvider {
+
+        //TODO: レプリケーターの数と完了済みの個数から追加発注できると良いかも？現状のすべて終わるまで待つのは非効率
         private fun canPushNextPattern(): Boolean {
             val uuid = pushedReplicationTask ?: return true
 
@@ -160,7 +181,7 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
             return true
         }
 
-        override fun getAvailablePatterns(): List<IPatternDetails> = chips
+        override fun getAvailablePatterns(): List<IPatternDetails> = patterns
 
         override fun pushPattern(patternDetails: IPatternDetails, inputHolder: Array<KeyCounter>): Boolean {
             if (!canPushNextPattern()) {
@@ -194,11 +215,24 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
             TickingRequest(5, 120, true)
 
         override fun tickingRequest(node: IGridNode, ticksSinceLastCall: Int): TickRateModulation {
-            val toPushTask = pendingTask ?: return TickRateModulation.SLEEP
+            val taskPushed = pushPendingTask()
+            val inserted = returnInventory.returnIntoStorage(
+                mainNode.grid?.storageService?.inventory ?: return TickRateModulation.SLEEP,
+                source
+            )
 
-            val matterNetwork = host.matterNetwork ?: return TickRateModulation.FASTER
-            val level = host.matterNetworkElement?.level as? ServerLevel ?: return TickRateModulation.FASTER
-            val pos = host.matterNetworkElement?.pos ?: return TickRateModulation.FASTER
+            if (taskPushed || inserted) {
+                return TickRateModulation.FASTER
+            }
+            return TickRateModulation.SLEEP
+        }
+
+        private fun pushPendingTask(): Boolean {
+            val toPushTask = pendingTask ?: return false
+
+            val matterNetwork = host.matterNetwork ?: return false
+            val level = host.matterNetworkElement?.level as? ServerLevel ?: return false
+            val pos = host.matterNetworkElement?.pos ?: return false
 
             val extracted = Object2LongOpenHashMap<IMatterType>()
             toPushTask.input.forEach {
@@ -214,7 +248,7 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
             pushedReplicationTask = task.uuid
             pendingTask = null
 
-            return TickRateModulation.SLEEP
+            return true
         }
     }
 
@@ -239,15 +273,15 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
         }
 
         override fun onAddedChipSupplier() {
-            updateChips()
+            updatePatterns()
         }
 
         override fun onRemovedChipSupplier() {
-            updateChips()
+            updatePatterns()
         }
 
         override fun onChipValuesChanged() {
-            updateChips()
+            updatePatterns()
         }
     }
 
@@ -308,14 +342,14 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
 
     fun gridChanged() {
         _tanks.reset()
-        updateChips()
+        updatePatterns()
         notifyNeighbors()
     }
 
-
-
     fun writeToNBT(tag: CompoundTag, @Suppress("unused") registries: HolderLookup.Provider) {
         tag.putInt("priority", priority)
+
+        tag.put("return_inventory", returnInventory.writeToTag(registries))
 
         pendingTask?.let { tag.putCodec(PENDING_TASK_CODEC, it) }
         pushedReplicationTask?.let { tag.putCodec(PUSHED_REPLICATION_TASK_CODEC, it) }
@@ -324,6 +358,8 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
     fun readFromNBT(tag: CompoundTag, @Suppress("unused") registries: HolderLookup.Provider) {
         notifyNeighbors()
         priority = tag.getInt("priority")
+
+        returnInventory.readFromTag(tag.getList("return_inventory", Tag.TAG_COMPOUND.toInt()), registries)
 
         pendingTask = tag.getCodec(PENDING_TASK_CODEC)
         pushedReplicationTask = tag.getCodec(PUSHED_REPLICATION_TASK_CODEC)

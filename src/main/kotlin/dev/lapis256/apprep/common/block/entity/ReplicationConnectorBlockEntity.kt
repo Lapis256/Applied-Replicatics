@@ -19,6 +19,7 @@ import net.minecraft.core.Direction
 import net.minecraft.core.HolderLookup
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
 
@@ -98,6 +99,16 @@ class ReplicationConnectorBlockEntity(type: BlockEntityType<*>, pos: BlockPos, s
 
     override fun getCableConnectionType(dir: Direction?): AECableType {
         return logic.getCableConnectionType(dir)
+    }
+
+    override fun addAdditionalDrops(level: Level, pos: BlockPos, drops: MutableList<ItemStack>) {
+        super.addAdditionalDrops(level, pos, drops)
+        logic.addDrops(level, pos, drops)
+    }
+
+    override fun clearContent() {
+        super.clearContent()
+        logic.clearContent()
     }
 
     // ReplicationConnectorLogicHost
