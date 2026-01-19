@@ -41,6 +41,7 @@ class AppliedReplicatics(eventBus: IEventBus) {
         AppRepComponents.REGISTRY.register(eventBus)
         AppRepItems.REGISTRY.register(eventBus)
         AppRepCreativeTab.REGISTRY.register(eventBus)
+        AppRepMenus.REGISTRY.register(eventBus)
 
         MatterPipeBlock.ALLOWED_CONNECTION_BLOCKS.add { it is ReplicationConnectorBlock }
 

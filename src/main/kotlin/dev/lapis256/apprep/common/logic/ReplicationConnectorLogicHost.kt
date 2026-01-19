@@ -2,6 +2,8 @@ package dev.lapis256.apprep.common.logic
 
 import appeng.helpers.IPriorityHost
 import appeng.menu.ISubMenu
+import appeng.menu.MenuOpener
+import appeng.menu.locator.MenuHostLocator
 import com.buuz135.replication.api.matter_fluid.IMatterTank
 import com.buuz135.replication.api.network.IMatterTanksConsumer
 import com.buuz135.replication.api.network.IMatterTanksSupplier
@@ -9,6 +11,7 @@ import com.buuz135.replication.network.DefaultMatterNetworkElement
 import com.buuz135.replication.network.MatterNetwork
 import com.hrznstudio.titanium.block_network.NetworkManager
 import dev.lapis256.apprep.api.extension.takeIfServer
+import dev.lapis256.apprep.common.init.AppRepMenus
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.block.entity.BlockEntity
 
@@ -35,6 +38,10 @@ interface ReplicationConnectorLogicHost : IMatterTanksConsumer, IMatterTanksSupp
         logic.onMainNodeStateChanged()
     }
 
+    fun openMenu(player: Player, locator: MenuHostLocator) {
+        MenuOpener.open(AppRepMenus.REPLICATION_CONNECTOR, player, locator)
+    }
+
     // IMatterTanksConsumer / IMatterTanksSupplier
 
     override fun getTanks(): List<IMatterTank> = logic.tanks
@@ -47,7 +54,7 @@ interface ReplicationConnectorLogicHost : IMatterTanksConsumer, IMatterTanksSupp
         logic.priority = newValue
     }
 
-    override fun returnToMainMenu(player: Player?, subMenu: ISubMenu?) {
-        TODO("Not yet implemented")
+    override fun returnToMainMenu(player: Player, subMenu: ISubMenu) {
+        MenuOpener.returnTo(AppRepMenus.REPLICATION_CONNECTOR, player, subMenu.locator)
     }
 }

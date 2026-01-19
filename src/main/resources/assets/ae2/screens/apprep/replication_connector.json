@@ -1,0 +1,47 @@
+{
+  "$schema": "https://raw.githubusercontent.com/AppliedEnergistics/Applied-Energistics-2/refs/tags/neoforge/v19.2.17/src/main/resources/assets/ae2/screens/schema.json",
+  "includes": [
+    "../common/common.json",
+    "../common/player_inventory.json"
+  ],
+  "helpTopic": "apprep:replication_connector.md",
+  "background": {
+    "texture": "guis/apprep/replication_connector.png",
+    "srcRect": [0, 0, 176, 163]
+  },
+  "text": {
+    "dialog_title": {
+      "text": {
+        "translate": "block.apprep.replication_connector"
+      },
+      "position": {
+        "left": 8,
+        "top": 6
+      }
+    },
+    "return_inventory_title": {
+      "text": {
+        "translate": "gui.ae2.ReturnInventory"
+      },
+      "position": {
+        "left": 8,
+        "top": 34
+      }
+    }
+  },
+  "widgets": {
+    "openPriority": {
+      "left": 152,
+      "top": -5,
+      "width": 20,
+      "height": 20
+    }
+  },
+  "slots": {
+    "STORAGE": {
+      "left": 8,
+      "top": 45,
+      "grid": "HORIZONTAL"
+    }
+  }
+}
