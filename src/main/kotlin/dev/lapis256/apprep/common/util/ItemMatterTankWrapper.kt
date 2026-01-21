@@ -4,55 +4,56 @@ import com.buuz135.replication.ReplicationAttachments
 import com.buuz135.replication.ReplicationConfig
 import com.buuz135.replication.api.matter_fluid.MatterStack
 import com.buuz135.replication.api.matter_fluid.MatterTank
+import com.buuz135.replication.block.CreativeMatterTankBlock
+import com.buuz135.replication.block.MatterTankBlock
 import net.minecraft.nbt.CompoundTag
+import net.minecraft.world.item.BlockItem
 import net.minecraft.world.item.ItemStack
 import net.neoforged.neoforge.fluids.capability.IFluidHandler
 
 
 class ItemMatterTankWrapper private constructor(private val stack: ItemStack, private val isCreative: Boolean) {
-    // TODO: クリエイティブで NBT をコピーしたタンクにも対応する
-    // TODO: 空のタンクがタンクとして認識されない問題の修正
-
     companion object {
         fun isMatterTank(stack: ItemStack): Boolean {
-            val tileData = stack.get(ReplicationAttachments.TILE) ?: return false
-            return tileData.contains("tank") || tileData.getCompound("lockableMatterTankBundle").contains("Tank")
+            val blockItem = stack.item as? BlockItem ?: return false
+            if (blockItem.block is MatterTankBlock || blockItem.block is CreativeMatterTankBlock) {
+                return true
+            }
+            val data = stack.getOrDefault(ReplicationAttachments.TILE, CompoundTag())
+            return data.contains("tank") || data.getCompound("lockableMatterTankBundle").contains("Tank")
         }
 
         fun of(stack: ItemStack): ItemMatterTankWrapper? {
-            val tileData = stack.get(ReplicationAttachments.TILE) ?: return null
+            val blockItem = stack.item as? BlockItem ?: return null
+            val isCreative = blockItem.block is CreativeMatterTankBlock
+            if (!(blockItem.block is MatterTankBlock || isCreative)) {
+                return null
+            }
 
-            val path = stack.itemHolder.key?.location()?.path ?: ""
-            val isCreative = path.contains("creative")
             val wrapper = ItemMatterTankWrapper(stack, isCreative)
+            val data = stack.getOrDefault(ReplicationAttachments.TILE, CompoundTag())
 
-            if (tileData.contains("tank")) {
-                wrapper.tank.readFromNBT(tileData.getCompound("tank"))
+            if (data.contains("lockableMatterTankBundle")) {
+                wrapper.tank.readFromNBT(data.getCompound("lockableMatterTankBundle").getCompound("Tank"))
                 return wrapper
             }
 
-            if (tileData.contains("lockableMatterTankBundle")) {
-                wrapper.tank.readFromNBT(tileData.getCompound("lockableMatterTankBundle").getCompound("Tank"))
-                return wrapper
-            }
-
-            return null
+            wrapper.tank.readFromNBT(data.getCompound("tank"))
+            return wrapper
         }
     }
 
     private val tank by lazy { MatterTank(ReplicationConfig.MatterTank.CAPACITY) }
 
     private fun mergeTankData(tankData: CompoundTag): CompoundTag {
-        val tileData = stack.get(ReplicationAttachments.TILE) ?: error("ItemStack has no TILE attachment")
+        val tileData = stack.get(ReplicationAttachments.TILE) ?: CompoundTag()
 
-        if (tileData.contains("tank")) {
-            tileData.getCompound("tank").merge(tankData)
-        } else if (tileData.contains("lockableMatterTankBundle")) {
+        if (tileData.contains("lockableMatterTankBundle")) {
             tileData.getCompound("lockableMatterTankBundle").getCompound("Tank").merge(tankData)
-        } else {
-            error("ItemStack has no tank data")
+            return tileData
         }
 
+        tileData.put("tank", tankData)
         return tileData
     }
 

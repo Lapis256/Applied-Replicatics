@@ -105,6 +105,4 @@ object MatterTankItemStrategy : ContainerItemStrategy<MatterKey, MatterTankItemS
                 }
         }
     }
-
-
 }
