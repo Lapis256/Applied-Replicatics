@@ -1,6 +1,7 @@
 package dev.lapis256.apprep.data.provider.client
 
 import appeng.datagen.providers.models.AE2BlockStateProvider
+import dev.apprep.apprep.integration.megacells.common.init.AppRepMEGABlocks
 import dev.lapis256.apprep.api.AppliedReplicaticsAPI
 import dev.lapis256.apprep.common.init.AppRepBlocks
 import dev.lapis256.apprep.common.init.AppRepItems
@@ -17,6 +18,8 @@ class AppRepBlockModelProvider(output: PackOutput, helper: ExistingFileHelper) :
         AppRepItems.CELLS.forEach(::matterCell)
 
         simpleBlockAndItem(AppRepBlocks.REPLICATION_CONNECTOR)
+
+        simpleBlockAndItem(AppRepMEGABlocks.SKY_REPLICA_BLOCK)
     }
 
     private fun matterCell(drive: MatterCellDefinition) {
@@ -25,7 +28,7 @@ class AppRepBlockModelProvider(output: PackOutput, helper: ExistingFileHelper) :
         cell(
             "${tier.namePrefix()}_matter_cell",
             if (isMEGA) "mega_matter" else "matter",
-            (tier.index() - (if (isMEGA) 6 else 0)) * 2
+            (tier.index() - (if (isMEGA) 6 else 1)) * 2,
         )
     }
 
