@@ -393,7 +393,7 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
         returnInventory.readFromTag(tag.getList("return_inventory", Tag.TAG_COMPOUND.toInt()), registries)
 
         pendingTask = tag.getCodec(PENDING_TASK_CODEC)
-        pushedReplicationTasks = tag.getCodec(PUSHED_REPLICATION_TASKS_CODEC) as ObjectOpenHashSet<UUID>
+        pushedReplicationTasks = tag.getCodec(PUSHED_REPLICATION_TASKS_CODEC) ?: ObjectOpenHashSet()
     }
 
     private fun remountMatterNetworkStorage() {
