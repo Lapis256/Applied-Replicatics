@@ -47,6 +47,7 @@ import dev.lapis256.apprep.common.ae2.storage.MatterNetworkStorage
 import dev.lapis256.apprep.common.replication.MENetworkMatterTankList
 import dev.lapis256.apprep.common.storage.ReplicationConnectorReturnInventory
 import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.core.HolderLookup
@@ -68,11 +69,16 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
     companion object {
         val LOGGER: Logger = LogUtils.getLogger()
 
-        val PUSHED_REPLICATION_TASK_CODEC: Codec<UUID> =
-            UUIDUtil.CODEC.fieldOf("pushed_replication_task").codec()
+        val PUSHED_REPLICATION_TASKS_CODEC: Codec<ObjectOpenHashSet<UUID>> =
+            UUIDUtil.CODEC.listOf().fieldOf("pushed_replication_tasks").codec().xmap(
+                { ObjectOpenHashSet(it) },
+                { it.toList() }
+            )
 
         val PENDING_TASK_CODEC: Codec<PendingTask> = PendingTask.CODEC.fieldOf("pending_task").codec()
     }
+
+    private val source: IActionSource get() = IActionSource.ofMachine(mainNode::getNode)
 
     private var _priority: Int = 0
         set(value) {
@@ -86,7 +92,7 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
     }
 
     private var pendingTask: PendingTask? = null
-    private var pushedReplicationTask: UUID? = null
+    private var pushedReplicationTasks: ObjectOpenHashSet<UUID> = ObjectOpenHashSet()
 
     val delegatingStorage = DelegatingMatterNetworkStorage()
 
@@ -115,10 +121,8 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
         }
     }
 
-    private val source: IActionSource get() = IActionSource.ofMachine(mainNode::getNode)
-
     val returnInventory = ReplicationConnectorReturnInventory {
-        wakeDevice()
+        alertDevice()
         host.saveChanges()
     }
 
@@ -166,18 +170,24 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
 
     inner class CraftingProvider : ICraftingProvider {
 
-        //TODO: レプリケーターの数と完了済みの個数から追加発注できると良いかも？現状のすべて終わるまで待つのは非効率
         private fun canPushNextPattern(): Boolean {
-            val uuid = pushedReplicationTask ?: return true
-
             val matterNetwork = host.matterNetwork ?: return false
             val taskManager = matterNetwork.taskManager
 
-            if (taskManager.pendingTasks.containsKey(uuid.toString())) {
-                return false
-            }
+            val iterator = pushedReplicationTasks.iterator()
+            while (iterator.hasNext()) {
+                val taskUuid = iterator.next()
+                if (!taskManager.pendingTasks.containsKey(taskUuid.toString())) {
+                    iterator.remove()
+                    continue
+                }
 
-            pushedReplicationTask = null
+                val task = taskManager.pendingTasks[taskUuid.toString()] ?: continue
+                val completedPercent = task.currentAmount.toDouble() / task.totalAmount.toDouble()
+                if (completedPercent <= 0.25) {
+                    return false
+                }
+            }
             return true
         }
 
@@ -200,7 +210,7 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
             }
             pendingTask!!.increaseProcessingCount()
 
-            wakeDevice()
+            alertDevice()
 
             return true
         }
@@ -215,16 +225,32 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
             TickingRequest(5, 120, true)
 
         override fun tickingRequest(node: IGridNode, ticksSinceLastCall: Int): TickRateModulation {
+            if (!shouldTick()) {
+                return TickRateModulation.SLEEP
+            }
+
             val taskPushed = pushPendingTask()
-            val inserted = returnInventory.returnIntoStorage(
-                mainNode.grid?.storageService?.inventory ?: return TickRateModulation.SLEEP,
-                source
-            )
+            val inserted = insertReturnedItems()
 
             if (taskPushed || inserted) {
                 return TickRateModulation.FASTER
             }
-            return TickRateModulation.SLEEP
+
+            return if (shouldTick()) {
+                TickRateModulation.FASTER
+            } else {
+                TickRateModulation.SLEEP
+            }
+        }
+
+        private fun shouldTick(): Boolean {
+            if (pendingTask != null) {
+                return true
+            }
+            if (!returnInventory.isEmpty()) {
+                return true
+            }
+            return false
         }
 
         private fun pushPendingTask(): Boolean {
@@ -245,10 +271,15 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
             matterNetwork.taskManager.addTask(task)
             matterNetwork.onTaskValueChanged(task, level)
 
-            pushedReplicationTask = task.uuid
+            pushedReplicationTasks.add(task.uuid)
             pendingTask = null
 
             return true
+        }
+
+        private fun insertReturnedItems(): Boolean {
+            val inventory = mainNode.grid?.storageService?.inventory ?: return false
+            return returnInventory.returnIntoStorage(inventory, source)
         }
     }
 
@@ -328,10 +359,10 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
         return AECableType.SMART
     }
 
-    private fun wakeDevice() {
+    private fun alertDevice() {
         if (mainNode.isActive) {
             mainNode.ifPresent { grid, node ->
-                grid.tickManager.wakeDevice(node)
+                grid.tickManager.alertDevice(node)
             }
         }
     }
@@ -352,7 +383,7 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
         tag.put("return_inventory", returnInventory.writeToTag(registries))
 
         pendingTask?.let { tag.putCodec(PENDING_TASK_CODEC, it) }
-        pushedReplicationTask?.let { tag.putCodec(PUSHED_REPLICATION_TASK_CODEC, it) }
+        tag.putCodec(PUSHED_REPLICATION_TASKS_CODEC, pushedReplicationTasks)
     }
 
     fun readFromNBT(tag: CompoundTag, @Suppress("unused") registries: HolderLookup.Provider) {
@@ -362,7 +393,7 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
         returnInventory.readFromTag(tag.getList("return_inventory", Tag.TAG_COMPOUND.toInt()), registries)
 
         pendingTask = tag.getCodec(PENDING_TASK_CODEC)
-        pushedReplicationTask = tag.getCodec(PUSHED_REPLICATION_TASK_CODEC)
+        pushedReplicationTasks = tag.getCodec(PUSHED_REPLICATION_TASKS_CODEC) as ObjectOpenHashSet<UUID>
     }
 
     private fun remountMatterNetworkStorage() {
