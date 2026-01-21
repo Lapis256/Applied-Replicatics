@@ -49,5 +49,5 @@ As part of integration with MEGA Cells, MEGA Storage Cells are also available.
 
 ## Note
 
-To exchange matter with a Replication network, you need the [ME Replication Connector](replication_connector.md).
+To exchange matter with a Replication network, you need the <ItemLink id="replication_connector" />.
 Please note that it is not compatible with blocks from other mods that perform similar functions.
