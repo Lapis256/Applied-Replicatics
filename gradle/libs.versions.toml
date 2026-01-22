@@ -14,6 +14,7 @@ junit = "6.0.1"
 
 spark = "6225208" # 1.10.124
 jei = "19.21.0.247"
+emi = "1.1.22+1.21.1"
 ae2 = "19.2.17"
 ae2JeiIntegration = "5748513" # 1.2.0
 titanium = "1.21-4.0.32"
@@ -37,6 +38,7 @@ dokka-versioning = { module = "org.jetbrains.dokka:versioning-plugin", version.r
 spark = { module = "curse.maven:spark-361579", version.ref = "spark" }
 jei = { module = "mezz.jei:jei-1.21.1-neoforge", version.ref = "jei" }
 jei-api = { module = "mezz.jei:jei-1.21.1-neoforge-api", version.ref = "jei" }
+emi = { module = "dev.emi:emi-neoforge", version.ref = "emi" }
 ae2 = { module = "org.appliedenergistics:appliedenergistics2", version.ref = "ae2" }
 ae2JeiIntegration = { module = "curse.maven:ae2-jei-integration-1074338", version.ref = "ae2JeiIntegration" }
 titanium = { module = "com.hrznstudio:titanium", version.ref = "titanium" }

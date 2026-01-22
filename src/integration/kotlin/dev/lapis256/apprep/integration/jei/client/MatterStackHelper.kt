@@ -1,4 +1,4 @@
-package dev.apprep.apprep.integration.jei.client
+package dev.lapis256.apprep.integration.jei.client
 
 import com.buuz135.replication.ReplicationAttachments
 import com.buuz135.replication.ReplicationConfig

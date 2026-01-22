@@ -1,7 +1,7 @@
 package dev.lapis256.apprep.data.provider.server.tags
 
-import dev.apprep.apprep.integration.megacells.common.init.AppRepMEGAItems
-import dev.apprep.apprep.integration.megacells.common.init.AppRepMEGATags
+import dev.lapis256.apprep.integration.megacells.common.init.AppRepMEGAItems
+import dev.lapis256.apprep.integration.megacells.common.init.AppRepMEGATags
 import dev.lapis256.apprep.api.AppliedReplicaticsAPI
 import net.minecraft.core.HolderLookup
 import net.minecraft.data.PackOutput

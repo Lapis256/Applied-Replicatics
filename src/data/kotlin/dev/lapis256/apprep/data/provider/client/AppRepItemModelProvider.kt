@@ -2,7 +2,7 @@ package dev.lapis256.apprep.data.provider.client
 
 import appeng.core.AppEng
 import appeng.core.definitions.ItemDefinition
-import dev.apprep.apprep.integration.megacells.common.init.AppRepMEGAItems
+import dev.lapis256.apprep.integration.megacells.common.init.AppRepMEGAItems
 import dev.lapis256.apprep.api.AppliedReplicaticsAPI
 import dev.lapis256.apprep.common.init.AppRepItems
 import dev.lapis256.apprep.extension.MatterCellDefinition

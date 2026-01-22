@@ -1,4 +1,4 @@
-package dev.apprep.apprep.integration.jei.client
+package dev.lapis256.apprep.integration.jei.client
 
 import com.buuz135.replication.api.matter_fluid.MatterStack
 import dev.lapis256.apprep.api.replication.util.renderMatterTypeOnGui

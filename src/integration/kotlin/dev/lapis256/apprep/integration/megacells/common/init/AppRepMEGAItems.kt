@@ -1,4 +1,4 @@
-package dev.apprep.apprep.integration.megacells.common.init
+package dev.lapis256.apprep.integration.megacells.common.init
 
 import appeng.core.definitions.ItemDefinition
 import appeng.items.AEBaseItem

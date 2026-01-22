@@ -11,10 +11,10 @@ import appeng.recipes.transform.TransformCircumstance
 import appeng.recipes.transform.TransformRecipeBuilder
 import com.buuz135.replication.ReplicationRegistry
 import com.glodblock.github.extendedae.recipe.CrystalAssemblerRecipeBuilder
-import dev.apprep.apprep.integration.megacells.common.MEGACellsIntegration
-import dev.apprep.apprep.integration.megacells.common.init.AppRepMEGABlocks
-import dev.apprep.apprep.integration.megacells.common.init.AppRepMEGAItems
-import dev.apprep.apprep.integration.megacells.common.init.AppRepMEGATags
+import dev.lapis256.apprep.integration.megacells.common.MEGACellsIntegration
+import dev.lapis256.apprep.integration.megacells.common.init.AppRepMEGABlocks
+import dev.lapis256.apprep.integration.megacells.common.init.AppRepMEGAItems
+import dev.lapis256.apprep.integration.megacells.common.init.AppRepMEGATags
 import dev.lapis256.apprep.api.AppliedReplicaticsAPI
 import dev.lapis256.apprep.common.init.AppRepBlocks
 import dev.lapis256.apprep.common.init.AppRepItems

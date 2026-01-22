@@ -1,4 +1,4 @@
-package dev.apprep.apprep.integration.megacells.common.init
+package dev.lapis256.apprep.integration.megacells.common.init
 
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.tags.BlockTags

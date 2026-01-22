@@ -1,6 +1,6 @@
 package dev.lapis256.apprep.data.provider.server.loot
 
-import dev.apprep.apprep.integration.megacells.common.init.AppRepMEGABlocks
+import dev.lapis256.apprep.integration.megacells.common.init.AppRepMEGABlocks
 import dev.lapis256.apprep.api.AppliedReplicaticsAPI
 import dev.lapis256.apprep.common.init.AppRepBlocks
 import net.minecraft.core.HolderLookup

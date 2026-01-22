@@ -1,7 +1,7 @@
 package dev.lapis256.apprep.data.provider.client
 
-import dev.apprep.apprep.integration.megacells.common.init.AppRepMEGABlocks
-import dev.apprep.apprep.integration.megacells.common.init.AppRepMEGAItems
+import dev.lapis256.apprep.integration.megacells.common.init.AppRepMEGABlocks
+import dev.lapis256.apprep.integration.megacells.common.init.AppRepMEGAItems
 import dev.lapis256.apprep.api.AppliedReplicaticsAPI
 import dev.lapis256.apprep.api.text.AppRepGuiText
 import dev.lapis256.apprep.common.init.AppRepBlocks

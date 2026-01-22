@@ -54,6 +54,10 @@ repositories {
         url = uri("https://modmaven.dev/")
     }
     maven {
+        name = "EMI"
+        url = uri("https://maven.terraformersmc.com/")
+    }
+    maven {
         name = "Curse Maven"
         url = uri("https://cursemaven.com")
     }
@@ -100,6 +104,8 @@ dependencies {
         val configuration = configurations.named(it).orNull ?: return@forEach
         configuration(bundle)
     }
+
+    "integrationCompileOnly"(variantOf(libs.emi, "api"))
 
     "apiImplementation"(libs.bundles.implementation)
     "optionalModsRuntimeOnly"(libs.bundles.integrationImplementation)
@@ -504,6 +510,8 @@ publishMods {
 
     curseforge {
         requires("applied-energistics-2")
+        requires("replication")
+        optional("mega-cells")
 
         minecraftVersions.add(mcVersion)
         clientRequired = true
@@ -517,6 +525,8 @@ publishMods {
 
     modrinth {
         requires("ae2")
+        requires("replication")
+        optional("mega")
 
         minecraftVersions.add(mcVersion)
 

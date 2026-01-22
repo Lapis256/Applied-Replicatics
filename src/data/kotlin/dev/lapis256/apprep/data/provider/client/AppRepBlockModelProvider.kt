@@ -1,7 +1,7 @@
 package dev.lapis256.apprep.data.provider.client
 
 import appeng.datagen.providers.models.AE2BlockStateProvider
-import dev.apprep.apprep.integration.megacells.common.init.AppRepMEGABlocks
+import dev.lapis256.apprep.integration.megacells.common.init.AppRepMEGABlocks
 import dev.lapis256.apprep.api.AppliedReplicaticsAPI
 import dev.lapis256.apprep.common.init.AppRepBlocks
 import dev.lapis256.apprep.common.init.AppRepItems
