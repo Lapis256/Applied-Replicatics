@@ -1,0 +1,487 @@
+<!doctype html>
+<html class="no-js" lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>MatterStackHelper</title>
+    <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
+        <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+      if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      } else {
+        const savedDarkMode = JSON.parse(storage)
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/safe-local-storage_blocking.js"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../../ui-kit/ui-kit.min.js" defer></script>
+<link href="../../../styles/multimodule.css" rel="Stylesheet">
+</head>
+<body>
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+            <a class="library-name--link" href="../../../index.html" tabindex="1">
+                    Applied-Replicatics
+            </a>
+        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">
+<dokka-template-command data="{&quot;@class&quot;:&quot;org.jetbrains.dokka.base.templating.ReplaceVersionsCommand&quot;,&quot;location&quot;:&quot;-applied--replicatics/dev.lapis256.apprep.integration.jei.client/-matter-stack-helper/index.html&quot;}"><div class="dropdown versions-dropdown" data-role="dropdown">
+  <div class="button button_dropdown versions-dropdown-button" role="combobox" data-role="dropdown-toggle" aria-controls="versions-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Select version" tabindex="0" title="21.1-1.0.0"><span class="versions-dropdown-button-text">21.1-1.0.0</span></div>
+  <div class="dropdown--list dropdown--list_positioned_left versions-dropdown-data" role="listbox" data-role="dropdown-listbox" aria-label="Versions" id="versions-listbox">
+    <div class="dropdown--header" data-remove-style="true" style="display: none"><span>Select version</span><button class="button" data-role="dropdown-toggle" aria-label="Close versions selection"><i class="ui-kit-icon ui-kit-icon_cross"></i></button></div>
+<a href="../../../../../-applied--replicatics/dev.lapis256.apprep.integration.jei.client/-matter-stack-helper/index.html" class="dropdown--option dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option" title="21.1-1.0.1"><span class="dropdown--option-icon"></span><span class="dropdown--option-text">21.1-1.0.1</span></a><a href="index.html" class="dropdown--option dropdown--option_active dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option" title="21.1-1.0.0"><span class="dropdown--option-icon dropdown--option-icon_selected"></span><span class="dropdown--option-text">21.1-1.0.0</span></a></div>
+  <div class="dropdown--overlay"></div>
+</div>
+</dokka-template-command>        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true" data-filter=":/main">jvm</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox" data-role="dropdown-toggle" aria-controls="platform-tags-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Toggle source sets"></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":/main" data-filter=":/main">
+                                <span class="checkbox--icon"></span>
+                                jvm
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button" type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config="{&quot;defaultSize&quot;: 280, &quot;minSize&quot;: 200, &quot;maxSize&quot;: 400}">
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list" data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    Applied-Replicatics
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="Applied-Replicatics::dev.lapis256.apprep.integration.jei.client/MatterStackHelper///PointingToDeclaration//-251573632">
+  <div class="breadcrumbs"><a href="../../../index.html">Applied-Replicatics</a><span class="delimiter">/</span><a href="../index.html">dev.lapis256.apprep.integration.jei.client</a><span class="delimiter">/</span><span class="current">MatterStackHelper</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Matter</span><wbr><span>Stack</span><wbr><span><span>Helper</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">object </span><a href="index.html">MatterStackHelper</a> : <span data-unresolved-link="mezz.jei.api.ingredients/IIngredientHelper///PointingToDeclaration/">IIngredientHelper</span><span class="token operator">&lt;</span><span data-unresolved-link="com.buuz135.replication.api.matter_fluid/MatterStack///PointingToDeclaration/">MatterStack</span><span class="token operator">&gt; </span></div></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="PROPERTY">
+        <h2 class="tableheader">Properties</h2>
+        <div class="table"><a data-name="1721525209%2FProperties%2F-251573632" anchor-label="ingredientType" id="1721525209%2FProperties%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="ingredient-type.html"><span>ingredient</span><wbr><span><span>Type</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1721525209%2FProperties%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">val </span><a href="ingredient-type.html">ingredientType</a><span class="token operator">: </span><span data-unresolved-link="mezz.jei.api.ingredients/IIngredientType///PointingToDeclaration/">IIngredientType</span><span class="token operator">&lt;</span><span data-unresolved-link="com.buuz135.replication.api.matter_fluid/MatterStack///PointingToDeclaration/">MatterStack</span><span class="token operator">?</span><span class="token operator">&gt;</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="tableheader">Functions</h2>
+        <div class="table"><a data-name="936582755%2FFunctions%2F-251573632" anchor-label="copyIngredient" id="936582755%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="copy-ingredient.html"><span>copy</span><wbr><span><span>Ingredient</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="936582755%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="copy-ingredient.html"><span class="token function">copyIngredient</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">ingredient<span class="token operator">: </span><span data-unresolved-link="com.buuz135.replication.api.matter_fluid/MatterStack///PointingToDeclaration/">MatterStack</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.buuz135.replication.api.matter_fluid/MatterStack///PointingToDeclaration/">MatterStack</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="820788275%2FFunctions%2F-251573632" anchor-label="copyWithAmount" id="820788275%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#820788275%2FFunctions%2F-251573632"><span>copy</span><wbr><span>With</span><wbr><span><span>Amount</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="820788275%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#820788275%2FFunctions%2F-251573632"><span class="token function">copyWithAmount</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">ingredient<span class="token operator">: </span><span data-unresolved-link="com.buuz135.replication.api.matter_fluid/MatterStack///PointingToDeclaration/">MatterStack</span><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter ">amount<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-long/index.html">Long</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.buuz135.replication.api.matter_fluid/MatterStack///PointingToDeclaration/">MatterStack</span><span class="token operator">?</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-35231814%2FFunctions%2F-251573632" anchor-label="getAmount" id="-35231814%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-35231814%2FFunctions%2F-251573632"><span>get</span><wbr><span><span>Amount</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-35231814%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#-35231814%2FFunctions%2F-251573632"><span class="token function">getAmount</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">ingredient<span class="token operator">: </span><span data-unresolved-link="com.buuz135.replication.api.matter_fluid/MatterStack///PointingToDeclaration/">MatterStack</span><span class="token operator">?</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-long/index.html">Long</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1917294845%2FFunctions%2F-251573632" anchor-label="getCheatItemStack" id="-1917294845%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-cheat-item-stack.html"><span>get</span><wbr><span>Cheat</span><wbr><span>Item</span><wbr><span><span>Stack</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1917294845%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="get-cheat-item-stack.html"><span class="token function">getCheatItemStack</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">ingredient<span class="token operator">: </span><span data-unresolved-link="com.buuz135.replication.api.matter_fluid/MatterStack///PointingToDeclaration/">MatterStack</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="net.minecraft.world.item/ItemStack///PointingToDeclaration/">ItemStack</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-960073995%2FFunctions%2F-251573632" anchor-label="getColors" id="-960073995%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-colors.html"><span>get</span><wbr><span><span>Colors</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-960073995%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="get-colors.html"><span class="token function">getColors</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">ingredient<span class="token operator">: </span><span data-unresolved-link="com.buuz135.replication.api.matter_fluid/MatterStack///PointingToDeclaration/">MatterStack</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-iterable/index.html">Iterable</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator">&gt;</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="775463575%2FFunctions%2F-251573632" anchor-label="getDisplayModId" id="775463575%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#775463575%2FFunctions%2F-251573632"><span>get</span><wbr><span>Display</span><wbr><span>Mod</span><wbr><span><span>Id</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="775463575%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#775463575%2FFunctions%2F-251573632"><span class="token function">getDisplayModId</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">ingredient<span class="token operator">: </span><span data-unresolved-link="com.buuz135.replication.api.matter_fluid/MatterStack///PointingToDeclaration/">MatterStack</span><span class="token operator">?</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-260301838%2FFunctions%2F-251573632" anchor-label="getDisplayName" id="-260301838%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-display-name.html"><span>get</span><wbr><span>Display</span><wbr><span><span>Name</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-260301838%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="get-display-name.html"><span class="token function">getDisplayName</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">ingredient<span class="token operator">: </span><span data-unresolved-link="com.buuz135.replication.api.matter_fluid/MatterStack///PointingToDeclaration/">MatterStack</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1931851110%2FFunctions%2F-251573632" anchor-label="getErrorInfo" id="-1931851110%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-error-info.html"><span>get</span><wbr><span>Error</span><wbr><span><span>Info</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1931851110%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="get-error-info.html"><span class="token function">getErrorInfo</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">ingredient<span class="token operator">: </span><span data-unresolved-link="com.buuz135.replication.api.matter_fluid/MatterStack///PointingToDeclaration/">MatterStack</span><span class="token operator">?</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-537441286%2FFunctions%2F-251573632" anchor-label="getGroupingUid" id="-537441286%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-1110343467%2FFunctions%2F-251573632"><span>get</span><wbr><span>Grouping</span><wbr><span><span>Uid</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-537441286%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#-1110343467%2FFunctions%2F-251573632"><span class="token function">getGroupingUid</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">ingredient<span class="token operator">: </span><span data-unresolved-link="com.buuz135.replication.api.matter_fluid/MatterStack///PointingToDeclaration/">MatterStack</span><span class="token operator">?</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-any/index.html">Any</a><span class="token operator">?</span></div><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#-172081501%2FFunctions%2F-251573632"><span class="token function">getGroupingUid</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">typedIngredient<span class="token operator">: </span><span data-unresolved-link="mezz.jei.api.ingredients/ITypedIngredient///PointingToDeclaration/">ITypedIngredient</span><span class="token operator">&lt;</span><span data-unresolved-link="com.buuz135.replication.api.matter_fluid/MatterStack///PointingToDeclaration/">MatterStack</span><span class="token operator">?</span><span class="token operator">&gt;</span><span class="token operator">?</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-any/index.html">Any</a><span class="token operator">?</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2063053451%2FFunctions%2F-251573632" anchor-label="getIngredientType" id="-2063053451%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-ingredient-type.html"><span>get</span><wbr><span>Ingredient</span><wbr><span><span>Type</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2063053451%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="get-ingredient-type.html"><span class="token function">getIngredientType</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="mezz.jei.api.ingredients/IIngredientType///PointingToDeclaration/">IIngredientType</span><span class="token operator">&lt;</span><span data-unresolved-link="com.buuz135.replication.api.matter_fluid/MatterStack///PointingToDeclaration/">MatterStack</span><span class="token operator">?</span><span class="token operator">&gt;</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1638189662%2FFunctions%2F-251573632" anchor-label="getResourceLocation" id="-1638189662%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-resource-location.html"><span>get</span><wbr><span>Resource</span><wbr><span><span>Location</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1638189662%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="get-resource-location.html"><span class="token function">getResourceLocation</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">ingredient<span class="token operator">: </span><span data-unresolved-link="com.buuz135.replication.api.matter_fluid/MatterStack///PointingToDeclaration/">MatterStack</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="net.minecraft.resources/ResourceLocation///PointingToDeclaration/">ResourceLocation</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="129910340%2FFunctions%2F-251573632" anchor-label="getTagEquivalent" id="129910340%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#129910340%2FFunctions%2F-251573632"><span>get</span><wbr><span>Tag</span><wbr><span><span>Equivalent</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="129910340%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#129910340%2FFunctions%2F-251573632"><span class="token function"><strike>getTagEquivalent</strike></span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">ingredients<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-collection/index.html">Collection</a><span class="token operator">&lt;</span><span data-unresolved-link="com.buuz135.replication.api.matter_fluid/MatterStack///PointingToDeclaration/">MatterStack</span><span class="token operator">?</span><span class="token operator">&gt;</span><span class="token operator">?</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html">Optional</a><span class="token operator">&lt;</span><span data-unresolved-link="net.minecraft.resources/ResourceLocation///PointingToDeclaration/">ResourceLocation</span><span class="token operator">?</span><span class="token operator">&gt;</span><span class="token operator">?</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1126161001%2FFunctions%2F-251573632" anchor-label="getTagKeyEquivalent" id="1126161001%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#1126161001%2FFunctions%2F-251573632"><span>get</span><wbr><span>Tag</span><wbr><span>Key</span><wbr><span><span>Equivalent</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1126161001%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#1126161001%2FFunctions%2F-251573632"><span class="token function">getTagKeyEquivalent</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">ingredients<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-collection/index.html">Collection</a><span class="token operator">&lt;</span><span data-unresolved-link="com.buuz135.replication.api.matter_fluid/MatterStack///PointingToDeclaration/">MatterStack</span><span class="token operator">?</span><span class="token operator">&gt;</span><span class="token operator">?</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html">Optional</a><span class="token operator">&lt;</span><span data-unresolved-link="net.minecraft.tags/TagKey///PointingToDeclaration/">TagKey</span><span class="token operator">&lt;</span><span class="token operator">*</span><span class="token operator">&gt;</span><span class="token operator">?</span><span class="token operator">&gt;</span><span class="token operator">?</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="667798728%2FFunctions%2F-251573632" anchor-label="getTagStream" id="667798728%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#667798728%2FFunctions%2F-251573632"><span>get</span><wbr><span>Tag</span><wbr><span><span>Stream</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="667798728%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#667798728%2FFunctions%2F-251573632"><span class="token function">getTagStream</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">ingredient<span class="token operator">: </span><span data-unresolved-link="com.buuz135.replication.api.matter_fluid/MatterStack///PointingToDeclaration/">MatterStack</span><span class="token operator">?</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/stream/Stream.html">Stream</a><span class="token operator">&lt;</span><span data-unresolved-link="net.minecraft.resources/ResourceLocation///PointingToDeclaration/">ResourceLocation</span><span class="token operator">?</span><span class="token operator">&gt;</span><span class="token operator">?</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="647550785%2FFunctions%2F-251573632" anchor-label="getUid" id="647550785%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-uid.html"><span>get</span><wbr><span><span>Uid</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="647550785%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="get-uid.html"><span class="token function">getUid</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">ingredient<span class="token operator">: </span><span data-unresolved-link="com.buuz135.replication.api.matter_fluid/MatterStack///PointingToDeclaration/">MatterStack</span><span class="token punctuation">, </span></span><span class="parameter ">context<span class="token operator">: </span><span data-unresolved-link="mezz.jei.api.ingredients.subtypes/UidContext///PointingToDeclaration/">UidContext</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-any/index.html">Any</a></div><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#99358939%2FFunctions%2F-251573632"><span class="token function">getUid</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">typedIngredient<span class="token operator">: </span><span data-unresolved-link="mezz.jei.api.ingredients/ITypedIngredient///PointingToDeclaration/">ITypedIngredient</span><span class="token operator">&lt;</span><span data-unresolved-link="com.buuz135.replication.api.matter_fluid/MatterStack///PointingToDeclaration/">MatterStack</span><span class="token operator">?</span><span class="token operator">&gt;</span><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter ">context<span class="token operator">: </span><span data-unresolved-link="mezz.jei.api.ingredients.subtypes/UidContext///PointingToDeclaration/">UidContext</span><span class="token operator">?</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-any/index.html">Any</a><span class="token operator">?</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1240124088%2FFunctions%2F-251573632" anchor-label="getUniqueId" id="-1240124088%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-unique-id.html"><span>get</span><wbr><span>Unique</span><wbr><span><span>Id</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1240124088%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="get-unique-id.html"><span class="token function"><strike>getUniqueId</strike></span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">ingredient<span class="token operator">: </span><span data-unresolved-link="com.buuz135.replication.api.matter_fluid/MatterStack///PointingToDeclaration/">MatterStack</span><span class="token punctuation">, </span></span><span class="parameter ">context<span class="token operator">: </span><span data-unresolved-link="mezz.jei.api.ingredients.subtypes/UidContext///PointingToDeclaration/">UidContext</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2025458979%2FFunctions%2F-251573632" anchor-label="getWildcardId" id="-2025458979%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-2025458979%2FFunctions%2F-251573632"><span>get</span><wbr><span>Wildcard</span><wbr><span><span>Id</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2025458979%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#-2025458979%2FFunctions%2F-251573632"><span class="token function"><strike>getWildcardId</strike></span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">ingredient<span class="token operator">: </span><span data-unresolved-link="com.buuz135.replication.api.matter_fluid/MatterStack///PointingToDeclaration/">MatterStack</span><span class="token operator">?</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-762009867%2FFunctions%2F-251573632" anchor-label="hasSubtypes" id="-762009867%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-762009867%2FFunctions%2F-251573632"><span>has</span><wbr><span><span>Subtypes</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-762009867%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#-762009867%2FFunctions%2F-251573632"><span class="token function">hasSubtypes</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">ingredient<span class="token operator">: </span><span data-unresolved-link="com.buuz135.replication.api.matter_fluid/MatterStack///PointingToDeclaration/">MatterStack</span><span class="token operator">?</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1256588052%2FFunctions%2F-251573632" anchor-label="isHiddenFromRecipeViewersByTags" id="-1256588052%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-1101026653%2FFunctions%2F-251573632"><span>is</span><wbr><span>Hidden</span><wbr><span>From</span><wbr><span>Recipe</span><wbr><span>Viewers</span><wbr><span>By</span><wbr><span><span>Tags</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1256588052%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#-1101026653%2FFunctions%2F-251573632"><span class="token function">isHiddenFromRecipeViewersByTags</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">ingredient<span class="token operator">: </span><span data-unresolved-link="com.buuz135.replication.api.matter_fluid/MatterStack///PointingToDeclaration/">MatterStack</span><span class="token operator">?</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#529350677%2FFunctions%2F-251573632"><span class="token function">isHiddenFromRecipeViewersByTags</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">ingredient<span class="token operator">: </span><span data-unresolved-link="mezz.jei.api.ingredients/ITypedIngredient///PointingToDeclaration/">ITypedIngredient</span><span class="token operator">&lt;</span><span data-unresolved-link="com.buuz135.replication.api.matter_fluid/MatterStack///PointingToDeclaration/">MatterStack</span><span class="token operator">?</span><span class="token operator">&gt;</span><span class="token operator">?</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="210465263%2FFunctions%2F-251573632" anchor-label="isIngredientOnServer" id="210465263%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#210465263%2FFunctions%2F-251573632"><span>is</span><wbr><span>Ingredient</span><wbr><span>On</span><wbr><span><span>Server</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="210465263%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#210465263%2FFunctions%2F-251573632"><span class="token function">isIngredientOnServer</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">ingredient<span class="token operator">: </span><span data-unresolved-link="com.buuz135.replication.api.matter_fluid/MatterStack///PointingToDeclaration/">MatterStack</span><span class="token operator">?</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1793428760%2FFunctions%2F-251573632" anchor-label="isValidIngredient" id="1793428760%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-valid-ingredient.html"><span>is</span><wbr><span>Valid</span><wbr><span><span>Ingredient</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1793428760%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="is-valid-ingredient.html"><span class="token function">isValidIngredient</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">ingredient<span class="token operator">: </span><span data-unresolved-link="com.buuz135.replication.api.matter_fluid/MatterStack///PointingToDeclaration/">MatterStack</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1994519971%2FFunctions%2F-251573632" anchor-label="normalizeIngredient" id="-1994519971%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="normalize-ingredient.html"><span>normalize</span><wbr><span><span>Ingredient</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1994519971%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="normalize-ingredient.html"><span class="token function">normalizeIngredient</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">ingredient<span class="token operator">: </span><span data-unresolved-link="com.buuz135.replication.api.matter_fluid/MatterStack///PointingToDeclaration/">MatterStack</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.buuz135.replication.api.matter_fluid/MatterStack///PointingToDeclaration/">MatterStack</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© 2026 Copyright</div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

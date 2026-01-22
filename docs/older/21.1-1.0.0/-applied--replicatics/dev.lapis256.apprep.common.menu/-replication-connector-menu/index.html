@@ -1,0 +1,1042 @@
+<!doctype html>
+<html class="no-js" lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>ReplicationConnectorMenu</title>
+    <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
+        <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+      if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      } else {
+        const savedDarkMode = JSON.parse(storage)
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/safe-local-storage_blocking.js"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../../ui-kit/ui-kit.min.js" defer></script>
+<link href="../../../styles/multimodule.css" rel="Stylesheet">
+</head>
+<body>
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+            <a class="library-name--link" href="../../../index.html" tabindex="1">
+                    Applied-Replicatics
+            </a>
+        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">
+<dokka-template-command data="{&quot;@class&quot;:&quot;org.jetbrains.dokka.base.templating.ReplaceVersionsCommand&quot;,&quot;location&quot;:&quot;-applied--replicatics/dev.lapis256.apprep.common.menu/-replication-connector-menu/index.html&quot;}"><div class="dropdown versions-dropdown" data-role="dropdown">
+  <div class="button button_dropdown versions-dropdown-button" role="combobox" data-role="dropdown-toggle" aria-controls="versions-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Select version" tabindex="0" title="21.1-1.0.0"><span class="versions-dropdown-button-text">21.1-1.0.0</span></div>
+  <div class="dropdown--list dropdown--list_positioned_left versions-dropdown-data" role="listbox" data-role="dropdown-listbox" aria-label="Versions" id="versions-listbox">
+    <div class="dropdown--header" data-remove-style="true" style="display: none"><span>Select version</span><button class="button" data-role="dropdown-toggle" aria-label="Close versions selection"><i class="ui-kit-icon ui-kit-icon_cross"></i></button></div>
+<a href="../../../../../-applied--replicatics/dev.lapis256.apprep.common.menu/-replication-connector-menu/index.html" class="dropdown--option dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option" title="21.1-1.0.1"><span class="dropdown--option-icon"></span><span class="dropdown--option-text">21.1-1.0.1</span></a><a href="index.html" class="dropdown--option dropdown--option_active dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option" title="21.1-1.0.0"><span class="dropdown--option-icon dropdown--option-icon_selected"></span><span class="dropdown--option-text">21.1-1.0.0</span></a></div>
+  <div class="dropdown--overlay"></div>
+</div>
+</dokka-template-command>        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true" data-filter=":/main">jvm</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox" data-role="dropdown-toggle" aria-controls="platform-tags-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Toggle source sets"></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":/main" data-filter=":/main">
+                                <span class="checkbox--icon"></span>
+                                jvm
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button" type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config="{&quot;defaultSize&quot;: 280, &quot;minSize&quot;: 200, &quot;maxSize&quot;: 400}">
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list" data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    Applied-Replicatics
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="Applied-Replicatics::dev.lapis256.apprep.common.menu/ReplicationConnectorMenu///PointingToDeclaration//-251573632">
+  <div class="breadcrumbs"><a href="../../../index.html">Applied-Replicatics</a><span class="delimiter">/</span><a href="../index.html">dev.lapis256.apprep.common.menu</a><span class="delimiter">/</span><span class="current">ReplicationConnectorMenu</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Replication</span><wbr><span>Connector</span><wbr><span><span>Menu</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">class </span><a href="index.html">ReplicationConnectorMenu</a> : <span data-unresolved-link="appeng.menu/AEBaseMenu///PointingToDeclaration/">AEBaseMenu</span><span class="source-link-wrapper"><span class="source-link" data-element-type="source-link">(<a href="https://github.com/Lapis256/Applied-Replicatics/src/main/kotlin/dev/lapis256/apprep/common/menu/ReplicationConnectorMenu.kt#L14">source</a>)</span></span></div><h4 class="tableheader">See also</h4><div class="table"><div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../../dev.lapis256.apprep.client.gui/-replication-connector-screen/index.html"><span>Replication</span><wbr><span>Connector</span><wbr><span><span>Screen</span></span></a></div></span></div><div></div></div></div></div></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="PROPERTY">
+        <h2 class="tableheader">Properties</h2>
+        <div class="table"><a data-name="-989889584%2FProperties%2F-251573632" anchor-label="actionSource" id="-989889584%2FProperties%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-989889584%2FProperties%2F-251573632"><span>action</span><wbr><span><span>Source</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-989889584%2FProperties%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">val </span><a href="index.html#-989889584%2FProperties%2F-251573632">actionSource</a><span class="token operator">: </span><span data-unresolved-link="appeng.api.networking.security/IActionSource///PointingToDeclaration/">IActionSource</span><span class="token operator">?</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="628933001%2FProperties%2F-251573632" anchor-label="blockEntity" id="628933001%2FProperties%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#628933001%2FProperties%2F-251573632"><span>block</span><wbr><span><span>Entity</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="628933001%2FProperties%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">val </span><a href="index.html#628933001%2FProperties%2F-251573632">blockEntity</a><span class="token operator">: </span><span data-unresolved-link="net.minecraft.world.level.block.entity/BlockEntity///PointingToDeclaration/">BlockEntity</span><span class="token operator">?</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1397127131%2FProperties%2F-251573632" anchor-label="carried" id="-1397127131%2FProperties%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-1397127131%2FProperties%2F-251573632"><span><span>carried</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1397127131%2FProperties%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="index.html#-1397127131%2FProperties%2F-251573632">carried</a><span class="token operator">: </span><span data-unresolved-link="net.minecraft.world.item/ItemStack///PointingToDeclaration/">ItemStack</span><span class="token operator">?</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1097366739%2FProperties%2F-251573632" anchor-label="containerId" id="1097366739%2FProperties%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#1097366739%2FProperties%2F-251573632"><span>container</span><wbr><span><span>Id</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1097366739%2FProperties%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="index.html#1097366739%2FProperties%2F-251573632">containerId</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1855683989%2FProperties%2F-251573632" anchor-label="isClientSide" id="1855683989%2FProperties%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#1855683989%2FProperties%2F-251573632"><span>is</span><wbr><span>Client</span><wbr><span><span>Side</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1855683989%2FProperties%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">val </span><a href="index.html#1855683989%2FProperties%2F-251573632">isClientSide</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1486603984%2FProperties%2F-251573632" anchor-label="isReturnedFromSubScreen" id="1486603984%2FProperties%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#1486603984%2FProperties%2F-251573632"><span>is</span><wbr><span>Returned</span><wbr><span>From</span><wbr><span>Sub</span><wbr><span><span>Screen</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1486603984%2FProperties%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="index.html#1486603984%2FProperties%2F-251573632">isReturnedFromSubScreen</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="869073416%2FProperties%2F-251573632" anchor-label="isValidMenu" id="869073416%2FProperties%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#869073416%2FProperties%2F-251573632"><span>is</span><wbr><span>Valid</span><wbr><span><span>Menu</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="869073416%2FProperties%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="index.html#869073416%2FProperties%2F-251573632">isValidMenu</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1003608207%2FProperties%2F-251573632" anchor-label="items" id="1003608207%2FProperties%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#1003608207%2FProperties%2F-251573632"><span><span>items</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1003608207%2FProperties%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">val </span><a href="index.html#1003608207%2FProperties%2F-251573632">items</a><span class="token operator">: </span><span data-unresolved-link="net.minecraft.core/NonNullList///PointingToDeclaration/">NonNullList</span><span class="token operator">&lt;</span><span data-unresolved-link="net.minecraft.world.item/ItemStack///PointingToDeclaration/">ItemStack</span><span class="token operator">?</span><span class="token operator">&gt;</span><span class="token operator">?</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="44479619%2FProperties%2F-251573632" anchor-label="locator" id="44479619%2FProperties%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#44479619%2FProperties%2F-251573632"><span><span>locator</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="44479619%2FProperties%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="index.html#44479619%2FProperties%2F-251573632">locator</a><span class="token operator">: </span><span data-unresolved-link="appeng.menu.locator/MenuHostLocator///PointingToDeclaration/">MenuHostLocator</span><span class="token operator">?</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="687872992%2FProperties%2F-251573632" anchor-label="player" id="687872992%2FProperties%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#687872992%2FProperties%2F-251573632"><span><span>player</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="687872992%2FProperties%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">val </span><a href="index.html#687872992%2FProperties%2F-251573632">player</a><span class="token operator">: </span><span data-unresolved-link="net.minecraft.world.entity.player/Player///PointingToDeclaration/">Player</span><span class="token operator">?</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1416627518%2FProperties%2F-251573632" anchor-label="playerInventory" id="1416627518%2FProperties%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#1416627518%2FProperties%2F-251573632"><span>player</span><wbr><span><span>Inventory</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1416627518%2FProperties%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">val </span><a href="index.html#1416627518%2FProperties%2F-251573632">playerInventory</a><span class="token operator">: </span><span data-unresolved-link="net.minecraft.world.entity.player/Inventory///PointingToDeclaration/">Inventory</span><span class="token operator">?</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="383812648%2FProperties%2F-251573632" anchor-label="returnInventory" id="383812648%2FProperties%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="return-inventory.html"><span>return</span><wbr><span><span>Inventory</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="383812648%2FProperties%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="return-inventory.html">returnInventory</a><span class="token operator">: </span><a href="../../dev.lapis256.apprep.common.storage/-replication-connector-return-inventory/index.html">ReplicationConnectorReturnInventory</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-244111430%2FProperties%2F-251573632" anchor-label="slots" id="-244111430%2FProperties%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-244111430%2FProperties%2F-251573632"><span><span>slots</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-244111430%2FProperties%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="index.html#-244111430%2FProperties%2F-251573632">slots</a><span class="token operator">: </span><span data-unresolved-link="net.minecraft.core/NonNullList///PointingToDeclaration/">NonNullList</span><span class="token operator">&lt;</span><span data-unresolved-link="net.minecraft.world.inventory/Slot///PointingToDeclaration/">Slot</span><span class="token operator">?</span><span class="token operator">&gt;</span><span class="token operator">?</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-66399293%2FProperties%2F-251573632" anchor-label="stateId" id="-66399293%2FProperties%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-66399293%2FProperties%2F-251573632"><span>state</span><wbr><span><span>Id</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-66399293%2FProperties%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">val </span><a href="index.html#-66399293%2FProperties%2F-251573632">stateId</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1216752432%2FProperties%2F-251573632" anchor-label="target" id="1216752432%2FProperties%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#1216752432%2FProperties%2F-251573632"><span><span>target</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1216752432%2FProperties%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">val </span><a href="index.html#1216752432%2FProperties%2F-251573632">target</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-any/index.html">Any</a><span class="token operator">?</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1421675249%2FProperties%2F-251573632" anchor-label="type" id="1421675249%2FProperties%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#1421675249%2FProperties%2F-251573632"><span><span>type</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1421675249%2FProperties%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">val </span><a href="index.html#1421675249%2FProperties%2F-251573632">type</a><span class="token operator">: </span><span data-unresolved-link="net.minecraft.world.inventory/MenuType///PointingToDeclaration/">MenuType</span><span class="token operator">&lt;</span><span class="token operator">*</span><span class="token operator">&gt;</span><span class="token operator">?</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="tableheader">Functions</h2>
+        <div class="table"><a data-name="-584451549%2FFunctions%2F-251573632" anchor-label="addClientSideSlot" id="-584451549%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-584451549%2FFunctions%2F-251573632"><span>add</span><wbr><span>Client</span><wbr><span>Side</span><wbr><span><span>Slot</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-584451549%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#-584451549%2FFunctions%2F-251573632"><span class="token function">addClientSideSlot</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">slot<span class="token operator">: </span><span data-unresolved-link="net.minecraft.world.inventory/Slot///PointingToDeclaration/">Slot</span><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter ">semantic<span class="token operator">: </span><span data-unresolved-link="appeng.menu/SlotSemantic///PointingToDeclaration/">SlotSemantic</span><span class="token operator">?</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="net.minecraft.world.inventory/Slot///PointingToDeclaration/">Slot</span><span class="token operator">?</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="801539857%2FFunctions%2F-251573632" anchor-label="addSlotListener" id="801539857%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#801539857%2FFunctions%2F-251573632"><span>add</span><wbr><span>Slot</span><wbr><span><span>Listener</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="801539857%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#801539857%2FFunctions%2F-251573632"><span class="token function">addSlotListener</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">p_38894_<span class="token operator">: </span><span data-unresolved-link="net.minecraft.world.inventory/ContainerListener///PointingToDeclaration/">ContainerListener</span><span class="token operator">?</span></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1273587561%2FFunctions%2F-251573632" anchor-label="broadcastChanges" id="1273587561%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#1273587561%2FFunctions%2F-251573632"><span>broadcast</span><wbr><span><span>Changes</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1273587561%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#1273587561%2FFunctions%2F-251573632"><span class="token function">broadcastChanges</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-49017846%2FFunctions%2F-251573632" anchor-label="broadcastFullState" id="-49017846%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-49017846%2FFunctions%2F-251573632"><span>broadcast</span><wbr><span>Full</span><wbr><span><span>State</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-49017846%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#-49017846%2FFunctions%2F-251573632"><span class="token function">broadcastFullState</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="321161874%2FFunctions%2F-251573632" anchor-label="canDragTo" id="321161874%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#321161874%2FFunctions%2F-251573632"><span>can</span><wbr><span>Drag</span><wbr><span><span>To</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="321161874%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#321161874%2FFunctions%2F-251573632"><span class="token function">canDragTo</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">s<span class="token operator">: </span><span data-unresolved-link="net.minecraft.world.inventory/Slot///PointingToDeclaration/">Slot</span><span class="token operator">?</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1460290725%2FFunctions%2F-251573632" anchor-label="canTakeItemForPickAll" id="-1460290725%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-1460290725%2FFunctions%2F-251573632"><span>can</span><wbr><span>Take</span><wbr><span>Item</span><wbr><span>For</span><wbr><span>Pick</span><wbr><span><span>All</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1460290725%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#-1460290725%2FFunctions%2F-251573632"><span class="token function">canTakeItemForPickAll</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">p_38908_<span class="token operator">: </span><span data-unresolved-link="net.minecraft.world.item/ItemStack///PointingToDeclaration/">ItemStack</span><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter ">p_38909_<span class="token operator">: </span><span data-unresolved-link="net.minecraft.world.inventory/Slot///PointingToDeclaration/">Slot</span><span class="token operator">?</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2033331850%2FFunctions%2F-251573632" anchor-label="clicked" id="-2033331850%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-2033331850%2FFunctions%2F-251573632"><span><span>clicked</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2033331850%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#-2033331850%2FFunctions%2F-251573632"><span class="token function">clicked</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">slotId<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">button<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">clickType<span class="token operator">: </span><span data-unresolved-link="net.minecraft.world.inventory/ClickType///PointingToDeclaration/">ClickType</span><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter ">player<span class="token operator">: </span><span data-unresolved-link="net.minecraft.world.entity.player/Player///PointingToDeclaration/">Player</span><span class="token operator">?</span></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1866323752%2FFunctions%2F-251573632" anchor-label="clickMenuButton" id="-1866323752%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-1866323752%2FFunctions%2F-251573632"><span>click</span><wbr><span>Menu</span><wbr><span><span>Button</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1866323752%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#-1866323752%2FFunctions%2F-251573632"><span class="token function">clickMenuButton</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">p_38875_<span class="token operator">: </span><span data-unresolved-link="net.minecraft.world.entity.player/Player///PointingToDeclaration/">Player</span><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter ">p_38876_<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2125504939%2FFunctions%2F-251573632" anchor-label="doAction" id="2125504939%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#2125504939%2FFunctions%2F-251573632"><span>do</span><wbr><span><span>Action</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2125504939%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#2125504939%2FFunctions%2F-251573632"><span class="token function">doAction</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">player<span class="token operator">: </span><span data-unresolved-link="net.minecraft.server.level/ServerPlayer///PointingToDeclaration/">ServerPlayer</span><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter ">action<span class="token operator">: </span><span data-unresolved-link="appeng.helpers/InventoryAction///PointingToDeclaration/">InventoryAction</span><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter ">slot<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">id<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-long/index.html">Long</a></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1550019326%2FFunctions%2F-251573632" anchor-label="findSlot" id="-1550019326%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-1550019326%2FFunctions%2F-251573632"><span>find</span><wbr><span><span>Slot</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1550019326%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#-1550019326%2FFunctions%2F-251573632"><span class="token function">findSlot</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">p_182418_<span class="token operator">: </span><span data-unresolved-link="net.minecraft.world/Container///PointingToDeclaration/">Container</span><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter ">p_182419_<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/OptionalInt.html">OptionalInt</a><span class="token operator">?</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1884317625%2FFunctions%2F-251573632" anchor-label="getSlot" id="1884317625%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#1884317625%2FFunctions%2F-251573632"><span>get</span><wbr><span><span>Slot</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1884317625%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#1884317625%2FFunctions%2F-251573632"><span class="token function">getSlot</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">p_38854_<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="net.minecraft.world.inventory/Slot///PointingToDeclaration/">Slot</span><span class="token operator">?</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1044641760%2FFunctions%2F-251573632" anchor-label="getSlots" id="-1044641760%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-1044641760%2FFunctions%2F-251573632"><span>get</span><wbr><span><span>Slots</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1044641760%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#-1044641760%2FFunctions%2F-251573632"><span class="token function">getSlots</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">semantic<span class="token operator">: </span><span data-unresolved-link="appeng.menu/SlotSemantic///PointingToDeclaration/">SlotSemantic</span><span class="token operator">?</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><span data-unresolved-link="net.minecraft.world.inventory/Slot///PointingToDeclaration/">Slot</span><span class="token operator">?</span><span class="token operator">&gt;</span><span class="token operator">?</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1577159007%2FFunctions%2F-251573632" anchor-label="getSlotSemantic" id="-1577159007%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-1577159007%2FFunctions%2F-251573632"><span>get</span><wbr><span>Slot</span><wbr><span><span>Semantic</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1577159007%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><span data-unresolved-link="org.jetbrains.annotations/Nullable///PointingToDeclaration/"><span class="token annotation builtin">Nullable</span></span></div></div><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#-1577159007%2FFunctions%2F-251573632"><span class="token function">getSlotSemantic</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">s<span class="token operator">: </span><span data-unresolved-link="net.minecraft.world.inventory/Slot///PointingToDeclaration/">Slot</span><span class="token operator">?</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span><span class="token annotation builtin">@</span><span data-unresolved-link="org.jetbrains.annotations/Nullable///PointingToDeclaration/"><span class="token annotation builtin">Nullable</span></span>&nbsp;</span><span data-unresolved-link="appeng.menu/SlotSemantic///PointingToDeclaration/">SlotSemantic</span><span class="token operator">?</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="723755619%2FFunctions%2F-251573632" anchor-label="hideSlot" id="723755619%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#723755619%2FFunctions%2F-251573632"><span>hide</span><wbr><span><span>Slot</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="723755619%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#723755619%2FFunctions%2F-251573632"><span class="token function">hideSlot</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">semantic<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="230214510%2FFunctions%2F-251573632" anchor-label="incrementStateId" id="230214510%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#230214510%2FFunctions%2F-251573632"><span>increment</span><wbr><span>State</span><wbr><span><span>Id</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="230214510%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#230214510%2FFunctions%2F-251573632"><span class="token function">incrementStateId</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1272454417%2FFunctions%2F-251573632" anchor-label="initializeContents" id="-1272454417%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-1272454417%2FFunctions%2F-251573632"><span>initialize</span><wbr><span><span>Contents</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1272454417%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#-1272454417%2FFunctions%2F-251573632"><span class="token function">initializeContents</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">stateId<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">items<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><span data-unresolved-link="net.minecraft.world.item/ItemStack///PointingToDeclaration/">ItemStack</span><span class="token operator">?</span><span class="token operator">&gt;</span><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter ">carried<span class="token operator">: </span><span data-unresolved-link="net.minecraft.world.item/ItemStack///PointingToDeclaration/">ItemStack</span><span class="token operator">?</span></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-927358823%2FFunctions%2F-251573632" anchor-label="isClientSideSlot" id="-927358823%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-927358823%2FFunctions%2F-251573632"><span>is</span><wbr><span>Client</span><wbr><span>Side</span><wbr><span><span>Slot</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-927358823%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#-927358823%2FFunctions%2F-251573632"><span class="token function">isClientSideSlot</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">slot<span class="token operator">: </span><span data-unresolved-link="net.minecraft.world.inventory/Slot///PointingToDeclaration/">Slot</span><span class="token operator">?</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1725695902%2FFunctions%2F-251573632" anchor-label="isPlayerInventorySlotLocked" id="1725695902%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#1725695902%2FFunctions%2F-251573632"><span>is</span><wbr><span>Player</span><wbr><span>Inventory</span><wbr><span>Slot</span><wbr><span><span>Locked</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1725695902%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="index.html#1725695902%2FFunctions%2F-251573632"><span class="token function">isPlayerInventorySlotLocked</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">invSlot<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2017179197%2FFunctions%2F-251573632" anchor-label="isPlayerSideSlot" id="-2017179197%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-2017179197%2FFunctions%2F-251573632"><span>is</span><wbr><span>Player</span><wbr><span>Side</span><wbr><span><span>Slot</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2017179197%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#-2017179197%2FFunctions%2F-251573632"><span class="token function">isPlayerSideSlot</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">slot<span class="token operator">: </span><span data-unresolved-link="net.minecraft.world.inventory/Slot///PointingToDeclaration/">Slot</span><span class="token operator">?</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="997162249%2FFunctions%2F-251573632" anchor-label="isValidForSlot" id="997162249%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#997162249%2FFunctions%2F-251573632"><span>is</span><wbr><span>Valid</span><wbr><span>For</span><wbr><span><span>Slot</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="997162249%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#997162249%2FFunctions%2F-251573632"><span class="token function">isValidForSlot</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">s<span class="token operator">: </span><span data-unresolved-link="net.minecraft.world.inventory/Slot///PointingToDeclaration/">Slot</span><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter ">i<span class="token operator">: </span><span data-unresolved-link="net.minecraft.world.item/ItemStack///PointingToDeclaration/">ItemStack</span><span class="token operator">?</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="131357671%2FFunctions%2F-251573632" anchor-label="isValidSlotIndex" id="131357671%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#131357671%2FFunctions%2F-251573632"><span>is</span><wbr><span>Valid</span><wbr><span>Slot</span><wbr><span><span>Index</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="131357671%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#131357671%2FFunctions%2F-251573632"><span class="token function">isValidSlotIndex</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">p_207776_<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-268578039%2FFunctions%2F-251573632" anchor-label="lockPlayerInventorySlot" id="-268578039%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-268578039%2FFunctions%2F-251573632"><span>lock</span><wbr><span>Player</span><wbr><span>Inventory</span><wbr><span><span>Slot</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-268578039%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#-268578039%2FFunctions%2F-251573632"><span class="token function">lockPlayerInventorySlot</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">invSlot<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="979257122%2FFunctions%2F-251573632" anchor-label="onServerDataSync" id="979257122%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#979257122%2FFunctions%2F-251573632"><span>on</span><wbr><span>Server</span><wbr><span>Data</span><wbr><span><span>Sync</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="979257122%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><span data-unresolved-link="org.jetbrains.annotations/MustBeInvokedByOverriders///PointingToDeclaration/"><span class="token annotation builtin">MustBeInvokedByOverriders</span></span></div></div><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#979257122%2FFunctions%2F-251573632"><span class="token function">onServerDataSync</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">updatedFields<span class="token operator">: </span><span data-unresolved-link="it.unimi.dsi.fastutil.shorts/ShortSet///PointingToDeclaration/">ShortSet</span><span class="token operator">?</span></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1703693610%2FFunctions%2F-251573632" anchor-label="onSlotChange" id="-1703693610%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-1703693610%2FFunctions%2F-251573632"><span>on</span><wbr><span>Slot</span><wbr><span><span>Change</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1703693610%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#-1703693610%2FFunctions%2F-251573632"><span class="token function">onSlotChange</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">s<span class="token operator">: </span><span data-unresolved-link="net.minecraft.world.inventory/Slot///PointingToDeclaration/">Slot</span><span class="token operator">?</span></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-906841875%2FFunctions%2F-251573632" anchor-label="quickMoveStack" id="-906841875%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-906841875%2FFunctions%2F-251573632"><span>quick</span><wbr><span>Move</span><wbr><span><span>Stack</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-906841875%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#-906841875%2FFunctions%2F-251573632"><span class="token function">quickMoveStack</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">player<span class="token operator">: </span><span data-unresolved-link="net.minecraft.world.entity.player/Player///PointingToDeclaration/">Player</span><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter ">idx<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="net.minecraft.world.item/ItemStack///PointingToDeclaration/">ItemStack</span><span class="token operator">?</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1137913359%2FFunctions%2F-251573632" anchor-label="receiveClientAction" id="1137913359%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#1137913359%2FFunctions%2F-251573632"><span>receive</span><wbr><span>Client</span><wbr><span><span>Action</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1137913359%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="index.html#1137913359%2FFunctions%2F-251573632"><span class="token function">receiveClientAction</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">actionName<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><span data-unresolved-link="org.jetbrains.annotations/Nullable///PointingToDeclaration/"><span class="token annotation builtin">Nullable</span></span>&nbsp;</span>jsonPayload<span class="token operator">: </span><span><span class="token annotation builtin">@</span><span data-unresolved-link="org.jetbrains.annotations/Nullable///PointingToDeclaration/"><span class="token annotation builtin">Nullable</span></span>&nbsp;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1472569731%2FFunctions%2F-251573632" anchor-label="receiveServerSyncData" id="1472569731%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#1472569731%2FFunctions%2F-251573632"><span>receive</span><wbr><span>Server</span><wbr><span>Sync</span><wbr><span><span>Data</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1472569731%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="index.html#1472569731%2FFunctions%2F-251573632"><span class="token function">receiveServerSyncData</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">data<span class="token operator">: </span><span data-unresolved-link="net.minecraft.network/RegistryFriendlyByteBuf///PointingToDeclaration/">RegistryFriendlyByteBuf</span><span class="token operator">?</span></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1981618303%2FFunctions%2F-251573632" anchor-label="removeClientSideSlot" id="1981618303%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#1981618303%2FFunctions%2F-251573632"><span>remove</span><wbr><span>Client</span><wbr><span>Side</span><wbr><span><span>Slot</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1981618303%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#1981618303%2FFunctions%2F-251573632"><span class="token function">removeClientSideSlot</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">slot<span class="token operator">: </span><span data-unresolved-link="net.minecraft.world.inventory/Slot///PointingToDeclaration/">Slot</span><span class="token operator">?</span></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-108672258%2FFunctions%2F-251573632" anchor-label="removed" id="-108672258%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-108672258%2FFunctions%2F-251573632"><span><span>removed</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-108672258%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#-108672258%2FFunctions%2F-251573632"><span class="token function">removed</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">p_38940_<span class="token operator">: </span><span data-unresolved-link="net.minecraft.world.entity.player/Player///PointingToDeclaration/">Player</span><span class="token operator">?</span></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1928380072%2FFunctions%2F-251573632" anchor-label="removeSlotListener" id="-1928380072%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-1928380072%2FFunctions%2F-251573632"><span>remove</span><wbr><span>Slot</span><wbr><span><span>Listener</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1928380072%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#-1928380072%2FFunctions%2F-251573632"><span class="token function">removeSlotListener</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">p_38944_<span class="token operator">: </span><span data-unresolved-link="net.minecraft.world.inventory/ContainerListener///PointingToDeclaration/">ContainerListener</span><span class="token operator">?</span></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="915662392%2FFunctions%2F-251573632" anchor-label="resumeRemoteUpdates" id="915662392%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#915662392%2FFunctions%2F-251573632"><span>resume</span><wbr><span>Remote</span><wbr><span><span>Updates</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="915662392%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#915662392%2FFunctions%2F-251573632"><span class="token function">resumeRemoteUpdates</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-403755701%2FFunctions%2F-251573632" anchor-label="sendAllDataToRemote" id="-403755701%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-403755701%2FFunctions%2F-251573632"><span>send</span><wbr><span>All</span><wbr><span>Data</span><wbr><span>To</span><wbr><span><span>Remote</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-403755701%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#-403755701%2FFunctions%2F-251573632"><span class="token function">sendAllDataToRemote</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1904172356%2FFunctions%2F-251573632" anchor-label="setData" id="-1904172356%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-1904172356%2FFunctions%2F-251573632"><span>set</span><wbr><span><span>Data</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1904172356%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#-1904172356%2FFunctions%2F-251573632"><span class="token function">setData</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">p_38855_<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">p_38856_<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-899528198%2FFunctions%2F-251573632" anchor-label="setFilter" id="-899528198%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-899528198%2FFunctions%2F-251573632"><span>set</span><wbr><span><span>Filter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-899528198%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#-899528198%2FFunctions%2F-251573632"><span class="token function">setFilter</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">slotIndex<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">item<span class="token operator">: </span><span data-unresolved-link="net.minecraft.world.item/ItemStack///PointingToDeclaration/">ItemStack</span><span class="token operator">?</span></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1465528722%2FFunctions%2F-251573632" anchor-label="setItem" id="1465528722%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#1465528722%2FFunctions%2F-251573632"><span>set</span><wbr><span><span>Item</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1465528722%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#1465528722%2FFunctions%2F-251573632"><span class="token function">setItem</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">p_182407_<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">p_182408_<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">p_182409_<span class="token operator">: </span><span data-unresolved-link="net.minecraft.world.item/ItemStack///PointingToDeclaration/">ItemStack</span><span class="token operator">?</span></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2058465473%2FFunctions%2F-251573632" anchor-label="setRemoteCarried" id="2058465473%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#2058465473%2FFunctions%2F-251573632"><span>set</span><wbr><span>Remote</span><wbr><span><span>Carried</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2058465473%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#2058465473%2FFunctions%2F-251573632"><span class="token function">setRemoteCarried</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">p_150423_<span class="token operator">: </span><span data-unresolved-link="net.minecraft.world.item/ItemStack///PointingToDeclaration/">ItemStack</span><span class="token operator">?</span></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="738563760%2FFunctions%2F-251573632" anchor-label="setRemoteSlot" id="738563760%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#738563760%2FFunctions%2F-251573632"><span>set</span><wbr><span>Remote</span><wbr><span><span>Slot</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="738563760%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#738563760%2FFunctions%2F-251573632"><span class="token function">setRemoteSlot</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">p_150405_<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">p_150406_<span class="token operator">: </span><span data-unresolved-link="net.minecraft.world.item/ItemStack///PointingToDeclaration/">ItemStack</span><span class="token operator">?</span></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-629920730%2FFunctions%2F-251573632" anchor-label="setRemoteSlotNoCopy" id="-629920730%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-629920730%2FFunctions%2F-251573632"><span>set</span><wbr><span>Remote</span><wbr><span>Slot</span><wbr><span>No</span><wbr><span><span>Copy</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-629920730%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#-629920730%2FFunctions%2F-251573632"><span class="token function">setRemoteSlotNoCopy</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">p_182415_<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">p_182416_<span class="token operator">: </span><span data-unresolved-link="net.minecraft.world.item/ItemStack///PointingToDeclaration/">ItemStack</span><span class="token operator">?</span></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1091867124%2FFunctions%2F-251573632" anchor-label="setSynchronizer" id="1091867124%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#1091867124%2FFunctions%2F-251573632"><span>set</span><wbr><span><span>Synchronizer</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1091867124%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#1091867124%2FFunctions%2F-251573632"><span class="token function">setSynchronizer</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">p_150417_<span class="token operator">: </span><span data-unresolved-link="net.minecraft.world.inventory/ContainerSynchronizer///PointingToDeclaration/">ContainerSynchronizer</span><span class="token operator">?</span></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1102677475%2FFunctions%2F-251573632" anchor-label="slotsChanged" id="1102677475%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#1102677475%2FFunctions%2F-251573632"><span>slots</span><wbr><span><span>Changed</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1102677475%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#1102677475%2FFunctions%2F-251573632"><span class="token function">slotsChanged</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">p_38868_<span class="token operator">: </span><span data-unresolved-link="net.minecraft.world/Container///PointingToDeclaration/">Container</span><span class="token operator">?</span></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-63952570%2FFunctions%2F-251573632" anchor-label="stillValid" id="-63952570%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-63952570%2FFunctions%2F-251573632"><span>still</span><wbr><span><span>Valid</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-63952570%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#-63952570%2FFunctions%2F-251573632"><span class="token function">stillValid</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">player<span class="token operator">: </span><span data-unresolved-link="net.minecraft.world.entity.player/Player///PointingToDeclaration/">Player</span><span class="token operator">?</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1255759296%2FFunctions%2F-251573632" anchor-label="suppressRemoteUpdates" id="-1255759296%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-1255759296%2FFunctions%2F-251573632"><span>suppress</span><wbr><span>Remote</span><wbr><span><span>Updates</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1255759296%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#-1255759296%2FFunctions%2F-251573632"><span class="token function">suppressRemoteUpdates</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-783072727%2FFunctions%2F-251573632" anchor-label="swapSlotContents" id="-783072727%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-783072727%2FFunctions%2F-251573632"><span>swap</span><wbr><span>Slot</span><wbr><span><span>Contents</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-783072727%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#-783072727%2FFunctions%2F-251573632"><span class="token function">swapSlotContents</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">slotA<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">slotB<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="562211995%2FFunctions%2F-251573632" anchor-label="transferState" id="562211995%2FFunctions%2F-251573632" data-filterable-set=":/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":/main" data-filterable-set=":/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#562211995%2FFunctions%2F-251573632"><span>transfer</span><wbr><span><span>State</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="562211995%2FFunctions%2F-251573632"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#562211995%2FFunctions%2F-251573632"><span class="token function">transferState</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">p_150415_<span class="token operator">: </span><span data-unresolved-link="net.minecraft.world.inventory/AbstractContainerMenu///PointingToDeclaration/">AbstractContainerMenu</span><span class="token operator">?</span></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© 2026 Copyright</div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
