@@ -6,7 +6,7 @@ object Constants {
         const val ID = "apprep"
         const val NAME = "Applied Replicatics"
         const val PROJECT_NAME = "Applied-Replicatics"
-        const val DESCRIPTION = "DESCRIPTION"
+        const val DESCRIPTION = "An add-on that integrates Applied Energistics 2 and Replication, adding Storage Cells for storing Matter."
         const val LICENSE = "LGPL-3.0"
         const val VERSION = "21.1-1.0.0"
         const val GROUP = "dev.lapis256"
@@ -16,8 +16,8 @@ object Constants {
     }
 
     object Publisher {
-        const val CURSEFORGE_PROJECT_ID = ""
-        const val MODRINTH_PROJECT_ID = ""
+        const val CURSEFORGE_PROJECT_ID = "1440118"
+        const val MODRINTH_PROJECT_ID = "K15f3OBQ"
     }
 
     object Dev {
