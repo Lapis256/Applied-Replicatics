@@ -2,6 +2,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import me.modmuss50.mpp.ReleaseType
 import net.neoforged.moddev.shadow.org.apache.maven.artifact.versioning.DefaultArtifactVersion
 import net.neoforged.moddevgradle.dsl.InternalModelHelper
 import net.neoforged.moddevgradle.dsl.RunModel
@@ -505,7 +506,7 @@ idea {
 }
 
 publishMods {
-    type = ALPHA
+    type = ReleaseType.STABLE
     modLoaders.add("neoforge")
 
     curseforge {
