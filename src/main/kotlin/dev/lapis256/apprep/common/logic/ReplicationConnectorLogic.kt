@@ -46,6 +46,7 @@ import dev.lapis256.apprep.common.ae2.storage.DelegatingMatterNetworkStorage
 import dev.lapis256.apprep.common.ae2.storage.MatterNetworkStorage
 import dev.lapis256.apprep.common.replication.MENetworkMatterTankList
 import dev.lapis256.apprep.common.storage.ReplicationConnectorReturnInventory
+import it.unimi.dsi.fastutil.objects.Object2LongMap
 import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet
 import net.minecraft.core.BlockPos
@@ -281,6 +282,15 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
             val inventory = mainNode.grid?.storageService?.inventory ?: return false
             return returnInventory.returnIntoStorage(inventory, source)
         }
+    }
+
+    fun returnMatterStacksToNetwork(stacks: Object2LongMap<IMatterType>) {
+        val inventory = mainNode.grid?.storageService?.inventory ?: return
+        stacks.forEach { (type, amount) ->
+            val key = MatterKey.of(type)
+            inventory.insert(key, amount, Actionable.MODULATE, source)
+        }
+        stacks.clear()
     }
 
     val mainNode: IManagedGridNode = gridNode

@@ -1,13 +1,17 @@
 package dev.lapis256.apprep.mixin.replication;
 
 import com.buuz135.replication.api.IMatterType;
+import com.buuz135.replication.api.task.IReplicationTask;
 import com.buuz135.replication.network.MatterNetwork;
 import com.llamalad7.mixinextras.expression.Definition;
 import com.llamalad7.mixinextras.expression.Expression;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.sugar.Local;
 import dev.lapis256.apprep.api.replication.matter_network.MatterNetworkListener;
 import dev.lapis256.apprep.api.replication.matter_network.MatterNetworkListenerHolder;
 import dev.lapis256.apprep.mixin_impl.replication.MixinImplMatterNetwork;
+import dev.lapis256.apprep.mixin_impl.replication.MixinImplMatterNetworkKt;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -111,5 +115,10 @@ public class MixinMatterNetwork implements MatterNetworkListenerHolder {
     @Inject(method = "onChipValuesChanged", at = @At("TAIL"))
     private void apprep$onChipValuesChanged(CallbackInfo ci) {
         apprep$impl.onChipValuesChanged();
+    }
+
+    @Inject(method = "cancelTask", at = @At(value = "INVOKE", target = "Lcom/buuz135/replication/api/task/IReplicationTask;getStoredMatterStack()Ljava/util/HashMap;"))
+    private void apprep$onCancelTask(String task, Level level, CallbackInfo ci, @Local(name = "replicationTask") IReplicationTask replicationTask) {
+        MixinImplMatterNetworkKt.returnInternalMatterStacks(level, replicationTask);
     }
 }
