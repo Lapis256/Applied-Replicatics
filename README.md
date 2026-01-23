@@ -2,7 +2,7 @@
 
 [日本語](README_JP.md) | [English](README.md)
 
-This is an add-on that integrates Applied Energistics 2 and Replication.
+This mod is an add-on that integrates Applied Energistics 2 and Replication.
 
 ## Features
 
@@ -10,7 +10,8 @@ This is an add-on that integrates Applied Energistics 2 and Replication.
 
 Provides functionality to handle Replication's Matter within Applied Energistics 2.
 
-This is not a pseudo-integration via custom blocks from existing mods; instead, it is a full integration that leverages AE2's standard features.
+This is not a pseudo-integration implemented by existing mods, but a full-fledged integration that leverages AE2's standard features.
+
 
 ### Matter Storage Cells
 
