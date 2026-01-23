@@ -248,9 +248,9 @@ val modDependencies = listOf(
     ModDep("neoforge", libs.versions.neoforge..<"21.2"),
     ModDep("minecraft", mcVersion.eq()),
     ModDep("kotlinforforge", libs.versions.kotlinForForge.gte()),
-    ModDep("ae2", libs.versions.ae2.gte()),
-    ModDep("replication", "1.21.1-1.2.6".gte()),
-    ModDep.optional("megacells", "4.10.1".gte()),
+    ModDep("ae2", libs.versions.ae2.gte(), ordering = Order.AFTER),
+    ModDep("replication", "1.21.1-1.2.6".gte(), ordering = Order.AFTER),
+    ModDep.optional("megacells", "4.10.1".gte(), ordering = Order.AFTER),
 )
 
 java {
@@ -510,6 +510,7 @@ publishMods {
     modLoaders.add("neoforge")
 
     curseforge {
+        requires("kotlin-for-forge")
         requires("applied-energistics-2")
         requires("replication")
         optional("mega-cells")
@@ -525,6 +526,7 @@ publishMods {
     }
 
     modrinth {
+        requires("kotlin-for-forge")
         requires("ae2")
         requires("replication")
         optional("mega")
