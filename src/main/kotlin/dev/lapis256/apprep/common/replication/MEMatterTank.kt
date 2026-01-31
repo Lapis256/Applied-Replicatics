@@ -14,19 +14,21 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler
  * ME ネットワークのマターを扱う [IMatterTank] 実装
  */
 class MEMatterTank(
-    private var stack: MatterStack,
+    private val type: IMatterType,
+    private var amount: Long,
     private val storage: MEStorage,
     private val source: IActionSource
 ) : IMatterTank {
-    val type: IMatterType get() = stack.matterType
+    private val doubleAmount get() = amount.toDouble()
+    private val stack get() = MatterStack(type, doubleAmount)
 
     override fun getMatter(): MatterStack = stack
-    override fun getMatterAmount() = stack.amount
+    override fun getMatterAmount() = doubleAmount
     override fun getCapacity() = Long.MAX_VALUE.toDouble()
     override fun isMatterValid(stack: MatterStack?): Boolean = true
 
     fun updateAmount(newAmount: Long) {
-        stack = MatterStack(type, newAmount.toDouble())
+        amount = newAmount
     }
 
     /**
@@ -35,10 +37,9 @@ class MEMatterTank(
      * TODO: StorageHelper を使ってエネルギーコストを考慮した挿入処理を実装すると良いかも?
      */
     override fun fill(resource: MatterStack, action: IFluidHandler.FluidAction): Double {
-        if (resource.isEmpty || !resource.isMatterEqual(stack)) {
+        if (resource.isEmpty || resource.matterType != type) {
             return 0.0
         }
-
         return storage.insert(MatterKey.of(type), resource.amount.toLong(), Actionable.of(action), source).toDouble()
     }
 
@@ -56,7 +57,7 @@ class MEMatterTank(
      * TODO: StorageHelper を使ってエネルギーコストを考慮した挿入処理を実装すると良いかも?
      */
     override fun drain(resource: MatterStack, action: IFluidHandler.FluidAction): MatterStack {
-        if (resource.isEmpty || !resource.isMatterEqual(stack)) {
+        if (resource.isEmpty || resource.matterType != type) {
             return MatterStack.EMPTY
         }
         return drain(resource.amount, action)

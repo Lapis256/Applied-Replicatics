@@ -5,7 +5,6 @@ import appeng.api.stacks.AEKey
 import appeng.api.storage.MEStorage
 import appeng.me.storage.NullInventory
 import com.buuz135.replication.api.IMatterType
-import com.buuz135.replication.api.matter_fluid.MatterStack
 import dev.lapis256.apprep.api.ae2.stack.MatterKey
 import dev.lapis256.apprep.api.util.ResettableLazy
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
@@ -30,13 +29,20 @@ class MENetworkMatterTankList(
     }
 
     private fun createTank(type: IMatterType, amount: Long): MEMatterTank {
-        val stack = MatterStack(type, amount.toDouble())
-        return MEMatterTank(stack, storage, source)
+        return MEMatterTank(type, amount, storage, source)
     }
 
     private val tankMap = Object2ObjectOpenHashMap<IMatterType, MEMatterTank>().apply {
         cachedMatters.forEach { (type, amount) ->
             put(type, createTank(type, amount))
+        }
+    }
+
+    private fun getTankOrCreate(type: IMatterType): MEMatterTank {
+        return tankMap.getOrPut(type) {
+            val tank = createTank(type, 0L)
+            _tankList.reset()
+            tank
         }
     }
 
@@ -46,22 +52,8 @@ class MENetworkMatterTankList(
      */
     fun updateCache(key: AEKey, amount: Long) {
         val matterKey = key as? MatterKey ?: return
-        val type = matterKey.type
-
-        if (amount <= 0) {
-            tankMap.remove(type)?.let {
-                _tankList.reset()
-            }
-            return
-        }
-
-        val tank = tankMap[type]
-        if (tank != null) {
-            tank.updateAmount(amount)
-        } else {
-            tankMap[type] = createTank(type, amount)
-            _tankList.reset()
-        }
+        val tank = getTankOrCreate(matterKey.type)
+        tank.updateAmount(amount)
     }
 
     private val _tankList = ResettableLazy { tankMap.values.toList() }
