@@ -539,7 +539,10 @@ publishMods {
 
     val releaseFilesDir = providers.gradleProperty("releaseFilesDir").orElse("dist")
     val releaseDirFileProvider = releaseFilesDir.map { layout.projectDirectory.dir(it).asFile }
-    val (mainJar, otherJars) = releaseDirFileProvider.pickJars("${Constants.Mod.PROJECT_NAME}-${Constants.Mod.VERSION}", "sources")
+    val (mainJar, otherJars) = releaseDirFileProvider.pickJars(
+        "${Constants.Mod.PROJECT_NAME}-${Constants.Mod.VERSION}",
+        "sources", "javadoc", "api"
+    )
 
     file = mainJar
     additionalFiles.from(otherJars)
