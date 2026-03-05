@@ -8,7 +8,7 @@ object Constants {
         const val PROJECT_NAME = "Applied-Replicatics"
         const val DESCRIPTION = "An add-on that integrates Applied Energistics 2 and Replication, adding Storage Cells for storing Matter."
         const val LICENSE = "LGPL-3.0"
-        const val VERSION = "21.1-1.0.3"
+        const val VERSION = "21.1-1.0.4"
         const val GROUP = "dev.lapis256"
         const val AUTHOR = "Lapis256"
         const val REPOSITORY_URL = "https://github.com/Lapis256/Applied-Replicatics"
