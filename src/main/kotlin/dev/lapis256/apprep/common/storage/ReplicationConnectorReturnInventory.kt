@@ -29,9 +29,8 @@ class ReplicationConnectorReturnInventory(listener: Runnable) : GenericStackInv(
     fun returnIntoStorage(storage: MEStorage, source: IActionSource): Boolean {
         var didSomething = false
         stacks
-            .asSequence()
-            .filterNotNull()
             .forEachIndexed { i, stack ->
+                if (stack == null) return@forEachIndexed
                 val sizeBefore = stack.amount()
                 val inserted = storage.insert(stack.what(), sizeBefore, Actionable.MODULATE, source)
                 if (inserted > 0L) {
