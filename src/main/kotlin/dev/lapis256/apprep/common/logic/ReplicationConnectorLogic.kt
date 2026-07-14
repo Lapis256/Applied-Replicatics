@@ -96,6 +96,7 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
     private var pushedReplicationTasks: ObjectOpenHashSet<UUID> = ObjectOpenHashSet()
 
     val delegatingStorage = DelegatingMatterNetworkStorage()
+    private var connectedMatterNetwork: MatterNetwork? = null
 
     private inner class StorageProvider : IStorageProvider {
         override fun mountInventories(storageMounts: IStorageMounts) {
@@ -145,7 +146,7 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
     }
 
     private val _patterns = ResettableLazy {
-        val matterNetwork = host.matterNetwork ?: return@ResettableLazy emptyList()
+        val matterNetwork = connectedMatterNetwork ?: return@ResettableLazy emptyList()
         matterNetwork.chipSuppliers
             .asSequence()
             .filter { it.level.isLoaded(it.pos) }
@@ -166,7 +167,9 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
 
     private fun updatePatterns() {
         _patterns.reset()
-        ICraftingProvider.requestUpdate(mainNode)
+        if (mainNode.grid != null) {
+            ICraftingProvider.requestUpdate(mainNode)
+        }
     }
 
     inner class CraftingProvider : ICraftingProvider {
@@ -328,41 +331,66 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
 
     private val matterNetworkListener by lazy { MatterNetworkListenerImpl() }
 
-    fun addMatterNetworkListener(network: MatterNetwork) {
-        network.addListener(matterNetworkListener)
+    private fun connectMatterNetwork(network: Network) {
+        val matterNetwork = network as? MatterNetwork
+            ?: return LOGGER.error("Connected network is not MatterNetwork: {}", network)
+
+        if (connectedMatterNetwork === matterNetwork) {
+            return
+        }
+
+        connectedMatterNetwork?.removeListener(matterNetworkListener)
+
+        connectedMatterNetwork = matterNetwork
+        delegatingStorage.storage = MatterNetworkStorage(matterNetwork)
+        matterNetwork.addListener(matterNetworkListener)
+
+        remountMatterNetworkStorage()
+        updatePatterns()
     }
 
-    fun removeMatterNetworkListener(network: MatterNetwork) {
-        network.removeListener(matterNetworkListener)
+    private fun disconnectMatterNetwork(network: Network) {
+        val matterNetwork = network as? MatterNetwork
+            ?: return LOGGER.error("Disconnected network is not MatterNetwork: {}", network)
+
+        if (connectedMatterNetwork !== matterNetwork) {
+            return
+        }
+
+        matterNetwork.removeListener(matterNetworkListener)
+        connectedMatterNetwork = null
+        delegatingStorage.storage = null
+
+        remountMatterNetworkStorage()
+        updatePatterns()
     }
 
     inner class NetworkElementListenerImpl : NetworkElementListener {
         override fun onAddedNetwork(network: Network) {
-            val matterNetwork = network as? MatterNetwork
-                ?: return LOGGER.error("Connected network is not MatterNetwork: {}", network)
-
-            delegatingStorage.storage = MatterNetworkStorage(matterNetwork)
-            addMatterNetworkListener(matterNetwork)
+            connectMatterNetwork(network)
         }
 
         override fun onRemoveNetwork(network: Network) {
-            delegatingStorage.storage = null
-
-            val matterNetwork = network as? MatterNetwork
-                ?: return LOGGER.error("Disconnected network is not MatterNetwork: {}", network)
-
-            removeMatterNetworkListener(matterNetwork)
+            disconnectMatterNetwork(network)
         }
     }
 
     private val networkElementListener by lazy { NetworkElementListenerImpl() }
 
     fun addNetworkElementListener(element: NetworkElement) {
-        element.addListener(networkElementListener)
+        if (!element.addListener(networkElementListener)) {
+            return
+        }
+
+        element.network?.let(::connectMatterNetwork)
     }
 
     fun removeNetworkElementListener(element: NetworkElement) {
-        element.removeListener(networkElementListener)
+        if (!element.removeListener(networkElementListener)) {
+            return
+        }
+
+        element.network?.let(::disconnectMatterNetwork)
     }
 
     fun getCableConnectionType(@Suppress("unused") dir: Direction?): AECableType {
@@ -407,7 +435,9 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
     }
 
     private fun remountMatterNetworkStorage() {
-        IStorageProvider.requestUpdate(mainNode)
+        if (mainNode.grid != null) {
+            IStorageProvider.requestUpdate(mainNode)
+        }
     }
 
     var wasOnline = false

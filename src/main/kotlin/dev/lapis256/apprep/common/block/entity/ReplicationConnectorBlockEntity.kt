@@ -29,8 +29,12 @@ class ReplicationConnectorBlockEntity(type: BlockEntityType<*>, pos: BlockPos, s
     IPriorityHost,
     ReplicationConnectorLogicHost {
 
+    private var isChunkUnloaded = false
+
     override fun onLoad() {
         super.onLoad()
+        isChunkUnloaded = false
+
         val level = level.takeIfServer() ?: return
 
         val networkManager = NetworkManager.get(level)
@@ -44,7 +48,6 @@ class ReplicationConnectorBlockEntity(type: BlockEntityType<*>, pos: BlockPos, s
         }
     }
 
-    private var isChunkUnloaded = false
     override fun onChunkUnloaded() {
         isChunkUnloaded = true
     }
@@ -52,22 +55,21 @@ class ReplicationConnectorBlockEntity(type: BlockEntityType<*>, pos: BlockPos, s
     override fun setRemoved() {
         super.setRemoved()
 
+        val element = matterNetworkElement ?: return
+        val network = matterNetwork
+
+        logic.removeNetworkElementListener(element)
+
         // チャンクがアンロードされた場合は NetworkElement の削除は行わない
         if (isChunkUnloaded) {
             return
         }
 
-        val element = matterNetworkElement ?: return
-        val network = matterNetwork ?: return
-
-        logic.removeNetworkElementListener(element)
-        logic.removeMatterNetworkListener(network)
-
         val level = level.takeIfServer() ?: return
         val networkManager = NetworkManager.get(level)
         networkManager.removeElement(worldPosition)
 
-        network.removeElement(element)
+        network?.removeElement(element)
     }
 
     private object NodeListener : BlockEntityNodeListener<ReplicationConnectorBlockEntity>() {
