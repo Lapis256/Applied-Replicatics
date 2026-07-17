@@ -32,8 +32,8 @@ class ReplicationConnectorBlockEntity(type: BlockEntityType<*>, pos: BlockPos, s
     private var isChunkUnloaded = false
 
     override fun onLoad() {
-        super.onLoad()
         isChunkUnloaded = false
+        super.onLoad()
 
         val level = level.takeIfServer() ?: return
 
@@ -50,6 +50,7 @@ class ReplicationConnectorBlockEntity(type: BlockEntityType<*>, pos: BlockPos, s
 
     override fun onChunkUnloaded() {
         isChunkUnloaded = true
+        super.onChunkUnloaded()
     }
 
     override fun setRemoved() {
@@ -60,7 +61,6 @@ class ReplicationConnectorBlockEntity(type: BlockEntityType<*>, pos: BlockPos, s
 
         logic.removeNetworkElementListener(element)
 
-        // チャンクがアンロードされた場合は NetworkElement の削除は行わない
         if (isChunkUnloaded) {
             return
         }
@@ -84,9 +84,6 @@ class ReplicationConnectorBlockEntity(type: BlockEntityType<*>, pos: BlockPos, s
 
     override fun onMainNodeStateChanged(reason: IGridNodeListener.State?) {
         super<ReplicationConnectorLogicHost>.onMainNodeStateChanged()
-        if (mainNode.hasGridBooted()) {
-            logic.notifyNeighbors()
-        }
     }
 
     override fun saveAdditional(data: CompoundTag, registries: HolderLookup.Provider) {

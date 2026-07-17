@@ -8,6 +8,7 @@
   "refmap": "apprep.refmap.json",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "replication.AccessorNetworkBlockEntity",
     "replication.MixinMatterNetwork",
     "replication.MixinReplicationTask",
     "replication.MixinReplicatorBlockEntity",

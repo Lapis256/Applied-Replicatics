@@ -40,9 +40,6 @@ class ReplicationConnectorPart(partItem: IPartItem<*>) : AEBasePart(partItem), R
     override fun onMainNodeStateChanged(reason: IGridNodeListener.State?) {
         super<AEBasePart>.onMainNodeStateChanged(reason)
         super<ReplicationConnectorLogicHost>.onMainNodeStateChanged()
-        if (mainNode.hasGridBooted()) {
-            logic.notifyNeighbors()
-        }
     }
 
     private object PartNodeListener : NodeListener<ReplicationConnectorPart>() {

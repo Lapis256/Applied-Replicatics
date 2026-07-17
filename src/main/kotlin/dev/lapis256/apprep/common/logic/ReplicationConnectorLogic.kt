@@ -179,20 +179,28 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
             val taskManager = matterNetwork.taskManager
 
             val iterator = pushedReplicationTasks.iterator()
-            while (iterator.hasNext()) {
-                val taskUuid = iterator.next()
-                if (!taskManager.pendingTasks.containsKey(taskUuid.toString())) {
-                    iterator.remove()
-                    continue
-                }
+            var tasksRemoved = false
+            try {
+                while (iterator.hasNext()) {
+                    val taskUuid = iterator.next()
+                    val task = taskManager.pendingTasks[taskUuid.toString()]
+                    if (task == null) {
+                        iterator.remove()
+                        tasksRemoved = true
+                        continue
+                    }
 
-                val task = taskManager.pendingTasks[taskUuid.toString()] ?: continue
-                val completedPercent = task.currentAmount.toDouble() / task.totalAmount.toDouble()
-                if (completedPercent <= 0.25) {
-                    return false
+                    val completedPercent = task.currentAmount.toDouble() / task.totalAmount.toDouble()
+                    if (completedPercent <= 0.25) {
+                        return false
+                    }
+                }
+                return true
+            } finally {
+                if (tasksRemoved) {
+                    host.saveChanges()
                 }
             }
-            return true
         }
 
         override fun getAvailablePatterns(): List<IPatternDetails> = patterns
@@ -213,6 +221,7 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
                 pendingTask = PendingTask(inputHolder, item)
             }
             pendingTask!!.increaseProcessingCount()
+            host.saveChanges()
 
             alertDevice()
 
@@ -277,6 +286,7 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
 
             pushedReplicationTasks.add(task.uuid)
             pendingTask = null
+            host.saveChanges()
 
             return true
         }
@@ -405,14 +415,9 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
         }
     }
 
-    fun notifyNeighbors() {
-        host.getBlockEntity()?.invalidateCapabilities()
-    }
-
     fun gridChanged() {
         _tanks.reset()
         updatePatterns()
-        notifyNeighbors()
     }
 
     fun writeToNBT(tag: CompoundTag, @Suppress("unused") registries: HolderLookup.Provider) {
@@ -425,8 +430,7 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
     }
 
     fun readFromNBT(tag: CompoundTag, @Suppress("unused") registries: HolderLookup.Provider) {
-        notifyNeighbors()
-        priority = tag.getInt("priority")
+        _priority = tag.getInt("priority")
 
         returnInventory.readFromTag(tag.getList("return_inventory", Tag.TAG_COMPOUND.toInt()), registries)
 

@@ -21,6 +21,11 @@ public abstract class MixinReplicatorBlockEntity {
     @Shadow
     private IReplicationTask cachedReplicationTask;
 
+    @ModifyExpressionValue(method = "setRemoved", at = @At(value = "FIELD", target = "Lcom/buuz135/replication/block/tile/ReplicatorBlockEntity;cachedReplicationTask:Lcom/buuz135/replication/api/task/IReplicationTask;", ordinal = 0))
+    private IReplicationTask apprep$keepTaskOnChunkUnload(IReplicationTask original) {
+        return MixinImplReplicatorBlockEntityKt.keepTaskOnChunkUnload(original, (ReplicatorBlockEntity) (Object) this);
+    }
+
     @ModifyExpressionValue(method = "replicateItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/BlockPos;equals(Ljava/lang/Object;)Z"))
     private boolean apprep$setConnectorHost(boolean original, @Share("connectorHost") LocalRef<ReplicationConnectorLogicHost> hostRef) {
         return MixinImplReplicatorBlockEntityKt.setConnectorHost(original, ((ReplicatorBlockEntity) (Object) this), hostRef, cachedReplicationTask);
