@@ -22,7 +22,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
+import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.HashMap;
@@ -42,7 +42,17 @@ public abstract class MixinReplicationTask implements MEReplicationTask {
         return apprep$impl.extractMatterStacks(original, pos, oldOriginalRef, ci, getStoredMatterStack());
     }
 
-    @ModifyArg(method = "storeMatterStacksFor", at = @At(value = "INVOKE", target = "Lcom/buuz135/replication/api/matter_fluid/MatterStack;<init>(Lcom/buuz135/replication/api/IMatterType;D)V"), index = 1)
+    @ModifyExpressionValue(
+        method = "storeMatterStacksFor",
+        at = @At(
+            value = "INVOKE",
+            target = "Lcom/buuz135/replication/calculation/MatterValue;getAmount()D"
+        ),
+        slice = @Slice(
+            from = @At(value = "NEW", target = "(Lcom/buuz135/replication/api/IMatterType;D)Lcom/buuz135/replication/api/matter_fluid/MatterStack;"),
+            to = @At(value = "INVOKE", target = "Lcom/buuz135/replication/api/matter_fluid/MatterStack;<init>(Lcom/buuz135/replication/api/IMatterType;D)V")
+        )
+    )
     private double apprep$restoreMatterAmount(double originalAmount, @Share("oldOriginal") LocalRef<MatterCompound> oldOriginalRef, @Local(name = "type") IMatterType type) {
         return apprep$impl.restoreMatterAmount(originalAmount, oldOriginalRef.get(), type);
     }

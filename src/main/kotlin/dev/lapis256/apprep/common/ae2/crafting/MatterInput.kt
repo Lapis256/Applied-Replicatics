@@ -7,7 +7,7 @@ import com.buuz135.replication.calculation.ReplicationCalculation
 import dev.lapis256.apprep.api.ae2.stack.MatterKey
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
-import kotlin.math.roundToLong
+import kotlin.math.ceil
 
 
 class MatterInput(private val stack: GenericStack, private val amount: Long) : IPatternDetails.IInput {
@@ -17,7 +17,7 @@ class MatterInput(private val stack: GenericStack, private val amount: Long) : I
         fun calculateFromOutput(output: ItemStack): Array<MatterInput> {
             val compound = ReplicationCalculation.getMatterCompound(output) ?: return arrayOf()
             val inputs = compound.values.values.map {
-                MatterInput(MatterKey.of(it.matter), it.amount.roundToLong())
+                MatterInput(MatterKey.of(it.matter), ceil(it.amount).toLong())
             }.toTypedArray()
             return inputs
         }

@@ -346,15 +346,16 @@ dokka {
         ?: currentVersion
 
     val orderedVersions = docVersionDir.listFiles(File::isDirectory)
-        .asSequence()
-        .map(File::getName)
-        .plus(latestDocVersion)
-        .plus(currentVersion)
-        .map(::DefaultArtifactVersion)
-        .sortedDescending()
-        .map(DefaultArtifactVersion::toString)
-        .toSet()
-        .toList()
+        ?.asSequence()
+        ?.map(File::getName)
+        ?.plus(latestDocVersion)
+        ?.plus(currentVersion)
+        ?.map(::DefaultArtifactVersion)
+        ?.sortedDescending()
+        ?.map(DefaultArtifactVersion::toString)
+        ?.toSet()
+        ?.toList()
+        ?: emptyList()
 
     pluginsConfiguration {
         versioning {
