@@ -1,6 +1,7 @@
 package dev.lapis256.apprep.common.logic
 
 import appeng.helpers.IPriorityHost
+import appeng.api.upgrades.IUpgradeableObject
 import appeng.menu.ISubMenu
 import appeng.menu.MenuOpener
 import appeng.menu.locator.MenuHostLocator
@@ -14,15 +15,20 @@ import dev.lapis256.apprep.api.extension.takeIfServer
 import dev.lapis256.apprep.common.init.AppRepMenus
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.block.entity.BlockEntity
+import net.minecraft.world.level.ItemLike
 
 
-interface ReplicationConnectorLogicHost : IMatterTanksConsumer, IMatterTanksSupplier, IPriorityHost {
+interface ReplicationConnectorLogicHost : IMatterTanksConsumer, IMatterTanksSupplier, IPriorityHost, IUpgradeableObject {
 
     fun getBlockEntity(): BlockEntity?
 
     fun saveChanges()
 
     val logic: ReplicationConnectorLogic
+
+    val upgradableItem: ItemLike
+
+    override fun getUpgrades() = logic.upgrades
 
     val matterNetworkElement: DefaultMatterNetworkElement?
         get() {

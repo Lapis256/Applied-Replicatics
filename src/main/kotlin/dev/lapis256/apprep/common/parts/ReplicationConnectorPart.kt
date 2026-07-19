@@ -54,6 +54,7 @@ class ReplicationConnectorPart(partItem: IPartItem<*>) : AEBasePart(partItem), R
 
     // ReplicationConnectorLogicHost
 
+    override val upgradableItem = partItem
     override val logic = ReplicationConnectorLogic(mainNode, this)
 
     // IPriorityHost

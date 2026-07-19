@@ -17,6 +17,8 @@ import appeng.api.stacks.AEKey
 import appeng.api.stacks.KeyCounter
 import appeng.api.storage.IStorageMounts
 import appeng.api.storage.IStorageProvider
+import appeng.api.upgrades.IUpgradeInventory
+import appeng.api.upgrades.UpgradeInventories
 import appeng.api.util.AECableType
 import com.buuz135.replication.api.IMatterType
 import com.buuz135.replication.api.matter_fluid.IMatterTank
@@ -29,6 +31,10 @@ import com.hrznstudio.titanium.block_network.element.NetworkElement
 import com.mojang.logging.LogUtils
 import com.mojang.serialization.Codec
 import dev.lapis256.apprep.api.ae2.stack.MatterKey
+import dev.lapis256.apprep.api.connector.ReplicationConnectorExtension
+import dev.lapis256.apprep.api.connector.ReplicationConnectorExtensionContext
+import dev.lapis256.apprep.api.connector.ReplicationConnectorExtensions
+import dev.lapis256.apprep.api.connector.ReplicationConnectorUpgrades
 import dev.lapis256.apprep.api.extension.getCodec
 import dev.lapis256.apprep.api.extension.putCodec
 import dev.lapis256.apprep.api.replication.matter_network.MatterNetworkListener
@@ -80,6 +86,25 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
     }
 
     private val source: IActionSource get() = IActionSource.ofMachine(mainNode::getNode)
+
+    private val extensions = mutableListOf<ReplicationConnectorExtension>()
+
+    val upgrades: IUpgradeInventory = UpgradeInventories.forMachine(
+        host.upgradableItem,
+        ReplicationConnectorUpgrades.slotCount,
+    ) {
+        host.saveChanges()
+        extensions.forEach(ReplicationConnectorExtension::onUpgradesChanged)
+    }
+
+    private val extensionContext = object : ReplicationConnectorExtensionContext {
+        override val managedNode: IManagedGridNode = gridNode
+        override val upgrades get() = this@ReplicationConnectorLogic.upgrades
+        override val actionSource: IActionSource get() = IActionSource.ofMachine(gridNode::getNode)
+        override val matterNetwork: MatterNetwork? get() = host.matterNetwork
+
+        override fun saveChanges() = host.saveChanges()
+    }
 
     private var _priority: Int = 0
         set(value) {
@@ -139,10 +164,14 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
 
     fun addDrops(level: Level, pos: BlockPos, drops: MutableList<ItemStack>) {
         returnInventory.addDrops(level, pos, drops)
+        upgrades.asSequence()
+            .filterNot(ItemStack::isEmpty)
+            .forEach(drops::add)
     }
 
     fun clearContent() {
         returnInventory.clear()
+        upgrades.clear()
     }
 
     private val _patterns = ResettableLazy {
@@ -312,6 +341,7 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
         .addService(IStorageWatcherNode::class.java, StackWatcher())
         .addService(ICraftingProvider::class.java, CraftingProvider())
         .addService(IGridTickable::class.java, Ticker())
+        .also { extensions += ReplicationConnectorExtensions.install(it, extensionContext) }
 
     inner class MatterNetworkListenerImpl : MatterNetworkListener {
         override fun onAddedTanksSupplier() {
@@ -420,19 +450,23 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
         updatePatterns()
     }
 
-    fun writeToNBT(tag: CompoundTag, @Suppress("unused") registries: HolderLookup.Provider) {
+    fun writeToNBT(tag: CompoundTag, registries: HolderLookup.Provider) {
         tag.putInt("priority", priority)
 
         tag.put("return_inventory", returnInventory.writeToTag(registries))
+
+        upgrades.writeToNBT(tag, "upgrades", registries)
 
         pendingTask?.let { tag.putCodec(PENDING_TASK_CODEC, it) }
         tag.putCodec(PUSHED_REPLICATION_TASKS_CODEC, pushedReplicationTasks)
     }
 
-    fun readFromNBT(tag: CompoundTag, @Suppress("unused") registries: HolderLookup.Provider) {
+    fun readFromNBT(tag: CompoundTag, registries: HolderLookup.Provider) {
         _priority = tag.getInt("priority")
 
         returnInventory.readFromTag(tag.getList("return_inventory", Tag.TAG_COMPOUND.toInt()), registries)
+
+        upgrades.readFromNBT(tag, "upgrades", registries)
 
         pendingTask = tag.getCodec(PENDING_TASK_CODEC)
         pushedReplicationTasks = tag.getCodec(PUSHED_REPLICATION_TASKS_CODEC) ?: ObjectOpenHashSet()

@@ -24,6 +24,7 @@ goldium = "5821676" # 1.21-2.2-neoforge
 extendedAE = "7478960" # 1.21-2.2.28-neoforge
 geckolib = "7415496" # 4.8.3
 advancedAE = "7374386" # 1.6.9-1.21.1
+appliedFlux = "8204513" # 1.21-2.1.5-neoforge
 
 
 [libraries]
@@ -48,6 +49,7 @@ goldium = { module = "curse.maven:glodium-957920", version.ref = "goldium" }
 extendedAE = { module = "curse.maven:extended-ae-892005", version.ref = "extendedAE" }
 geckolib = { module = "curse.maven:geckolib-388172", version.ref = "geckolib" }
 advancedAE = { module = "curse.maven:advancedae-1084104", version.ref = "advancedAE" }
+appliedFlux = { module = "curse.maven:applied-flux-965012", version.ref = "appliedFlux" }
 
 
 [plugins]
@@ -78,7 +80,8 @@ integrationImplementation = [
     "goldium",
     "extendedAE",
     "geckolib",
-    "advancedAE"
+    "advancedAE",
+    "appliedFlux"
 ]
 
 integrationCompileOnly = [

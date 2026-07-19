@@ -112,6 +112,7 @@ class ReplicationConnectorBlockEntity(type: BlockEntityType<*>, pos: BlockPos, s
 
     // ReplicationConnectorLogicHost
 
+    override val upgradableItem = AppRepBlocks.REPLICATION_CONNECTOR
     override val logic = ReplicationConnectorLogic(mainNode, this)
 
     // IPriorityHost

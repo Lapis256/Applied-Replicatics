@@ -251,6 +251,7 @@ val modDependencies = listOf(
     ModDep("ae2", libs.versions.ae2.gte(), ordering = Order.AFTER),
     ModDep("replication", "1.21.1-1.2.6".gte(), ordering = Order.AFTER),
     ModDep.optional("megacells", "4.10.1".gte(), ordering = Order.AFTER),
+    ModDep.optional("appflux", "1.21-2.1.5-neoforge".gte(), ordering = Order.AFTER),
 )
 
 java {
@@ -514,6 +515,7 @@ publishMods {
         requires("applied-energistics-2")
         requires("replication")
         optional("mega-cells")
+        optional("applied-flux")
 
         minecraftVersions.add(mcVersion)
         clientRequired = true
@@ -530,6 +532,7 @@ publishMods {
         requires("ae2")
         requires("replication")
         optional("mega")
+        optional("appflux")
 
         minecraftVersions.add(mcVersion)
 

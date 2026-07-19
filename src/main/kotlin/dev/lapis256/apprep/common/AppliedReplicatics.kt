@@ -16,6 +16,8 @@ import com.buuz135.replication.block.MatterPipeBlock
 import dev.lapis256.apprep.api.AppliedReplicaticsAPI
 import dev.lapis256.apprep.api.ae2.stack.MatterKey
 import dev.lapis256.apprep.api.ae2.stack.MatterKeyType
+import dev.lapis256.apprep.api.connector.ReplicationConnectorExtensions
+import dev.lapis256.apprep.api.connector.ReplicationConnectorUpgrades
 import dev.lapis256.apprep.common.ae2.crafting.ReplicationPatternDecoder
 import dev.lapis256.apprep.common.ae2.strategies.GenericStackMatterStorage
 import dev.lapis256.apprep.common.ae2.strategies.MatterHandlerExternalStorageStrategy
@@ -74,6 +76,9 @@ class AppliedReplicatics(eventBus: IEventBus) {
             Upgrades.add(AEItems.EQUAL_DISTRIBUTION_CARD, it, 1, storageCellGroup)
             Upgrades.add(AEItems.VOID_CARD, it, 1, storageCellGroup)
         }
+
+        ReplicationConnectorExtensions.freeze()
+        ReplicationConnectorUpgrades.freeze()
     }
 
     private fun onRegister(event: RegisterEvent) {
