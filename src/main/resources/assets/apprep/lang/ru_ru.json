@@ -1,0 +1,22 @@
+{
+  "block.apprep.replication_connector": "МЭ интерфейс репликации",
+  "block.apprep.sky_replica_block": "Блок небесной реплики",
+  "gui.apprep.creative_tab": "Applied Replicatics",
+  "gui.apprep.matter": "Материя",
+  "gui.apprep.matter_network_storage": "Сетевое хранилище материи",
+
+  "item.apprep.matter_cell_housing": "МЭ корпус для ячейки материи",
+  "item.apprep.mega_matter_cell_housing": "МЭ МЕГА корпус для ячейки материи",
+  "item.apprep.sky_replica_ingot": "Слиток небесной реплики",
+
+  "item.apprep.matter_cell_1k": "1К МЭ ячейка хранения материи",
+  "item.apprep.matter_cell_4k": "4К МЭ ячейка хранения материи",
+  "item.apprep.matter_cell_16k": "16К МЭ ячейка хранения материи",
+  "item.apprep.matter_cell_64k": "64К МЭ ячейка хранения материи",
+  "item.apprep.matter_cell_256k": "256К МЭ ячейка хранения материи",
+  "item.apprep.matter_cell_1m": "1М МЭ МЕГА ячейка хранения материи",
+  "item.apprep.matter_cell_4m": "4М МЭ МЕГА ячейка хранения материи",
+  "item.apprep.matter_cell_16m": "16М МЭ МЕГА ячейка хранения материи",
+  "item.apprep.matter_cell_64m": "64М МЭ МЕГА ячейка хранения материи",
+  "item.apprep.matter_cell_256m": "256М МЭ МЕГА ячейка хранения материи"
+}
