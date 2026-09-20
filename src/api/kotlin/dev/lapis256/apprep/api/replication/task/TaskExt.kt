@@ -6,7 +6,3 @@ import com.buuz135.replication.api.task.ReplicationTask
 var ReplicationTask.internalMatterStacks
     get() = (this as MEReplicationTask).`apprep$getInternalMatterStacks`()
     set(value) = (this as MEReplicationTask).`apprep$setInternalMatterStacks`(value)
-
-var ReplicationTask.isMEAutoCraftingTask
-    get() = (this as MEReplicationTask).`apprep$isAutoCraftingTask`()
-    set(value) = (this as MEReplicationTask).`apprep$setAutoCraftingTask`(value)
