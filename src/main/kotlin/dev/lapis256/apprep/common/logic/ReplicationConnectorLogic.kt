@@ -77,7 +77,7 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
     companion object {
         val LOGGER: Logger = LogUtils.getLogger()
 
-        // TODO(22.0): Remove legacy pending-task save compatibility.
+        // TODO(next major): Remove legacy pending-task save compatibility when bumping the mod major version.
         val PENDING_TASK_CODEC: Codec<PendingTask> = PendingTask.CODEC.fieldOf("pending_task").codec()
     }
 
@@ -114,7 +114,7 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
         _priority = newValue
     }
 
-    // TODO(22.0): Remove after saves from 21.x no longer need to finish a queued legacy batch.
+    // TODO(next major): Remove when save compatibility can be broken (e.g. 21.1-2.x or a new Minecraft line such as 26.1-x.y.z).
     private var pendingTask: PendingTask? = null
 
     val delegatingStorage = DelegatingMatterNetworkStorage()
@@ -311,7 +311,7 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
             return false
         }
 
-        // TODO(22.0): Remove legacy 21.x batched-task migration.
+        // TODO(next major): Remove legacy batched-task migration when bumping the mod major version.
         private fun pushLegacyPendingTask(): Boolean {
             val toPushTask = pendingTask ?: return false
 
@@ -473,7 +473,7 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
 
         upgrades.writeToNBT(tag, "upgrades", registries)
 
-        // TODO(22.0): Remove legacy pending-task persistence.
+        // TODO(next major): Remove legacy pending-task persistence when bumping the mod major version.
         pendingTask?.let { tag.putCodec(PENDING_TASK_CODEC, it) }
     }
 
@@ -484,7 +484,7 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
 
         upgrades.readFromNBT(tag, "upgrades", registries)
 
-        // TODO(22.0): Remove legacy pending-task migration.
+        // TODO(next major): Remove legacy pending-task migration when bumping the mod major version.
         pendingTask = tag.getCodec(PENDING_TASK_CODEC)
     }
 
