@@ -12,6 +12,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 
 
 class MixinImplReplicationTask(private val extractMatter: (type: IMatterType, amount: Long) -> Long) {
+    var isAutoCraftingTask: Boolean = false
+
     var internalMatterStacks: Object2LongMap<IMatterType> = Object2LongOpenHashMap()
         set(value) {
             field.clear()
