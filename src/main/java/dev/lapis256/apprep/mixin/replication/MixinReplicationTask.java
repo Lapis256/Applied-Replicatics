@@ -76,4 +76,14 @@ public abstract class MixinReplicationTask implements MEReplicationTask {
     public @NotNull Object2LongMap<@NotNull IMatterType> apprep$getInternalMatterStacks() {
         return apprep$impl.getInternalMatterStacks();
     }
+
+    @Override
+    public void apprep$setAutoCraftingTask(boolean autoCraftingTask) {
+        apprep$impl.setAutoCraftingTask(autoCraftingTask);
+    }
+
+    @Override
+    public boolean apprep$isAutoCraftingTask() {
+        return apprep$impl.isAutoCraftingTask();
+    }
 }
