@@ -25,6 +25,9 @@ import com.buuz135.replication.api.matter_fluid.IMatterTank
 import com.buuz135.replication.api.network.IMatterTanksConsumer
 import com.buuz135.replication.api.network.IMatterTanksSupplier
 import com.buuz135.replication.api.pattern.IMatterPatternHolder
+import com.buuz135.replication.api.task.IReplicationTask
+import com.buuz135.replication.api.task.ReplicationTask
+import com.buuz135.replication.block.tile.ReplicatorBlockEntity
 import com.buuz135.replication.network.MatterNetwork
 import com.hrznstudio.titanium.block_network.Network
 import com.hrznstudio.titanium.block_network.element.NetworkElement
@@ -41,6 +44,7 @@ import dev.lapis256.apprep.api.replication.matter_network.MatterNetworkListener
 import dev.lapis256.apprep.api.replication.matter_network.addListener
 import dev.lapis256.apprep.api.replication.matter_network.removeListener
 import dev.lapis256.apprep.api.replication.task.MEReplicationTask
+import dev.lapis256.apprep.api.replication.task.isMEAutoCraftingTask
 import dev.lapis256.apprep.api.replication.util.MATTER_TYPES
 import dev.lapis256.apprep.api.replication.util.addTask
 import dev.lapis256.apprep.api.titanium.network_element.NetworkElementListener
@@ -54,11 +58,9 @@ import dev.lapis256.apprep.common.replication.MENetworkMatterTankList
 import dev.lapis256.apprep.common.storage.ReplicationConnectorReturnInventory
 import it.unimi.dsi.fastutil.objects.Object2LongMap
 import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.core.HolderLookup
-import net.minecraft.core.UUIDUtil
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.nbt.Tag
 import net.minecraft.server.level.ServerLevel
@@ -66,7 +68,6 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.entity.BlockEntity
 import org.slf4j.Logger
-import java.util.*
 
 
 class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: ReplicationConnectorLogicHost) :
@@ -76,12 +77,7 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
     companion object {
         val LOGGER: Logger = LogUtils.getLogger()
 
-        val PUSHED_REPLICATION_TASKS_CODEC: Codec<ObjectOpenHashSet<UUID>> =
-            UUIDUtil.CODEC.listOf().fieldOf("pushed_replication_tasks").codec().xmap(
-                { ObjectOpenHashSet(it) },
-                { it.toList() }
-            )
-
+        // TODO(22.0): Remove legacy pending-task save compatibility.
         val PENDING_TASK_CODEC: Codec<PendingTask> = PendingTask.CODEC.fieldOf("pending_task").codec()
     }
 
@@ -118,8 +114,8 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
         _priority = newValue
     }
 
+    // TODO(22.0): Remove after saves from 21.x no longer need to finish a queued legacy batch.
     private var pendingTask: PendingTask? = null
-    private var pushedReplicationTasks: ObjectOpenHashSet<UUID> = ObjectOpenHashSet()
 
     val delegatingStorage = DelegatingMatterNetworkStorage()
     private var connectedMatterNetwork: MatterNetwork? = null
@@ -202,33 +198,42 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
 
     inner class CraftingProvider : ICraftingProvider {
 
+        private fun getAvailableReplicatorPositions(matterNetwork: MatterNetwork): Set<Long> {
+            return matterNetwork.replicators
+                .asSequence()
+                .filter { it.level.isLoaded(it.pos) }
+                .mapNotNull { it.level.getBlockEntity(it.pos) as? ReplicatorBlockEntity }
+                .filterNot { it.isInfinite }
+                .map { it.blockPos.asLong() }
+                .toSet()
+        }
+
         private fun canPushNextPattern(): Boolean {
-            val matterNetwork = host.matterNetwork ?: return false
-            val taskManager = matterNetwork.taskManager
-
-            val iterator = pushedReplicationTasks.iterator()
-            var tasksRemoved = false
-            try {
-                while (iterator.hasNext()) {
-                    val taskUuid = iterator.next()
-                    val task = taskManager.pendingTasks[taskUuid.toString()]
-                    if (task == null) {
-                        iterator.remove()
-                        tasksRemoved = true
-                        continue
-                    }
-
-                    val completedPercent = task.currentAmount.toDouble() / task.totalAmount.toDouble()
-                    if (completedPercent <= 0.25) {
-                        return false
-                    }
-                }
-                return true
-            } finally {
-                if (tasksRemoved) {
-                    host.saveChanges()
-                }
+            // Finish a queued 21.x batch before accepting work using the new task model.
+            if (pendingTask != null) {
+                return false
             }
+
+            val matterNetwork = host.matterNetwork ?: return false
+            val availableReplicators = getAvailableReplicatorPositions(matterNetwork)
+            if (availableReplicators.isEmpty()) {
+                return false
+            }
+
+            val tasks = matterNetwork.taskManager.pendingTasks.values
+
+            val occupiedReplicators = tasks
+                .asSequence()
+                .flatMap { it.replicatorsOnTask.asSequence() }
+                .count { it in availableReplicators }
+
+            val queuedAutoCraftingTasks = tasks.count { task ->
+                task is ReplicationTask &&
+                    task.isMEAutoCraftingTask &&
+                    task.replicatorsOnTask.isEmpty()
+            }
+
+            return occupiedReplicators + queuedAutoCraftingTasks < availableReplicators.size
         }
 
         override fun getAvailablePatterns(): List<IPatternDetails> = patterns
@@ -238,27 +243,37 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
                 return false
             }
 
+            val matterNetwork = host.matterNetwork ?: return false
+            val level = host.matterNetworkElement?.level as? ServerLevel ?: return false
+            val pos = host.matterNetworkElement?.pos ?: return false
+
             val output = patternDetails.outputs[0] ?: return false
             val item = output.what as? AEItemKey ?: return false
 
-            if (pendingTask != null && pendingTask?.output != item) {
-                return false
+            val extracted = Object2LongOpenHashMap<IMatterType>()
+            inputHolder.forEach { counter ->
+                counter.forEach {
+                    val what = it.key as? MatterKey ?: return@forEach
+                    extracted[what.type] = extracted.getLong(what.type) + it.longValue
+                }
             }
 
-            if (pendingTask == null) {
-                pendingTask = PendingTask(inputHolder, item)
-            }
-            pendingTask!!.increaseProcessingCount()
-            host.saveChanges()
+            val task = MEReplicationTask.create(
+                extracted,
+                item,
+                1,
+                pos,
+                IReplicationTask.Mode.SINGLE,
+                autoCraftingTask = true
+            )
 
-            alertDevice()
+            matterNetwork.taskManager.addTask(task)
+            matterNetwork.onTaskValueChanged(task, level)
 
             return true
         }
 
-        override fun isBusy(): Boolean {
-            return !canPushNextPattern()
-        }
+        override fun isBusy(): Boolean = !canPushNextPattern()
 
         override fun getPatternPriority() = priority
     }
@@ -272,7 +287,7 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
                 return TickRateModulation.SLEEP
             }
 
-            val taskPushed = pushPendingTask()
+            val taskPushed = pushLegacyPendingTask()
             val inserted = insertReturnedItems()
 
             if (taskPushed || inserted) {
@@ -296,7 +311,8 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
             return false
         }
 
-        private fun pushPendingTask(): Boolean {
+        // TODO(22.0): Remove legacy 21.x batched-task migration.
+        private fun pushLegacyPendingTask(): Boolean {
             val toPushTask = pendingTask ?: return false
 
             val matterNetwork = host.matterNetwork ?: return false
@@ -314,7 +330,6 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
             matterNetwork.taskManager.addTask(task)
             matterNetwork.onTaskValueChanged(task, level)
 
-            pushedReplicationTasks.add(task.uuid)
             pendingTask = null
             host.saveChanges()
 
@@ -458,8 +473,8 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
 
         upgrades.writeToNBT(tag, "upgrades", registries)
 
+        // TODO(22.0): Remove legacy pending-task persistence.
         pendingTask?.let { tag.putCodec(PENDING_TASK_CODEC, it) }
-        tag.putCodec(PUSHED_REPLICATION_TASKS_CODEC, pushedReplicationTasks)
     }
 
     fun readFromNBT(tag: CompoundTag, registries: HolderLookup.Provider) {
@@ -469,8 +484,8 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
 
         upgrades.readFromNBT(tag, "upgrades", registries)
 
+        // TODO(22.0): Remove legacy pending-task migration.
         pendingTask = tag.getCodec(PENDING_TASK_CODEC)
-        pushedReplicationTasks = tag.getCodec(PUSHED_REPLICATION_TASKS_CODEC) ?: ObjectOpenHashSet()
     }
 
     private fun remountStorage() {
