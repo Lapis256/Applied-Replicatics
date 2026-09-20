@@ -7,7 +7,7 @@ import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 
 
-// TODO(22.0): Remove with the legacy ReplicationConnectorLogic pending-task migration.
+// TODO(next major): Remove with the legacy ReplicationConnectorLogic pending-task migration when bumping the mod major version.
 data class PendingTask(
     val input: KeyCounter,
     val output: AEItemKey,
