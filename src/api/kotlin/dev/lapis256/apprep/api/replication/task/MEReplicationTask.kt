@@ -19,8 +19,6 @@ import kotlin.math.max
 interface MEReplicationTask {
     fun `apprep$setInternalMatterStacks`(stacks: Object2LongMap<IMatterType>)
     fun `apprep$getInternalMatterStacks`(): Object2LongMap<IMatterType>
-    fun `apprep$setAutoCraftingTask`(autoCraftingTask: Boolean)
-    fun `apprep$isAutoCraftingTask`(): Boolean
 
     /**
      * 自動クラフトの材料として搬出されたマター
@@ -29,18 +27,12 @@ interface MEReplicationTask {
         get() = `apprep$getInternalMatterStacks`()
         set(value) = `apprep$setInternalMatterStacks`(value)
 
-    private var autoCraftingTask: Boolean
-        get() = `apprep$isAutoCraftingTask`()
-        set(value) = `apprep$setAutoCraftingTask`(value)
-
     fun deserializeAdditionalNBT(provider: HolderLookup.Provider, compoundTag: CompoundTag) {
         val ops = provider.createSerializationContext(NbtOps.INSTANCE)
         INTERNAL_MATTER_STACKS_CODEC.parse(ops, compoundTag)
             .ifSuccess {
                 internalMatterStacks = it
             }
-
-        autoCraftingTask = compoundTag.getBoolean(AUTO_CRAFTING_TASK_TAG)
     }
 
     fun serializeAdditionalNBT(provider: HolderLookup.Provider, compoundTag: CompoundTag): CompoundTag {
@@ -50,10 +42,6 @@ interface MEReplicationTask {
             .ifSuccess {
                 compoundTag.merge(it as CompoundTag)
             }
-
-        if (autoCraftingTask) {
-            compoundTag.putBoolean(AUTO_CRAFTING_TASK_TAG, true)
-        }
 
         return compoundTag
     }
@@ -68,8 +56,6 @@ interface MEReplicationTask {
     }
 
     companion object {
-        private const val AUTO_CRAFTING_TASK_TAG = "${AppliedReplicaticsAPI.MOD_ID}:auto_crafting_task"
-
         val MATTER_COUNT_CODEC: Codec<Object2LongMap<IMatterType>> = Codec.unboundedMap(
             MATTER_TYPE_NAME_CODEC,
             Codec.LONG
@@ -83,8 +69,7 @@ interface MEReplicationTask {
             output: AEItemKey,
             totalAmount: Long,
             source: BlockPos,
-            mode: IReplicationTask.Mode = IReplicationTask.Mode.MULTIPLE,
-            autoCraftingTask: Boolean = false
+            mode: IReplicationTask.Mode = IReplicationTask.Mode.MULTIPLE
         ): ReplicationTask {
             return ReplicationTask(
                 output.toStack(),
@@ -94,7 +79,6 @@ interface MEReplicationTask {
                 false
             ).apply {
                 this.internalMatterStacks = internalMatterStacks
-                this.autoCraftingTask = autoCraftingTask
             }
         }
     }
