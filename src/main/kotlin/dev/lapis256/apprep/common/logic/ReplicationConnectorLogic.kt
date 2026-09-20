@@ -26,8 +26,6 @@ import com.buuz135.replication.api.network.IMatterTanksConsumer
 import com.buuz135.replication.api.network.IMatterTanksSupplier
 import com.buuz135.replication.api.pattern.IMatterPatternHolder
 import com.buuz135.replication.api.task.IReplicationTask
-import com.buuz135.replication.api.task.ReplicationTask
-import com.buuz135.replication.block.tile.ReplicatorBlockEntity
 import com.buuz135.replication.network.MatterNetwork
 import com.hrznstudio.titanium.block_network.Network
 import com.hrznstudio.titanium.block_network.element.NetworkElement
@@ -44,7 +42,6 @@ import dev.lapis256.apprep.api.replication.matter_network.MatterNetworkListener
 import dev.lapis256.apprep.api.replication.matter_network.addListener
 import dev.lapis256.apprep.api.replication.matter_network.removeListener
 import dev.lapis256.apprep.api.replication.task.MEReplicationTask
-import dev.lapis256.apprep.api.replication.task.isMEAutoCraftingTask
 import dev.lapis256.apprep.api.replication.util.MATTER_TYPES
 import dev.lapis256.apprep.api.replication.util.addTask
 import dev.lapis256.apprep.api.titanium.network_element.NetworkElementListener
@@ -198,42 +195,29 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
 
     inner class CraftingProvider : ICraftingProvider {
 
-        private fun getAvailableReplicatorPositions(matterNetwork: MatterNetwork): Set<Long> {
-            return matterNetwork.replicators
-                .asSequence()
-                .filter { it.level.isLoaded(it.pos) }
-                .mapNotNull { it.level.getBlockEntity(it.pos) as? ReplicatorBlockEntity }
-                .filterNot { it.isInfinite }
-                .map { it.blockPos.asLong() }
-                .toSet()
-        }
-
         private fun canPushNextPattern(): Boolean {
-            // Finish a queued 21.x batch before accepting work using the new task model.
+            // Finish a queued legacy batch before accepting work using the new task model.
             if (pendingTask != null) {
                 return false
             }
 
             val matterNetwork = host.matterNetwork ?: return false
-            val availableReplicators = getAvailableReplicatorPositions(matterNetwork)
-            if (availableReplicators.isEmpty()) {
+            val replicatorCount = matterNetwork.replicators.size
+            if (replicatorCount == 0) {
                 return false
             }
 
-            val tasks = matterNetwork.taskManager.pendingTasks.values
-
-            val occupiedReplicators = tasks
-                .asSequence()
-                .flatMap { it.replicatorsOnTask.asSequence() }
-                .count { it in availableReplicators }
-
-            val queuedAutoCraftingTasks = tasks.count { task ->
-                task is ReplicationTask &&
-                    task.isMEAutoCraftingTask &&
-                    task.replicatorsOnTask.isEmpty()
+            // Match Replication's own worker accounting: every SINGLE task reserves one
+            // Replicator, while MULTIPLE tasks only occupy the workers currently assigned.
+            val reservedReplicators = matterNetwork.taskManager.pendingTasks.values.sumOf { task ->
+                if (task.mode == IReplicationTask.Mode.SINGLE) {
+                    1
+                } else {
+                    task.replicatorsOnTask.size
+                }
             }
 
-            return occupiedReplicators + queuedAutoCraftingTasks < availableReplicators.size
+            return reservedReplicators < replicatorCount
         }
 
         override fun getAvailablePatterns(): List<IPatternDetails> = patterns
@@ -263,8 +247,7 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
                 item,
                 1,
                 pos,
-                IReplicationTask.Mode.SINGLE,
-                autoCraftingTask = true
+                IReplicationTask.Mode.SINGLE
             )
 
             matterNetwork.taskManager.addTask(task)
