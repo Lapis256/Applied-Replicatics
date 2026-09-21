@@ -64,11 +64,18 @@ interface MEReplicationTask {
         val INTERNAL_MATTER_STACKS_CODEC: Codec<Object2LongMap<IMatterType>> =
             MATTER_COUNT_CODEC.fieldOf("${AppliedReplicaticsAPI.MOD_ID}:internal_matter_stacks").codec()
 
-        fun create(internalMatterStacks: Object2LongMap<IMatterType>, output: AEItemKey, totalAmount: Long, source: BlockPos): ReplicationTask {
+        @JvmOverloads
+        fun create(
+            internalMatterStacks: Object2LongMap<IMatterType>,
+            output: AEItemKey,
+            totalAmount: Long,
+            source: BlockPos,
+            mode: IReplicationTask.Mode = IReplicationTask.Mode.MULTIPLE
+        ): ReplicationTask {
             return ReplicationTask(
                 output.toStack(),
                 max(1, totalAmount.toInt()),
-                IReplicationTask.Mode.MULTIPLE,
+                mode,
                 source,
                 false
             ).apply {
