@@ -30,8 +30,8 @@ jobs:
       - name: Setup common environment
         uses: ./.github/actions/setup-common-env
 
-      - name: Build
-        run: ./gradlew build
+      - name: Build and test
+        run: ./gradlew runGameTestServer build
 
       - name: Upload artifacts
         uses: ./.github/actions/build-and-upload-artifacts
