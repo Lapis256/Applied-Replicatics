@@ -57,7 +57,7 @@ class MatterKey private constructor(val stack: MatterStack) : AEKey() {
     }
 
     override fun toTag(output: ValueOutput) {
-        output.store(MAP_CODEC, this)
+        output.store("type", MATTER_TYPE_NAME_CODEC, type)
     }
 
     override fun writeToPacket(data: RegistryFriendlyByteBuf) {
