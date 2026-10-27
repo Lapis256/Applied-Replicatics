@@ -1,6 +1,7 @@
 package dev.lapis256.apprep.data.provider.client
 
 import appeng.client.item.StorageCellStateTintSource
+import appeng.core.AppEng
 import dev.lapis256.apprep.api.AppliedReplicaticsAPI
 import dev.lapis256.apprep.common.init.AppRepBlocks
 import dev.lapis256.apprep.common.init.AppRepItems
@@ -15,7 +16,6 @@ import net.minecraft.client.data.models.model.TextureSlot
 import net.minecraft.client.resources.model.sprite.Material
 import net.minecraft.core.Direction
 import net.minecraft.data.PackOutput
-import net.minecraft.resources.Identifier
 import net.neoforged.neoforge.client.model.generators.template.ExtendedModelTemplateBuilder
 
 
@@ -35,9 +35,9 @@ class AppRepModelProvider(output: PackOutput) : ModelProvider(output, AppliedRep
         val model = ModelTemplates.THREE_LAYERED_ITEM.create(
             cell.asItem(),
             TextureMapping()
-                .put(TextureSlot.LAYER0, Material(AppliedReplicaticsAPI.rl("item/matter_cell_housing")))
-                .put(TextureSlot.LAYER1, Material(Identifier.fromNamespaceAndPath("ae2", "item/storage_cell_led")))
-                .put(TextureSlot.LAYER2, Material(AppliedReplicaticsAPI.rl("item/cell_tier/tier_$tier"))),
+                .put(TextureSlot.LAYER0, Material(modLocation("item/matter_cell_housing")))
+                .put(TextureSlot.LAYER1, Material(AppEng.makeId("item/storage_cell_led")))
+                .put(TextureSlot.LAYER2, Material(modLocation("item/cell_tier/tier_$tier"))),
             items.modelOutput
         )
         items.itemModelOutput.accept(
@@ -55,7 +55,7 @@ class AppRepModelProvider(output: PackOutput) : ModelProvider(output, AppliedRep
         val tier = cell.tier.namePrefix.lowercase()
         val offset = ((cell.tier.index - 1) * 2).toFloat()
         val cellTexture = TextureSlot.create("cell")
-        val texture = Material(AppliedReplicaticsAPI.rl("block/drive/cells/matter"))
+        val texture = Material(modLocation("block/drive/cells/matter"))
         ExtendedModelTemplateBuilder.builder()
             .ambientOcclusion(false)
             .requiredTextureSlot(cellTexture)
@@ -69,7 +69,7 @@ class AppRepModelProvider(output: PackOutput) : ModelProvider(output, AppliedRep
             }
             .build()
             .create(
-                AppliedReplicaticsAPI.rl("block/drive/cells/${tier}_matter_cell"),
+                modLocation("block/drive/cells/${tier}_matter_cell"),
                 TextureMapping().put(cellTexture, texture).put(TextureSlot.PARTICLE, texture),
                 blocks.modelOutput
             )
