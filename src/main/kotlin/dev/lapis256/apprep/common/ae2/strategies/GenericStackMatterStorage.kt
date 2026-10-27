@@ -32,17 +32,11 @@ class GenericStackMatterStorage(val inventory: GenericInternalInventory) : IMatt
 
     override fun fill(stack: MatterStack, action: IFluidHandler.FluidAction): Double {
         val key = MatterKey.of(stack) ?: return 0.0
-        val remainder = stack.amount - inventory.insert(0, key, stack.amount.toLong(), action.toActionable())
-
-        if (remainder <= 0.0) {
-            return 0.0
-        }
-
-        return key.toStack(remainder.toLong()).amount
+        return inventory.insert(0, key, stack.amount.toLong(), action.toActionable()).toDouble()
     }
 
     override fun drain(resource: MatterStack, action: IFluidHandler.FluidAction): MatterStack {
-        if (resource.isEmpty || !resource.isMatterEqual(resource)) {
+        if (resource.isEmpty || !resource.isMatterEqual(getMatterInTank(0))) {
             return MatterStack.EMPTY
         }
         return drain(resource.amount, action)
