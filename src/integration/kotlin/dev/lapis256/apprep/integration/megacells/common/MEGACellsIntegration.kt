@@ -1,3 +1,4 @@
+/*
 package dev.lapis256.apprep.integration.megacells.common
 
 import dev.lapis256.apprep.integration.megacells.common.init.AppRepMEGABlocks
@@ -22,3 +23,5 @@ class MEGACellsIntegration(modBus: IEventBus) {
         }
     }
 }
+
+*/

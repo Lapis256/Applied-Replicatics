@@ -1,3 +1,4 @@
+/*
 package dev.lapis256.apprep.data.provider.server.tags
 
 import dev.lapis256.apprep.integration.megacells.common.init.AppRepMEGAItems
@@ -27,3 +28,4 @@ class AppRepItemTagsProvider(
             .addOptional(AppRepMEGAItems.SKY_REPLICA_INGOT.id())
     }
 }
+*/

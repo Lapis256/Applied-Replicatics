@@ -1,8 +1,0 @@
-{
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "apprep:item/mega_matter_cell_housing",
-    "layer1": "ae2:item/storage_cell_led",
-    "layer2": "apprep:item/cell_tier/tier_16m"
-  }
-}

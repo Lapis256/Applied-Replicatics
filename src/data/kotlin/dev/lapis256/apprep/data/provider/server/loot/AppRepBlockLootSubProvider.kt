@@ -1,6 +1,6 @@
 package dev.lapis256.apprep.data.provider.server.loot
 
-import dev.lapis256.apprep.integration.megacells.common.init.AppRepMEGABlocks
+// import dev.lapis256.apprep.integration.megacells.common.init.AppRepMEGABlocks
 import dev.lapis256.apprep.api.AppliedReplicaticsAPI
 import dev.lapis256.apprep.common.init.AppRepBlocks
 import net.minecraft.core.HolderLookup
@@ -15,8 +15,8 @@ class AppRepBlockLootSubProvider(provider: HolderLookup.Provider) :
 
     override fun getKnownBlocks(): Iterable<Block> {
         return BuiltInRegistries.BLOCK.filter {
-            it.lootTable.location().namespace == AppliedReplicaticsAPI.MOD_ID &&
-                    it != AppRepMEGABlocks.SKY_REPLICA_BLOCK.block() // neoforge:mod_loaded ありのファイルを生成できないため
+            BuiltInRegistries.BLOCK.getKey(it).namespace == AppliedReplicaticsAPI.MOD_ID
+            // && it != AppRepMEGABlocks.SKY_REPLICA_BLOCK.block()
         }
     }
 

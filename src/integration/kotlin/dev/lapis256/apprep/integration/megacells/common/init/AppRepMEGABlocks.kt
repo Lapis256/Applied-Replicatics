@@ -1,3 +1,4 @@
+/*
 package dev.lapis256.apprep.integration.megacells.common.init
 
 import appeng.block.AEBaseBlockItem
@@ -44,3 +45,5 @@ object AppRepMEGABlocks {
         .also(AppRepCreativeTab::registerItem)
         .also(BLOCKS::add)
 }
+
+*/

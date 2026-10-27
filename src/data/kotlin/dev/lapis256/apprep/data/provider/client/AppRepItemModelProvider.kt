@@ -1,42 +1,42 @@
 package dev.lapis256.apprep.data.provider.client
 
-import appeng.core.AppEng
-import appeng.core.definitions.ItemDefinition
-import dev.lapis256.apprep.integration.megacells.common.init.AppRepMEGAItems
+import appeng.client.item.StorageCellStateTintSource
+import com.google.gson.JsonParser
 import dev.lapis256.apprep.api.AppliedReplicaticsAPI
+import dev.lapis256.apprep.common.init.AppRepBlocks
 import dev.lapis256.apprep.common.init.AppRepItems
-import dev.lapis256.apprep.extension.MatterCellDefinition
+import net.minecraft.client.data.models.BlockModelGenerators
+import net.minecraft.client.data.models.ItemModelGenerators
+import net.minecraft.client.data.models.ModelProvider
+import net.minecraft.client.data.models.model.ItemModelUtils
+import net.minecraft.client.data.models.model.ModelInstance
+import net.minecraft.client.data.models.model.ModelTemplates
+import net.minecraft.client.data.models.model.TextureMapping
+import net.minecraft.client.data.models.model.TextureSlot
+import net.minecraft.client.resources.model.sprite.Material
 import net.minecraft.data.PackOutput
 import net.minecraft.resources.Identifier
-import net.neoforged.neoforge.client.model.generators.ItemModelProvider
-import net.neoforged.neoforge.common.data.ExistingFileHelper
 
+class AppRepItemModelProvider(output: PackOutput) : ModelProvider(output, AppliedReplicaticsAPI.MOD_ID) {
+    override fun registerModels(blocks: BlockModelGenerators, items: ItemModelGenerators) {
+        blocks.createTrivialCube(AppRepBlocks.REPLICATION_CONNECTOR.block())
+        items.generateFlatItem(AppRepItems.MATTER_CELL_HOUSING.asItem(), ModelTemplates.FLAT_ITEM)
 
-class AppRepItemModelProvider(output: PackOutput, helper: ExistingFileHelper) :
-    ItemModelProvider(output, AppliedReplicaticsAPI.MOD_ID, helper) {
+        for (cell in AppRepItems.CELLS) {
+            val tier = cell.tier.namePrefix.lowercase()
+            val model = ModelTemplates.THREE_LAYERED_ITEM.create(
+                cell.asItem(),
+                TextureMapping()
+                    .put(TextureSlot.LAYER0, Material(AppliedReplicaticsAPI.rl("item/matter_cell_housing")))
+                    .put(TextureSlot.LAYER1, Material(Identifier.fromNamespaceAndPath("ae2", "item/storage_cell_led")))
+                    .put(TextureSlot.LAYER2, Material(AppliedReplicaticsAPI.rl("item/cell_tier/tier_$tier"))),
+                items.modelOutput
+            )
+            items.itemModelOutput.accept(cell.asItem(), ItemModelUtils.tintedModel(model, ItemModelUtils.constantTint(-1), StorageCellStateTintSource()))
 
-    private val parent = mcLoc("item/generated")
-    private val cellLed: Identifier = AppEng.makeId("item/storage_cell_led")
-
-    override fun registerModels() {
-        AppRepItems.CELLS.forEach(::cellTexture)
-
-        simpleTexture(AppRepItems.MATTER_CELL_HOUSING)
-
-        simpleTexture(AppRepMEGAItems.SKY_REPLICA_INGOT)
-        simpleTexture(AppRepMEGAItems.MEGA_MATTER_CELL_HOUSING)
+            val offset = (cell.tier.index - 1) * 2
+            val json = """{"ambientocclusion":false,"elements":[{"from":[0,0,0],"to":[6,2,2],"faces":{"north":{"uv":[0,$offset,6,${offset + 2}],"texture":"#cell","cullface":"north"},"up":{"uv":[6,$offset,0,${offset + 2}],"texture":"#cell","cullface":"north"},"down":{"uv":[6,$offset,0,${offset + 2}],"texture":"#cell","cullface":"north"}}}],"textures":{"cell":"apprep:block/drive/cells/matter","particle":"apprep:block/drive/cells/matter"}}"""
+            blocks.modelOutput.accept(AppliedReplicaticsAPI.rl("block/drive/cells/${tier}_matter_cell"), ModelInstance { JsonParser.parseString(json) })
+        }
     }
-
-    private fun cellTexture(cell: MatterCellDefinition) {
-        val isMEGA = cell.tier.index in 6..10
-        val megaPrefix = if (isMEGA) "mega_" else ""
-        withExistingParent(cell.id().path, parent)
-            .texture("layer0", modLoc("item/${megaPrefix}matter_cell_housing"))
-            .texture("layer1", cellLed)
-            .texture("layer2", modLoc("item/cell_tier/tier_${cell.tier.namePrefix.lowercase()}"))
-    }
-
-    private fun simpleTexture(item: ItemDefinition<*>) =
-        withExistingParent(item.id().path, parent)
-            .texture("layer0", modLoc("item/${item.id().path}"))
 }

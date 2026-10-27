@@ -10,12 +10,12 @@ item_ids:
     - matter_cell_16k
     - matter_cell_64k
     - matter_cell_256k
-    - mega_matter_cell_housing
-    - matter_cell_1m
-    - matter_cell_4m
-    - matter_cell_16m
-    - matter_cell_64m
-    - matter_cell_256m
+#    - mega_matter_cell_housing
+#    - matter_cell_1m
+#    - matter_cell_4m
+#    - matter_cell_16m
+#    - matter_cell_64m
+#    - matter_cell_256m
 ---
 
 # Applied Replicatics: ME Matter Storage Cell
@@ -43,7 +43,7 @@ Replication のマターが保存可能な [ストレージセル](ae2:items-blo
 
 基本的な仕様は [ストレージセル](ae2:items-blocks-machines/storage_cells.md) と同様ですが、256マターで 1バイト消費します。
 
-MEGA Cells との連携要素として MEGAストレージセルも利用可能です。
+<!-- MEGA Cells との連携要素として MEGAストレージセルも利用可能です。 -->
 
 ---
 

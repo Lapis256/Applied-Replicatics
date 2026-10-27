@@ -1,3 +1,4 @@
+/*
 package dev.lapis256.apprep.data.provider.client
 
 import appeng.datagen.providers.models.AE2BlockStateProvider
@@ -61,3 +62,5 @@ class AppRepBlockModelProvider(output: PackOutput, helper: ExistingFileHelper) :
             .end()
     }
 }
+
+*/

@@ -1,3 +1,4 @@
+/*
 package dev.lapis256.apprep.integration.megacells.common.init
 
 import net.minecraft.resources.Identifier
@@ -21,3 +22,5 @@ object AppRepMEGATags {
         private fun create(tag: String): TagKey<Block> = BlockTags.create(Identifier.parse(tag))
     }
 }
+
+*/

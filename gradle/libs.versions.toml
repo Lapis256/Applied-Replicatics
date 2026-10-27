@@ -1,5 +1,5 @@
 [versions]
-plugin-kotlin = "2.3.0"
+plugin-kotlin = "2.4.21"
 plugin-moddev = "2.0.141"
 plugin-modPublishPlugin = "1.1.0"
 plugin-dokka= "2.1.0"
@@ -7,7 +7,6 @@ plugin-dokka= "2.1.0"
 
 minecraft = "26.1.2"
 neoforge = "26.1.2.124"
-kotlinLangForge = "2.16.0-k2.4.21-3.1+neoforge"
 
 junit = "6.0.1"
 
@@ -27,7 +26,6 @@ appliedFlux = "9304490" # 26.1-1.0.4-neoforge
 
 
 [libraries]
-kotlinLangForge = { module = "dev.nyon:KotlinLangForge", version.ref = "kotlinLangForge" }
 
 junit = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
 junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }
@@ -68,13 +66,12 @@ implementation = [
 ]
 
 runtimeOnly = [
-    "kotlinLangForge",
     "spark",
     "jei"
 ]
 
 integrationImplementation = [
-    "megaCells",
+    # "megaCells", # No 26.1.2 release yet.
     "goldium",
     "extendedAE",
     "geckolib",
