@@ -43,7 +43,6 @@ Replication のマターが保存可能な [ストレージセル](ae2:items-blo
 
 基本的な仕様は [ストレージセル](ae2:items-blocks-machines/storage_cells.md) と同様ですが、256マターで 1バイト消費します。
 
-{/* MEGA Cells との連携要素として MEGAストレージセルも利用可能です。 */}
 
 ---
 
