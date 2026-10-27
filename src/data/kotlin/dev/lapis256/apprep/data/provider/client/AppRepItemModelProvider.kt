@@ -1,7 +1,6 @@
 package dev.lapis256.apprep.data.provider.client
 
 import appeng.client.item.StorageCellStateTintSource
-import com.google.gson.JsonParser
 import dev.lapis256.apprep.api.AppliedReplicaticsAPI
 import dev.lapis256.apprep.common.init.AppRepBlocks
 import dev.lapis256.apprep.common.init.AppRepItems
@@ -9,13 +8,14 @@ import net.minecraft.client.data.models.BlockModelGenerators
 import net.minecraft.client.data.models.ItemModelGenerators
 import net.minecraft.client.data.models.ModelProvider
 import net.minecraft.client.data.models.model.ItemModelUtils
-import net.minecraft.client.data.models.model.ModelInstance
 import net.minecraft.client.data.models.model.ModelTemplates
 import net.minecraft.client.data.models.model.TextureMapping
 import net.minecraft.client.data.models.model.TextureSlot
 import net.minecraft.client.resources.model.sprite.Material
 import net.minecraft.data.PackOutput
 import net.minecraft.resources.Identifier
+import net.minecraft.core.Direction
+import net.neoforged.neoforge.client.model.generators.template.ExtendedModelTemplateBuilder
 
 class AppRepItemModelProvider(output: PackOutput) : ModelProvider(output, AppliedReplicaticsAPI.MOD_ID) {
     override fun registerModels(blocks: BlockModelGenerators, items: ItemModelGenerators) {
@@ -32,11 +32,31 @@ class AppRepItemModelProvider(output: PackOutput) : ModelProvider(output, Applie
                     .put(TextureSlot.LAYER2, Material(AppliedReplicaticsAPI.rl("item/cell_tier/tier_$tier"))),
                 items.modelOutput
             )
-            items.itemModelOutput.accept(cell.asItem(), ItemModelUtils.tintedModel(model, ItemModelUtils.constantTint(-1), StorageCellStateTintSource()))
+            items.itemModelOutput.accept(
+                cell.asItem(),
+                ItemModelUtils.tintedModel(model, ItemModelUtils.constantTint(-1), StorageCellStateTintSource())
+            )
 
-            val offset = (cell.tier.index - 1) * 2
-            val json = """{"ambientocclusion":false,"elements":[{"from":[0,0,0],"to":[6,2,2],"faces":{"north":{"uv":[0,$offset,6,${offset + 2}],"texture":"#cell","cullface":"north"},"up":{"uv":[6,$offset,0,${offset + 2}],"texture":"#cell","cullface":"north"},"down":{"uv":[6,$offset,0,${offset + 2}],"texture":"#cell","cullface":"north"}}}],"textures":{"cell":"apprep:block/drive/cells/matter","particle":"apprep:block/drive/cells/matter"}}"""
-            blocks.modelOutput.accept(AppliedReplicaticsAPI.rl("block/drive/cells/${tier}_matter_cell"), ModelInstance { JsonParser.parseString(json) })
+            val offset = ((cell.tier.index - 1) * 2).toFloat()
+            val cellTexture = TextureSlot.create("cell")
+            val texture = Material(AppliedReplicaticsAPI.rl("block/drive/cells/matter"))
+            ExtendedModelTemplateBuilder.builder()
+                .ambientOcclusion(false)
+                .requiredTextureSlot(cellTexture)
+                .requiredTextureSlot(TextureSlot.PARTICLE)
+                .element { element ->
+                    element.to(6f, 2f, 2f)
+                    element.face(Direction.NORTH) { it.uvs(0f, offset, 6f, offset + 2f) }
+                    element.face(Direction.UP) { it.uvs(6f, offset, 0f, offset + 2f) }
+                    element.face(Direction.DOWN) { it.uvs(6f, offset, 0f, offset + 2f) }
+                    element.faces { _, face -> face.texture(cellTexture).cullface(Direction.NORTH) }
+                }
+                .build()
+                .create(
+                    AppliedReplicaticsAPI.rl("block/drive/cells/${tier}_matter_cell"),
+                    TextureMapping().put(cellTexture, texture).put(TextureSlot.PARTICLE, texture),
+                    blocks.modelOutput
+                )
         }
     }
 }

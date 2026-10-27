@@ -7,30 +7,30 @@
           "cullface": "north",
           "texture": "#cell",
           "uv": [
-            6,
-            6,
-            0,
-            8
+            6.0,
+            6.0,
+            0.0,
+            8.0
           ]
         },
         "north": {
           "cullface": "north",
           "texture": "#cell",
           "uv": [
-            0,
-            6,
-            6,
-            8
+            0.0,
+            6.0,
+            6.0,
+            8.0
           ]
         },
         "up": {
           "cullface": "north",
           "texture": "#cell",
           "uv": [
-            6,
-            6,
-            0,
-            8
+            6.0,
+            6.0,
+            0.0,
+            8.0
           ]
         }
       },

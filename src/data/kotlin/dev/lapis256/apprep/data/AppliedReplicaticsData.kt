@@ -20,19 +20,12 @@ class AppliedReplicaticsData(modBus: IEventBus) {
     }
 
     private fun onGatherData(event: GatherDataEvent.Client) {
-        val generator = event.generator
-        val output = generator.packOutput
+        val output = event.generator.packOutput
         val provider = event.lookupProvider
-
-        generator.addProvider(true, AppRepLanguageProvider(output))
-        generator.addProvider(true, AppRepItemModelProvider(output))
-        // generator.addProvider(true, AppRepBlockModelProvider(output, helper))
-
-
-        generator.addProvider(true, AppRepRecipeProvider.Runner(output, provider))
-        generator.addProvider(true, AppRepLootTableProvider(output, provider))
-
-        generator.addProvider(true, AppRepBlockTagsProvider(output, provider))
-        // generator.addProvider(true, AppRepItemTagsProvider(output, provider, blockTags, helper))
+        event.addProvider(AppRepLanguageProvider(output))
+        event.addProvider(AppRepItemModelProvider(output))
+        event.addProvider(AppRepRecipeProvider.Runner(output, provider))
+        event.addProvider(AppRepLootTableProvider(output, provider))
+        event.addProvider(AppRepBlockTagsProvider(output, provider))
     }
 }
