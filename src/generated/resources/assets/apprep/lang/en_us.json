@@ -1,4 +1,5 @@
 {
+  "block.apprep.replication_connector": "ME Replication Connector",
   "gui.apprep.creative_tab": "Applied Replicatics",
   "gui.apprep.matter": "Matter",
   "gui.apprep.matter_network_storage": "Matter Network Storage",
@@ -7,6 +8,5 @@
   "item.apprep.matter_cell_256k": "256k ME Matter Storage Cell",
   "item.apprep.matter_cell_4k": "4k ME Matter Storage Cell",
   "item.apprep.matter_cell_64k": "64k ME Matter Storage Cell",
-  "item.apprep.matter_cell_housing": "ME Matter Cell Housing",
-  "item.apprep.replication_connector": "ME Replication Connector"
+  "item.apprep.matter_cell_housing": "ME Matter Cell Housing"
 }

@@ -38,6 +38,7 @@ fun <BLOCK : Block> DeferredRegister.Blocks.register(
     val deferredBlock = registerBlock(name, supplier)
     val deferredItem = itemRegistry.registerItem(name) { properties ->
         val block = deferredBlock.get()
+        properties.useBlockDescriptionPrefix()
         when {
             itemSupplier != null -> itemSupplier(block, properties)
             block is AEBaseBlock -> AEBaseBlockItem(block, properties)

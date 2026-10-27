@@ -17,7 +17,7 @@ class AppRepLanguageProvider(output: PackOutput) : LanguageProvider(output, Appl
         }
 
         for (block in AppRepBlocks.BLOCKS /* + AppRepMEGABlocks.BLOCKS */) {
-            add(block.asItem(), block.englishName)
+            add(block.block(), block.englishName)
         }
 
         for(text in AppRepGuiText.entries) {

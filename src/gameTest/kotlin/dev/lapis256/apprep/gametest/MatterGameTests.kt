@@ -12,6 +12,7 @@ import net.minecraft.core.BlockPos
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.gametest.framework.GameTestHelper
 import net.minecraft.nbt.CompoundTag
+import net.minecraft.network.chat.contents.TranslatableContents
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.neoforged.bus.api.IEventBus
@@ -49,6 +50,9 @@ class MatterGameTests(bus: IEventBus) {
     }
 
     private fun testConnector(helper: GameTestHelper) {
+        val block = AppRepBlocks.REPLICATION_CONNECTOR.block()
+        val itemName = AppRepBlocks.REPLICATION_CONNECTOR.stack().hoverName.contents as? TranslatableContents
+        if (itemName?.key != block.descriptionId) return helper.fail("Connector item and block names differ")
         val relativePos = BlockPos.ZERO
         helper.setBlock(relativePos, AppRepBlocks.REPLICATION_CONNECTOR.block())
         val entity = helper.getBlockEntity(relativePos, ReplicationConnectorBlockEntity::class.java)
