@@ -1,3 +1,4 @@
+/*
 package dev.lapis256.apprep.integration.emi.client
 
 import appeng.client.api.integrations.emi.EmiStackConverter
@@ -21,3 +22,5 @@ object MatterStackConverter : EmiStackConverter {
         return matterEmiStack.stack.toGenericStackOrNull()
     }
 }
+
+*/

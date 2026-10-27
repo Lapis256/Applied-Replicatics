@@ -112,7 +112,9 @@ dependencies {
         configuration(bundle)
     }
 
-    "integrationCompileOnly"(libs.emi)
+    // "integrationCompileOnly"(libs.emi)
+    "apiImplementation"(kotlin("reflect"))
+    implementation(kotlin("reflect"))
 
     "apiImplementation"(libs.bundles.implementation)
     "optionalModsRuntimeOnly"(libs.bundles.integrationImplementation)

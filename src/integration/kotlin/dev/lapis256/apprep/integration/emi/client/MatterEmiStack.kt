@@ -1,3 +1,4 @@
+/*
 package dev.lapis256.apprep.integration.emi.client
 
 import com.buuz135.replication.api.IMatterType
@@ -65,3 +66,5 @@ class MatterEmiStack(val stack: MatterStack, amount: Long) : EmiStack() {
         }
     }
 }
+
+*/

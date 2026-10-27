@@ -1,3 +1,4 @@
+/*
 package dev.lapis256.apprep.integration.emi.client
 
 import com.buuz135.replication.ReplicationRegistry
@@ -27,3 +28,5 @@ object MatterEmiStackSerializer : EmiStackSerializer<MatterEmiStack> {
         }
     }
 }
+
+*/
