@@ -3,6 +3,8 @@ package dev.lapis256.apprep
 import appeng.api.config.Actionable
 import com.buuz135.replication.api.MatterType
 import com.buuz135.replication.api.matter_fluid.MatterTank
+import com.buuz135.replication.api.matter_fluid.MatterStack
+import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction
 import dev.lapis256.apprep.api.ae2.stack.MatterKey
 import dev.lapis256.apprep.common.ae2.storage.GroupedMatterTanks
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -38,5 +40,19 @@ class GroupedMatterTanksTest {
         assertEquals(150, tanks.extract(earth, 150, Actionable.MODULATE))
         assertEquals(100, tanks.insert(ender, 100, Actionable.MODULATE))
         assertEquals(100, tanks.extract(ender, 100, Actionable.MODULATE))
+    }
+    @Test
+    fun leavesFractionalMatterInPlace() {
+        val tank = MatterTank(100)
+        val earth = MatterKey.of(MatterType.EARTH)
+        tank.fill(MatterStack(MatterType.EARTH, 99.5), FluidAction.EXECUTE)
+        val tanks = GroupedMatterTanks { listOf(tank) }
+
+        assertEquals(0, tanks.insert(earth, 1, Actionable.MODULATE))
+        assertEquals(99.5, tank.matterAmount)
+        assertEquals(99, tanks.extract(earth, 100, Actionable.MODULATE))
+        assertEquals(0.5, tank.matterAmount)
+        assertEquals(0, tanks.extract(earth, 1, Actionable.MODULATE))
+        assertEquals(0.5, tank.matterAmount)
     }
 }

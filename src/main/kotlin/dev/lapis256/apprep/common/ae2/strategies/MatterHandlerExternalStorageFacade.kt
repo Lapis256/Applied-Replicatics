@@ -10,7 +10,7 @@ import com.buuz135.replication.api.matter_fluid.IMatterHandler
 import dev.lapis256.apprep.api.ae2.stack.MatterKey
 import dev.lapis256.apprep.api.ae2.stack.MatterKeyType
 import dev.lapis256.apprep.api.ae2.util.toGenericStackOrNull
-import dev.lapis256.apprep.common.util.fluidAction
+import dev.lapis256.apprep.common.util.transferWholeMatter
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction
 
 
@@ -29,12 +29,16 @@ class MatterHandlerExternalStorageFacade(private val handler: IMatterHandler) : 
 
     override fun insertExternal(what: AEKey?, amount: Int, mode: Actionable?): Int {
         val key = what as? MatterKey ?: return 0
-        return handler.fill(key.toStack(amount.toLong()), mode?.fluidAction ?: return 0).toInt()
+        return transferWholeMatter(amount.toLong(), mode ?: return 0) { count, action ->
+            handler.fill(key.toStack(count), action)
+        }.toInt()
     }
 
     override fun extractExternal(what: AEKey?, amount: Int, mode: Actionable?): Int {
         val key = what as? MatterKey ?: return 0
-        return handler.drain(key.toStack(amount.toLong()), mode?.fluidAction ?: return 0).amount.toInt()
+        return transferWholeMatter(amount.toLong(), mode ?: return 0) { count, action ->
+            handler.drain(key.toStack(count), action).amount
+        }.toInt()
     }
 
     override fun containsAnyFuzzy(keys: Set<AEKey?>?): Boolean {

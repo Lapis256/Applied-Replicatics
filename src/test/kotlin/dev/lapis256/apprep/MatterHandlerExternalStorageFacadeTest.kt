@@ -53,4 +53,20 @@ class MatterHandlerExternalStorageFacadeTest {
         storage.setExtractableOnly(true)
         assertEquals(0, storage.availableStacks[key])
     }
+    @Test
+    fun transfersOnlyWholeMatterWithoutChangingFractionalRemainders() {
+        val tank = MatterTank(100)
+        val earth = MatterKey.of(MatterType.EARTH)
+        val storage = MatterHandlerExternalStorageFacade(tank)
+        val source = IActionSource.empty()
+        tank.fill(MatterStack(MatterType.EARTH, 99.5), FluidAction.EXECUTE)
+
+        assertEquals(0, storage.insert(earth, 1, Actionable.MODULATE, source))
+        assertEquals(99.5, tank.matterAmount)
+        assertEquals(99, storage.extract(earth, 100, Actionable.MODULATE, source))
+        assertEquals(0.5, tank.matterAmount)
+        assertEquals(0, storage.extract(earth, 1, Actionable.MODULATE, source))
+        assertEquals(0, storage.availableStacks[earth])
+        assertEquals(0.5, tank.matterAmount)
+    }
 }
