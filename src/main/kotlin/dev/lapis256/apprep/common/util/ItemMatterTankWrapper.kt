@@ -46,10 +46,12 @@ class ItemMatterTankWrapper private constructor(private val stack: ItemStack, pr
     private val tank by lazy { MatterTank(ReplicationConfig.MatterTank.CAPACITY) }
 
     private fun mergeTankData(tankData: CompoundTag): CompoundTag {
-        val tileData = stack.get(ReplicationAttachments.TILE.get()) ?: CompoundTag()
+        val tileData = stack.get(ReplicationAttachments.TILE.get())?.copy() ?: CompoundTag()
 
         if (tileData.contains("lockableMatterTankBundle")) {
-            tileData.getCompoundOrEmpty("lockableMatterTankBundle").getCompoundOrEmpty("Tank").merge(tankData)
+            val bundle = tileData.getCompoundOrEmpty("lockableMatterTankBundle")
+            bundle.put("Tank", bundle.getCompoundOrEmpty("Tank").merge(tankData))
+            tileData.put("lockableMatterTankBundle", bundle)
             return tileData
         }
 

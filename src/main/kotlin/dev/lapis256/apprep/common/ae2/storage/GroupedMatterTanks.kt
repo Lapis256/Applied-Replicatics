@@ -57,7 +57,7 @@ class GroupedMatterTanks(
         while (iterator.hasNext() && remaining > 0L) {
             val tank = iterator.next()
             val inserted = tank.fill(key.toStack(remaining), mode.fluidAction)
-            if (inserted > 0.0) {
+            if (inserted > 0.0 && mode == Actionable.MODULATE) {
                 iterator.remove()
                 groupedTanks.computeIfAbsent(type) { ObjectLinkedOpenHashSet() }.add(tank)
             }
