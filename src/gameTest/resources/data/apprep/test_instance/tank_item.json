@@ -1,8 +1,0 @@
-{
-  "type": "minecraft:function",
-  "environment": "minecraft:default",
-  "function": "apprep:tank_item",
-  "max_ticks": 20,
-  "setup_ticks": 1,
-  "structure": "minecraft:empty"
-}
