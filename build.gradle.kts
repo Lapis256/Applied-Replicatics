@@ -192,7 +192,7 @@ neoForge {
 
         configureEach {
             systemProperty("forge.logging.markers", "REGISTRIES")
-            logLevel = Level.DEBUG
+            logLevel = Level.INFO
             disableIdeRun()
 
             if (!type.get().lowercase().endsWith("data")) {
