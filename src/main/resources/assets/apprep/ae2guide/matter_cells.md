@@ -43,7 +43,7 @@ item_ids:
 
 The basic specs are the same as [Storage Cells](ae2:items-blocks-machines/storage_cells.md), but it consumes 1 byte per 256 matter.
 
-<!-- As part of integration with MEGA Cells, MEGA Storage Cells are also available. -->
+{/* As part of integration with MEGA Cells, MEGA Storage Cells are also available. */}
 
 ---
 

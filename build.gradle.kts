@@ -145,7 +145,7 @@ neoForge {
         fun RunModel.setupGuideMELivePreview() {
             systemProperty("guideme.ae2.guide.sources", "$mainResources/assets/$modId/ae2guide")
             systemProperty("guideme.ae2.guide.sourcesNamespace", modId)
-            jvmArgument("--add-modules jdk.incubator.vector")
+            jvmArgument("--add-modules=jdk.incubator.vector")
         }
 
         register("client") {
