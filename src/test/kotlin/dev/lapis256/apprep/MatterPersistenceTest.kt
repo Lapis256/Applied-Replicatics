@@ -8,6 +8,7 @@ import net.minecraft.world.level.storage.TagValueOutput
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
+
 class MatterPersistenceTest {
     @Test
     fun matterKeyUsesTheExistingTypeField() {

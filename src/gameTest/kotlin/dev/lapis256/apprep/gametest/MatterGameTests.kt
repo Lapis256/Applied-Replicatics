@@ -13,6 +13,7 @@ import net.neoforged.fml.common.Mod
 import net.neoforged.neoforge.registries.DeferredRegister
 import java.util.function.Consumer
 
+
 @Mod(AppliedReplicaticsAPI.MOD_ID)
 class MatterGameTests(bus: IEventBus) {
     init {
