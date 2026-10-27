@@ -20,7 +20,6 @@ import net.minecraft.world.level.block.state.BlockBehaviour
 import net.neoforged.neoforge.registries.DeferredRegister
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.reflect.KClass
-import kotlin.reflect.full.isSubclassOf
 
 
 fun <ITEM : Item> DeferredRegister.Items.register(englishName: String, name: String, supplier: (Item.Properties) -> ITEM): ItemDefinition<ITEM> {
@@ -88,5 +87,5 @@ inline fun <reified ENTITY : AEBaseBlockEntity, reified TICKING : Any> makeTicke
     crossinline tickerFuncRef: TICKING.() -> Unit
 ): BlockEntityTicker<ENTITY>? {
     return BlockEntityTicker<ENTITY> { _, _, _, entity -> tickerFuncRef.invoke(entity as TICKING) }
-        .takeIf { clazz.isSubclassOf(TICKING::class) }
+        .takeIf { TICKING::class.java.isAssignableFrom(clazz.java) }
 }

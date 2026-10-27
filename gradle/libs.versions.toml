@@ -7,7 +7,7 @@ plugin-dokka= "2.1.0"
 
 minecraft = "26.1.2"
 neoforge = "26.1.2.124"
-kotlinForForge = "6.4.0"
+kotlinLangForge = "2.16.0-k2.4.21-3.1+neoforge"
 
 junit = "6.0.1"
 
@@ -27,7 +27,7 @@ appliedFlux = "9304490" # 26.1-1.0.4-neoforge
 
 
 [libraries]
-kotlinForForge = { module = "thedarkcolour:kotlinforforge-neoforge", version.ref = "kotlinForForge" }
+kotlinLangForge = { module = "dev.nyon:KotlinLangForge", version.ref = "kotlinLangForge" }
 
 junit = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
 junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }
@@ -62,13 +62,13 @@ dokka-javadoc = { id = "org.jetbrains.dokka-javadoc", version.ref = "plugin-dokk
 
 [bundles]
 implementation = [
-    "kotlinForForge",
     "ae2",
     "titanium",
     "replication"
 ]
 
 runtimeOnly = [
+    "kotlinLangForge",
     "spark",
     "jei"
 ]

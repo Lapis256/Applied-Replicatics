@@ -47,8 +47,8 @@ base {
 repositories {
     mavenLocal()
     maven {
-        name = "Kotlin for Forge"
-        url = uri("https://thedarkcolour.github.io/KotlinForForge/")
+        name = "KotlinLangForge"
+        url = uri("https://repo.nyon.dev/releases")
     }
     maven {
         name = "JEI"
@@ -242,7 +242,6 @@ val mixin = arrayOf(
 val modDependencies = listOf(
     ModDep("neoforge", libs.versions.neoforge..<"26.2"),
     ModDep("minecraft", mcVersion.eq()),
-    ModDep("kotlinforforge", libs.versions.kotlinForForge.gte()),
     ModDep("ae2", libs.versions.ae2.gte(), ordering = Order.AFTER),
     ModDep("replication", "26.1.2-1.2.8".gte(), ordering = Order.AFTER),
     ModDep.optional("megacells", "4.10.1".gte(), ordering = Order.AFTER),
@@ -507,7 +506,7 @@ publishMods {
     modLoaders.add("neoforge")
 
     curseforge {
-        requires("kotlin-for-forge")
+        requires("kotlinlangforge")
         requires("applied-energistics-2")
         requires("replication")
         optional("mega-cells")
@@ -524,7 +523,7 @@ publishMods {
     }
 
     modrinth {
-        requires("kotlin-for-forge")
+        requires("kotlin-lang-forge")
         requires("ae2")
         requires("replication")
         optional("mega")
