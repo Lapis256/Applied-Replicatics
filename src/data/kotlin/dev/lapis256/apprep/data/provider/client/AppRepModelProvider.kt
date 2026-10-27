@@ -12,12 +12,13 @@ import net.minecraft.client.data.models.model.ModelTemplates
 import net.minecraft.client.data.models.model.TextureMapping
 import net.minecraft.client.data.models.model.TextureSlot
 import net.minecraft.client.resources.model.sprite.Material
+import net.minecraft.core.Direction
 import net.minecraft.data.PackOutput
 import net.minecraft.resources.Identifier
-import net.minecraft.core.Direction
 import net.neoforged.neoforge.client.model.generators.template.ExtendedModelTemplateBuilder
 
-class AppRepItemModelProvider(output: PackOutput) : ModelProvider(output, AppliedReplicaticsAPI.MOD_ID) {
+
+class AppRepModelProvider(output: PackOutput) : ModelProvider(output, AppliedReplicaticsAPI.MOD_ID) {
     override fun registerModels(blocks: BlockModelGenerators, items: ItemModelGenerators) {
         blocks.createTrivialCube(AppRepBlocks.REPLICATION_CONNECTOR.block())
         items.generateFlatItem(AppRepItems.MATTER_CELL_HOUSING.asItem(), ModelTemplates.FLAT_ITEM)
@@ -37,6 +38,11 @@ class AppRepItemModelProvider(output: PackOutput) : ModelProvider(output, Applie
                 ItemModelUtils.tintedModel(model, ItemModelUtils.constantTint(-1), StorageCellStateTintSource())
             )
 
+            /*
+             * Cell model geometry is based on LGPL-3.0 code from MEGACells:
+             * https://github.com/62832/MEGACells/blob/3107e5a994aaf219f3bf5c219dea424dfc6185d2/src/data/java/gripe/_90/megacells/datagen/MEGAModelProvider.java#L271-L291
+             * See the original project's LICENSE for the LGPL-3.0 license text.
+             */
             val offset = ((cell.tier.index - 1) * 2).toFloat()
             val cellTexture = TextureSlot.create("cell")
             val texture = Material(AppliedReplicaticsAPI.rl("block/drive/cells/matter"))

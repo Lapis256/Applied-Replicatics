@@ -1,8 +1,7 @@
 package dev.lapis256.apprep.data
 
 import dev.lapis256.apprep.api.AppliedReplicaticsAPI
-// import dev.lapis256.apprep.data.provider.client.AppRepBlockModelProvider
-import dev.lapis256.apprep.data.provider.client.AppRepItemModelProvider
+import dev.lapis256.apprep.data.provider.client.AppRepModelProvider
 import dev.lapis256.apprep.data.provider.client.AppRepLanguageProvider
 import dev.lapis256.apprep.data.provider.server.AppRepRecipeProvider
 import dev.lapis256.apprep.data.provider.server.loot.AppRepLootTableProvider
@@ -21,7 +20,7 @@ class AppliedReplicaticsData(modBus: IEventBus) {
 
     private fun onGatherData(event: GatherDataEvent.Client) {
         event.createProvider(::AppRepLanguageProvider)
-        event.createProvider(::AppRepItemModelProvider)
+        event.createProvider(::AppRepModelProvider)
         event.createProvider { output, provider -> AppRepRecipeProvider.Runner(output, provider) }
         event.createProvider(::AppRepLootTableProvider)
         event.createProvider(::AppRepBlockTagsProvider)
