@@ -1,0 +1,15 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "apprep:item/matter_cell_64k",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": -1
+      },
+      {
+        "type": "ae2:storage_cell_state"
+      }
+    ]
+  }
+}

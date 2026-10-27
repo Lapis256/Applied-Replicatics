@@ -10,8 +10,8 @@ import appeng.api.util.AECableType
 import appeng.parts.AEBasePart
 import dev.lapis256.apprep.common.logic.ReplicationConnectorLogic
 import dev.lapis256.apprep.common.logic.ReplicationConnectorLogicHost
-import net.minecraft.core.HolderLookup
-import net.minecraft.nbt.CompoundTag
+import net.minecraft.world.level.storage.ValueInput
+import net.minecraft.world.level.storage.ValueOutput
 import net.minecraft.world.item.ItemStack
 
 
@@ -25,14 +25,14 @@ class ReplicationConnectorPart(partItem: IPartItem<*>) : AEBasePart(partItem), R
         host.markForSave()
     }
 
-    override fun readFromNBT(data: CompoundTag, registries: HolderLookup.Provider) {
-        super.readFromNBT(data, registries)
-        logic.readFromNBT(data, registries)
+    override fun readFromNBT(data: ValueInput) {
+        super.readFromNBT(data)
+        logic.readFromNBT(data)
     }
 
-    override fun writeToNBT(data: CompoundTag, registries: HolderLookup.Provider) {
-        super.writeToNBT(data, registries)
-        logic.writeToNBT(data, registries)
+    override fun writeToNBT(data: ValueOutput) {
+        super.writeToNBT(data)
+        logic.writeToNBT(data)
     }
 
     override fun getCableConnectionLength(cable: AECableType?): Float = 4.0F

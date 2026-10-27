@@ -36,8 +36,6 @@ import dev.lapis256.apprep.api.connector.ReplicationConnectorExtension
 import dev.lapis256.apprep.api.connector.ReplicationConnectorExtensionContext
 import dev.lapis256.apprep.api.connector.ReplicationConnectorExtensions
 import dev.lapis256.apprep.api.connector.ReplicationConnectorUpgrades
-import dev.lapis256.apprep.api.extension.getCodec
-import dev.lapis256.apprep.api.extension.putCodec
 import dev.lapis256.apprep.api.replication.matter_network.MatterNetworkListener
 import dev.lapis256.apprep.api.replication.matter_network.addListener
 import dev.lapis256.apprep.api.replication.matter_network.removeListener
@@ -57,9 +55,8 @@ import it.unimi.dsi.fastutil.objects.Object2LongMap
 import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
-import net.minecraft.core.HolderLookup
-import net.minecraft.nbt.CompoundTag
-import net.minecraft.nbt.Tag
+import net.minecraft.world.level.storage.ValueInput
+import net.minecraft.world.level.storage.ValueOutput
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
@@ -449,26 +446,26 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
         updatePatterns()
     }
 
-    fun writeToNBT(tag: CompoundTag, registries: HolderLookup.Provider) {
+    fun writeToNBT(tag: ValueOutput) {
         tag.putInt("priority", priority)
 
-        tag.put("return_inventory", returnInventory.writeToTag(registries))
+        returnInventory.writeToTag(tag.childrenList("return_inventory"))
 
-        upgrades.writeToNBT(tag, "upgrades", registries)
+        upgrades.writeToNBT(tag, "upgrades")
 
         // TODO(next major): Remove legacy pending-task persistence when bumping the mod major version.
-        pendingTask?.let { tag.putCodec(PENDING_TASK_CODEC, it) }
+        pendingTask?.let { tag.store("pending_task", PendingTask.CODEC, it) }
     }
 
-    fun readFromNBT(tag: CompoundTag, registries: HolderLookup.Provider) {
-        _priority = tag.getInt("priority")
+    fun readFromNBT(tag: ValueInput) {
+        _priority = tag.getIntOr("priority", 0)
 
-        returnInventory.readFromTag(tag.getList("return_inventory", Tag.TAG_COMPOUND.toInt()), registries)
+        returnInventory.readFromTag(tag.childrenListOrEmpty("return_inventory"))
 
-        upgrades.readFromNBT(tag, "upgrades", registries)
+        upgrades.readFromNBT(tag, "upgrades")
 
         // TODO(next major): Remove legacy pending-task migration when bumping the mod major version.
-        pendingTask = tag.getCodec(PENDING_TASK_CODEC)
+        pendingTask = tag.read("pending_task", PendingTask.CODEC).orElse(null)
     }
 
     private fun remountStorage() {

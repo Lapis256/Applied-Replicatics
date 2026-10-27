@@ -9,16 +9,14 @@ import com.mojang.serialization.codecs.RecordCodecBuilder
 import dev.lapis256.apprep.api.replication.util.MATTER_TYPE_NAME_CODEC
 import dev.lapis256.apprep.api.replication.util.getMatterId
 import net.minecraft.core.BlockPos
-import net.minecraft.core.HolderLookup
-import net.minecraft.nbt.CompoundTag
-import net.minecraft.nbt.NbtOps
 import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.chat.Component
 import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
+import net.minecraft.world.level.storage.ValueOutput
 
 
 class MatterKey private constructor(val stack: MatterStack) : AEKey() {
@@ -58,9 +56,8 @@ class MatterKey private constructor(val stack: MatterStack) : AEKey() {
         return MatterStack(stack.matterType, amount.toDouble())
     }
 
-    override fun toTag(registries: HolderLookup.Provider): CompoundTag {
-        val ops = registries.createSerializationContext(NbtOps.INSTANCE)
-        return CODEC.encodeStart(ops, this).getOrThrow() as? CompoundTag ?: error("Failed to serialize MatterKey to NBT")
+    override fun toTag(output: ValueOutput) {
+        output.store(MAP_CODEC, this)
     }
 
     override fun writeToPacket(data: RegistryFriendlyByteBuf) {
@@ -71,8 +68,8 @@ class MatterKey private constructor(val stack: MatterStack) : AEKey() {
         // No-op
     }
 
-    val location: ResourceLocation by lazy { getMatterId(stack.matterType) }
-    override fun getId(): ResourceLocation = location
+    val location: Identifier by lazy { getMatterId(stack.matterType) }
+    override fun getId(): Identifier = location
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

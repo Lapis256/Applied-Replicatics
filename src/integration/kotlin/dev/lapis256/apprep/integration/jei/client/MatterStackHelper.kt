@@ -8,7 +8,7 @@ import dev.lapis256.apprep.api.replication.util.getMatterId
 import mezz.jei.api.ingredients.IIngredientHelper
 import mezz.jei.api.ingredients.subtypes.UidContext
 import net.minecraft.nbt.CompoundTag
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.world.item.ItemStack
 import kotlin.math.roundToInt
 
@@ -31,12 +31,7 @@ object MatterStackHelper : IIngredientHelper<MatterStack> {
     override fun getUid(ingredient: MatterStack, context: UidContext): Any =
         ingredient.matterType
 
-    @Suppress("removal")
-    @Deprecated("Removal in JEI 19.9.0")
-    override fun getUniqueId(ingredient: MatterStack, context: UidContext) =
-        "matter:${ingredient.matterType.name}"
-
-    override fun getResourceLocation(ingredient: MatterStack): ResourceLocation =
+    override fun getIdentifier(ingredient: MatterStack): Identifier =
         getMatterId(ingredient.matterType)
 
     override fun getColors(ingredient: MatterStack): Iterable<Int> =
@@ -54,7 +49,7 @@ object MatterStackHelper : IIngredientHelper<MatterStack> {
         }
 
         return ItemStack(ReplicationRegistry.Blocks.CREATIVE_MATTER_TANK).apply {
-            set(ReplicationAttachments.TILE, tileData)
+            set(ReplicationAttachments.TILE.get(), tileData)
         }
     }
 

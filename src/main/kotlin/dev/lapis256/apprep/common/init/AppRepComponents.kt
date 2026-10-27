@@ -19,7 +19,7 @@ object AppRepComponents {
         EncodedReplicationPattern.STREAM_CODEC
     )
 
-    fun <T> register(name: String, codec: Codec<T>, streamCodec: StreamCodec<in RegistryFriendlyByteBuf, T>): DataComponentType<T> {
+    fun <T : Any> register(name: String, codec: Codec<T>, streamCodec: StreamCodec<in RegistryFriendlyByteBuf, T>): DataComponentType<T> {
         return DataComponentType.builder<T>()
             .persistent(codec)
             .networkSynchronized(streamCodec)

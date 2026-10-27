@@ -5,6 +5,7 @@ import com.buuz135.replication.api.IMatterType
 import com.buuz135.replication.api.matter_fluid.MatterTank
 import dev.lapis256.apprep.api.ae2.stack.MatterKey
 import dev.lapis256.apprep.api.util.ResettableLazy
+import dev.lapis256.apprep.common.util.fluidAction
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap
 import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet
 import java.util.function.Supplier

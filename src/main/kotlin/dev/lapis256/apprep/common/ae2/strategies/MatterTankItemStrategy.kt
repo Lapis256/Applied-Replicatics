@@ -6,6 +6,7 @@ import appeng.api.stacks.GenericStack
 import dev.lapis256.apprep.api.ae2.stack.MatterKey
 import dev.lapis256.apprep.api.ae2.util.toGenericStackOrNull
 import dev.lapis256.apprep.common.util.ItemMatterTankWrapper
+import dev.lapis256.apprep.common.util.fluidAction
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource
 import net.minecraft.world.entity.player.Player
@@ -63,11 +64,11 @@ object MatterTankItemStrategy : ContainerItemStrategy<MatterKey, MatterTankItemS
     }
 
     override fun playFillSound(player: Player, what: MatterKey) {
-        player.playNotifySound(SoundEvents.BUCKET_FILL, SoundSource.PLAYERS, 1.0F, 1.0F)
+        player.playSound(SoundEvents.BUCKET_FILL, 1.0F, 1.0F)
     }
 
     override fun playEmptySound(player: Player, what: MatterKey) {
-        player.playNotifySound(SoundEvents.BUCKET_EMPTY, SoundSource.PLAYERS, 1.0F, 1.0F)
+        player.playSound(SoundEvents.BUCKET_EMPTY, 1.0F, 1.0F)
     }
 
     override fun getExtractableContent(context: Context): GenericStack? {

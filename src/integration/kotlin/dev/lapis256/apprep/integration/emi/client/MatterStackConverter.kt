@@ -1,6 +1,6 @@
 package dev.lapis256.apprep.integration.emi.client
 
-import appeng.api.integrations.emi.EmiStackConverter
+import appeng.client.api.integrations.emi.EmiStackConverter
 import appeng.api.stacks.GenericStack
 import com.buuz135.replication.api.IMatterType
 import dev.emi.emi.api.stack.EmiStack

@@ -106,7 +106,7 @@ dependencies {
         configuration(bundle)
     }
 
-    "integrationCompileOnly"(variantOf(libs.emi, "api"))
+    "integrationCompileOnly"(libs.emi)
 
     "apiImplementation"(libs.bundles.implementation)
     "optionalModsRuntimeOnly"(libs.bundles.integrationImplementation)
@@ -130,11 +130,6 @@ neoForge {
             from(atFile)
             publish(atFile)
         }
-    }
-
-    parchment {
-        mappingsVersion = libs.versions.parchmentmc.get()
-        minecraftVersion = mcVersion
     }
 
     runs {
@@ -245,13 +240,13 @@ val mixin = arrayOf(
 )
 
 val modDependencies = listOf(
-    ModDep("neoforge", libs.versions.neoforge..<"21.2"),
+    ModDep("neoforge", libs.versions.neoforge..<"26.2"),
     ModDep("minecraft", mcVersion.eq()),
     ModDep("kotlinforforge", libs.versions.kotlinForForge.gte()),
     ModDep("ae2", libs.versions.ae2.gte(), ordering = Order.AFTER),
-    ModDep("replication", "1.21.1-1.2.6".gte(), ordering = Order.AFTER),
+    ModDep("replication", "26.1.2-1.2.8".gte(), ordering = Order.AFTER),
     ModDep.optional("megacells", "4.10.1".gte(), ordering = Order.AFTER),
-    ModDep.optional("appflux", "1.21-2.1.5-neoforge".gte(), ordering = Order.AFTER),
+    ModDep.optional("appflux", "26.1-1.0.4-neoforge".gte(), ordering = Order.AFTER),
 )
 
 java {

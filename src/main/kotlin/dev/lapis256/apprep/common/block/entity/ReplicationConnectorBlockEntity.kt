@@ -86,14 +86,14 @@ class ReplicationConnectorBlockEntity(type: BlockEntityType<*>, pos: BlockPos, s
         super<ReplicationConnectorLogicHost>.onMainNodeStateChanged()
     }
 
-    override fun saveAdditional(data: CompoundTag, registries: HolderLookup.Provider) {
-        super.saveAdditional(data, registries)
-        logic.writeToNBT(data, registries)
+    override fun saveAdditional(data: net.minecraft.world.level.storage.ValueOutput) {
+        super.saveAdditional(data)
+        logic.writeToNBT(data)
     }
 
-    override fun loadTag(data: CompoundTag, registries: HolderLookup.Provider) {
-        super.loadTag(data, registries)
-        logic.readFromNBT(data, registries)
+    override fun loadTag(data: net.minecraft.world.level.storage.ValueInput) {
+        super.loadTag(data)
+        logic.readFromNBT(data)
     }
 
     override fun getCableConnectionType(dir: Direction?): AECableType {

@@ -1,47 +1,59 @@
 package dev.lapis256.apprep.client
 
-import appeng.api.client.AEKeyRenderHandler
+import appeng.client.api.AEKeyRenderer
 import com.buuz135.replication.Replication
 import com.mojang.blaze3d.vertex.PoseStack
 import dev.lapis256.apprep.api.ae2.stack.MatterKey
 import dev.lapis256.apprep.api.replication.util.renderMatterTypeOnGui
 import net.minecraft.client.Minecraft
-import net.minecraft.client.gui.GuiGraphics
-import net.minecraft.client.renderer.MultiBufferSource
-import net.minecraft.client.renderer.RenderType
+import net.minecraft.client.gui.GuiGraphicsExtractor
+import net.minecraft.client.renderer.SubmitNodeCollector
+import net.minecraft.client.renderer.rendertype.RenderTypes
 import net.minecraft.client.renderer.texture.OverlayTexture
 import net.minecraft.network.chat.Component
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.world.level.Level
 
 
-class AE2MatterStackRenderer : AEKeyRenderHandler<MatterKey> {
-    override fun getDisplayName(stack: MatterKey): Component = stack.displayName
+class AE2MatterStackRenderer : AEKeyRenderer<MatterKey, AE2MatterStackRenderer.State> {
+    class State {
+        lateinit var icon: Identifier
+        var r = 1f
+        var g = 1f
+        var b = 1f
+        var a = 1f
+    }
 
-    override fun drawInGui(minecraft: Minecraft, guiGraphics: GuiGraphics, x: Int, y: Int, stack: MatterKey) {
+    override fun getTooltip(stack: MatterKey): List<Component> = listOf(stack.displayName)
+
+    override fun drawInGui(minecraft: Minecraft, guiGraphics: GuiGraphicsExtractor, x: Int, y: Int, stack: MatterKey) {
         renderMatterTypeOnGui(guiGraphics, stack.stack.matterType, x, y)
     }
 
-    override fun drawOnBlockFace(poseStack: PoseStack, buffers: MultiBufferSource, stack: MatterKey, scale: Float, combinedLight: Int, level: Level) {
+    override fun stateClass(): Class<State> = State::class.java
+
+    override fun createState() = State()
+
+    override fun extract(state: State, stack: MatterKey, level: Level?, seed: Int) {
         val type = stack.stack.matterType
         val (r, g, b, a) = type.color.get()
-        val icon = ResourceLocation.fromNamespaceAndPath(Replication.MOD_ID, "textures/gui/mattertypes/${type.name.lowercase()}.png")
+        state.icon = Identifier.fromNamespaceAndPath(Replication.MOD_ID, "textures/gui/mattertypes/${type.name.lowercase()}.png")
+        state.r = r
+        state.g = g
+        state.b = b
+        state.a = a
+    }
 
-        // The following implementation is based on appeng.init.client.InitStackRenderHandlers.FluidKeyRenderHandler#drawOnBlockFace.
-        // https://github.com/AppliedEnergistics/Applied-Energistics-2/blob/74ed04a0ffe055ddf2ae06a91cf43c63292a3af0/src/main/java/appeng/init/client/InitStackRenderHandlers.java#L125-L166
+    override fun submit(poseStack: PoseStack, state: State, nodes: SubmitNodeCollector, combinedLight: Int) {
         poseStack.pushPose()
-        // Push it out of the block face a bit to avoid z-fighting
         poseStack.translate(0f, 0f, 0.001f)
 
-        val buffer = buffers.getBuffer(RenderType.text(icon))
-
-        // y is flipped here
-        val x0 = -scale / 2F
-        val y0 = scale / 2F
-        val x1 = scale / 2F
-        val y1 = -scale / 2F
-
-        val transform = poseStack.last().pose()
+        val x0 = -0.5f
+        val y0 = 0.5f
+        val x1 = 0.5f
+        val y1 = -0.5f
+        val (r, g, b, a) = listOf(state.r, state.g, state.b, state.a)
+        nodes.submitCustomGeometry(poseStack, RenderTypes.text(state.icon)) { transform, buffer ->
         buffer.addVertex(transform, x0, y1, 0f)
             .setColor(r, g, b, a)
             .setUv(0F, 1F)
@@ -66,6 +78,7 @@ class AE2MatterStackRenderer : AEKeyRenderHandler<MatterKey> {
             .setOverlay(OverlayTexture.NO_OVERLAY)
             .setLight(combinedLight)
             .setNormal(0f, 0f, 1f)
+        }
         poseStack.popPose()
     }
 }

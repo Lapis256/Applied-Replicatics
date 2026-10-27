@@ -39,7 +39,7 @@ object AppRepCreativeTab {
         CreativeModeTab.builder()
             .title(AppRepGuiText.CREATIVE_TAB.text())
             .icon { ItemStack(AppRepItems.MATTER_CELL_256K) }
-            .withTabsBefore(AECreativeTabIds.MAIN, ResourceKey.create(Registries.CREATIVE_MODE_TAB, Replication.TAB.resourceLocation))
+            .withTabsBefore(AECreativeTabIds.MAIN, ResourceKey.create(Registries.CREATIVE_MODE_TAB, Replication.TAB.identifier))
             .displayItems { parameters, output ->
                 for (entry in displayEntries) {
                     entry.register(output)
