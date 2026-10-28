@@ -5,10 +5,10 @@ import com.buuz135.replication.api.IMatterType
 import com.buuz135.replication.api.matter_fluid.MatterTank
 import dev.lapis256.apprep.api.ae2.stack.MatterKey
 import dev.lapis256.apprep.api.util.ResettableLazy
+import dev.lapis256.apprep.common.util.transferWholeMatter
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap
 import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet
 import java.util.function.Supplier
-import kotlin.math.roundToLong
 
 
 class GroupedMatterTanks(
@@ -44,8 +44,10 @@ class GroupedMatterTanks(
         var remaining = amount
 
         groupedTanks[type]?.forEach { tank ->
-            val inserted = tank.fill(key.toStack(remaining), mode.fluidAction)
-            remaining -= inserted.roundToLong()
+            val inserted = transferWholeMatter(remaining, mode) { count, action ->
+                tank.fill(key.toStack(count), action)
+            }
+            remaining -= inserted
 
             if (remaining <= 0L) {
                 return amount - remaining
@@ -55,12 +57,14 @@ class GroupedMatterTanks(
         val iterator = emptyTanks.iterator()
         while (iterator.hasNext() && remaining > 0L) {
             val tank = iterator.next()
-            val inserted = tank.fill(key.toStack(remaining), mode.fluidAction)
-            if (inserted > 0.0) {
+            val inserted = transferWholeMatter(remaining, mode) { count, action ->
+                tank.fill(key.toStack(count), action)
+            }
+            if (inserted > 0L && mode == Actionable.MODULATE) {
                 iterator.remove()
                 groupedTanks.computeIfAbsent(type) { ObjectLinkedOpenHashSet() }.add(tank)
             }
-            remaining -= inserted.roundToLong()
+            remaining -= inserted
         }
 
         return amount - remaining
@@ -73,7 +77,9 @@ class GroupedMatterTanks(
         val iterator = tanks.iterator()
         while (iterator.hasNext() && remaining > 0L) {
             val tank = iterator.next()
-            val extracted = tank.drain(key.toStack(remaining), mode.fluidAction).amount.toLong()
+            val extracted = transferWholeMatter(remaining, mode) { count, action ->
+                tank.drain(key.toStack(count), action).amount
+            }
             if (tank.isEmpty) {
                 iterator.remove()
                 emptyTanks.add(tank)

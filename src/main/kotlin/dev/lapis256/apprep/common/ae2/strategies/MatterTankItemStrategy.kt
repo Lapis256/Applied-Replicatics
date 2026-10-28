@@ -6,8 +6,8 @@ import appeng.api.stacks.GenericStack
 import dev.lapis256.apprep.api.ae2.stack.MatterKey
 import dev.lapis256.apprep.api.ae2.util.toGenericStackOrNull
 import dev.lapis256.apprep.common.util.ItemMatterTankWrapper
+import dev.lapis256.apprep.common.util.transferWholeMatter
 import net.minecraft.sounds.SoundEvents
-import net.minecraft.sounds.SoundSource
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.item.ItemStack
@@ -41,8 +41,10 @@ object MatterTankItemStrategy : ContainerItemStrategy<MatterKey, MatterTankItemS
         val copy = stack.copyWithCount(1)
         val wrapper = ItemMatterTankWrapper.of(copy) ?: return 0L
 
-        val extracted: Long = wrapper.drain(what.toStack(amount), mode.fluidAction).amount.toLong()
-        if (mode == Actionable.MODULATE) {
+        val extracted = transferWholeMatter(amount, mode) { count, action ->
+            wrapper.drain(what.toStack(count), action).amount
+        }
+        if (mode == Actionable.MODULATE && extracted > 0) {
             stack.shrink(1)
             context.addOverflow(wrapper.getChangedStack())
         }
@@ -54,20 +56,22 @@ object MatterTankItemStrategy : ContainerItemStrategy<MatterKey, MatterTankItemS
         val copy = stack.copyWithCount(1)
         val wrapper = ItemMatterTankWrapper.of(copy) ?: return 0L
 
-        val filled = wrapper.fill(what.toStack(amount), mode.fluidAction)
-        if (mode == Actionable.MODULATE) {
+        val filled = transferWholeMatter(amount, mode) { count, action ->
+            wrapper.fill(what.toStack(count), action)
+        }
+        if (mode == Actionable.MODULATE && filled > 0) {
             stack.shrink(1)
             context.addOverflow(wrapper.getChangedStack())
         }
-        return filled.toLong()
+        return filled
     }
 
     override fun playFillSound(player: Player, what: MatterKey) {
-        player.playNotifySound(SoundEvents.BUCKET_FILL, SoundSource.PLAYERS, 1.0F, 1.0F)
+        player.playSound(SoundEvents.BUCKET_FILL, 1.0F, 1.0F)
     }
 
     override fun playEmptySound(player: Player, what: MatterKey) {
-        player.playNotifySound(SoundEvents.BUCKET_EMPTY, SoundSource.PLAYERS, 1.0F, 1.0F)
+        player.playSound(SoundEvents.BUCKET_EMPTY, 1.0F, 1.0F)
     }
 
     override fun getExtractableContent(context: Context): GenericStack? {
