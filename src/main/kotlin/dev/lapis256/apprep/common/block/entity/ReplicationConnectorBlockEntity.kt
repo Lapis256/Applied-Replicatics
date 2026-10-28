@@ -20,6 +20,8 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.level.storage.ValueInput
+import net.minecraft.world.level.storage.ValueOutput
 
 
 class ReplicationConnectorBlockEntity(type: BlockEntityType<*>, pos: BlockPos, state: BlockState) :
@@ -84,12 +86,12 @@ class ReplicationConnectorBlockEntity(type: BlockEntityType<*>, pos: BlockPos, s
         super<ReplicationConnectorLogicHost>.onMainNodeStateChanged()
     }
 
-    override fun saveAdditional(data: net.minecraft.world.level.storage.ValueOutput) {
+    override fun saveAdditional(data: ValueOutput) {
         super.saveAdditional(data)
         logic.writeToNBT(data)
     }
 
-    override fun loadTag(data: net.minecraft.world.level.storage.ValueInput) {
+    override fun loadTag(data: ValueInput) {
         super.loadTag(data)
         logic.readFromNBT(data)
     }
