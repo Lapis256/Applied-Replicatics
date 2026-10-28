@@ -1,6 +1,7 @@
+/*
 package dev.lapis256.apprep.integration.emi.client
 
-import appeng.api.integrations.emi.EmiStackConverters
+import appeng.client.api.integrations.emi.EmiStackConverters
 import dev.emi.emi.api.EmiEntrypoint
 import dev.emi.emi.api.EmiInitRegistry
 import dev.emi.emi.api.EmiPlugin
@@ -19,3 +20,5 @@ class AppRepEMI : EmiPlugin {
         EmiStackConverters.register(MatterStackConverter)
     }
 }
+
+*/

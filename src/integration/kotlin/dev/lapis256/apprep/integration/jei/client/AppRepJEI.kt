@@ -8,16 +8,13 @@ import mezz.jei.api.IModPlugin
 import mezz.jei.api.JeiPlugin
 import mezz.jei.api.ingredients.IIngredientType
 import mezz.jei.api.registration.IModIngredientRegistration
-import net.neoforged.fml.ModList
-import tamaized.ae2jeiintegration.api.integrations.jei.IngredientConverters
+import appeng.client.api.integrations.jei.IngredientConverters
 
 
 @JeiPlugin
 class AppRepJEI : IModPlugin {
     init {
-        if (ModList.get().isLoaded("ae2jeiintegration")) {
-            IngredientConverters.register(MatterIngredientConverter())
-        }
+        IngredientConverters.register(MatterIngredientConverter())
     }
 
     companion object {

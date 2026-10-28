@@ -1,12 +1,12 @@
 package dev.lapis256.apprep.common.replication
 
-import appeng.api.config.Actionable
 import appeng.api.networking.security.IActionSource
 import appeng.api.storage.MEStorage
 import com.buuz135.replication.api.IMatterType
 import com.buuz135.replication.api.matter_fluid.IMatterTank
 import com.buuz135.replication.api.matter_fluid.MatterStack
 import dev.lapis256.apprep.api.ae2.stack.MatterKey
+import dev.lapis256.apprep.common.util.toActionable
 import net.neoforged.neoforge.fluids.capability.IFluidHandler
 
 
@@ -40,7 +40,7 @@ class MEMatterTank(
         if (resource.isEmpty || resource.matterType != type) {
             return 0.0
         }
-        return storage.insert(MatterKey.of(type), resource.amount.toLong(), Actionable.of(action), source).toDouble()
+        return storage.insert(MatterKey.of(type), resource.amount.toLong(), action.toActionable(), source).toDouble()
     }
 
     /**
@@ -48,7 +48,7 @@ class MEMatterTank(
      * TODO: StorageHelper を使ってエネルギーコストを考慮した挿入処理を実装すると良いかも?
      */
     override fun drain(maxDrain: Double, action: IFluidHandler.FluidAction): MatterStack {
-        val extracted = storage.extract(MatterKey.of(type), maxDrain.toLong(), Actionable.of(action), source)
+        val extracted = storage.extract(MatterKey.of(type), maxDrain.toLong(), action.toActionable(), source)
         return MatterStack(type, extracted.toDouble())
     }
 

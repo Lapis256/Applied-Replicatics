@@ -13,7 +13,7 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.phys.BlockHitResult
 
 
-class ReplicationConnectorBlock : AEBaseEntityBlock<ReplicationConnectorBlockEntity>(metalProps()), INetworkDirectionalConnection {
+class ReplicationConnectorBlock(properties: Properties) : AEBaseEntityBlock<ReplicationConnectorBlockEntity>(metalProps(properties)), INetworkDirectionalConnection {
     override fun canConnect(level: Level?, pos: BlockPos?, state: BlockState?, side: Direction?) = true
 
     override fun useWithoutItem(state: BlockState, level: Level, pos: BlockPos, player: Player, hitResult: BlockHitResult): InteractionResult {
@@ -23,6 +23,6 @@ class ReplicationConnectorBlock : AEBaseEntityBlock<ReplicationConnectorBlockEnt
         if (!level.isClientSide) {
             blockEntity.openMenu(player, MenuLocators.forBlockEntity(blockEntity))
         }
-        return InteractionResult.sidedSuccess(level.isClientSide)
+        return InteractionResult.SUCCESS
     }
 }

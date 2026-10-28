@@ -30,14 +30,11 @@ import com.buuz135.replication.network.MatterNetwork
 import com.hrznstudio.titanium.block_network.Network
 import com.hrznstudio.titanium.block_network.element.NetworkElement
 import com.mojang.logging.LogUtils
-import com.mojang.serialization.Codec
 import dev.lapis256.apprep.api.ae2.stack.MatterKey
 import dev.lapis256.apprep.api.connector.ReplicationConnectorExtension
 import dev.lapis256.apprep.api.connector.ReplicationConnectorExtensionContext
 import dev.lapis256.apprep.api.connector.ReplicationConnectorExtensions
 import dev.lapis256.apprep.api.connector.ReplicationConnectorUpgrades
-import dev.lapis256.apprep.api.extension.getCodec
-import dev.lapis256.apprep.api.extension.putCodec
 import dev.lapis256.apprep.api.replication.matter_network.MatterNetworkListener
 import dev.lapis256.apprep.api.replication.matter_network.addListener
 import dev.lapis256.apprep.api.replication.matter_network.removeListener
@@ -57,9 +54,8 @@ import it.unimi.dsi.fastutil.objects.Object2LongMap
 import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
-import net.minecraft.core.HolderLookup
-import net.minecraft.nbt.CompoundTag
-import net.minecraft.nbt.Tag
+import net.minecraft.world.level.storage.ValueInput
+import net.minecraft.world.level.storage.ValueOutput
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
@@ -73,9 +69,6 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
 
     companion object {
         val LOGGER: Logger = LogUtils.getLogger()
-
-        // TODO(next major): Remove legacy pending-task save compatibility when bumping the mod major version.
-        val PENDING_TASK_CODEC: Codec<PendingTask> = PendingTask.CODEC.fieldOf("pending_task").codec()
     }
 
     private val source: IActionSource get() = IActionSource.ofMachine(mainNode::getNode)
@@ -110,9 +103,6 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
     fun setPriority(newValue: Int) {
         _priority = newValue
     }
-
-    // TODO(next major): Remove when save compatibility can be broken (e.g. 21.1-2.x or a new Minecraft line such as 26.1-x.y.z).
-    private var pendingTask: PendingTask? = null
 
     val delegatingStorage = DelegatingMatterNetworkStorage()
     private var connectedMatterNetwork: MatterNetwork? = null
@@ -196,11 +186,6 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
     inner class CraftingProvider : ICraftingProvider {
 
         private fun canPushNextPattern(): Boolean {
-            // Finish a queued legacy batch before accepting work using the new task model.
-            if (pendingTask != null) {
-                return false
-            }
-
             val matterNetwork = host.matterNetwork ?: return false
             val replicatorCount = matterNetwork.replicators.size
             if (replicatorCount == 0) {
@@ -270,10 +255,9 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
                 return TickRateModulation.SLEEP
             }
 
-            val taskPushed = pushLegacyPendingTask()
             val inserted = insertReturnedItems()
 
-            if (taskPushed || inserted) {
+            if (inserted) {
                 return TickRateModulation.FASTER
             }
 
@@ -284,40 +268,7 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
             }
         }
 
-        private fun shouldTick(): Boolean {
-            if (pendingTask != null) {
-                return true
-            }
-            if (!returnInventory.isEmpty()) {
-                return true
-            }
-            return false
-        }
-
-        // TODO(next major): Remove legacy batched-task migration when bumping the mod major version.
-        private fun pushLegacyPendingTask(): Boolean {
-            val toPushTask = pendingTask ?: return false
-
-            val matterNetwork = host.matterNetwork ?: return false
-            val level = host.matterNetworkElement?.level as? ServerLevel ?: return false
-            val pos = host.matterNetworkElement?.pos ?: return false
-
-            val extracted = Object2LongOpenHashMap<IMatterType>()
-            toPushTask.input.forEach {
-                val what = it.key as? MatterKey ?: return@forEach
-                extracted[what.type] = it.longValue * toPushTask.count
-            }
-
-            val task = MEReplicationTask.create(extracted, toPushTask.output, toPushTask.count, pos)
-
-            matterNetwork.taskManager.addTask(task)
-            matterNetwork.onTaskValueChanged(task, level)
-
-            pendingTask = null
-            host.saveChanges()
-
-            return true
-        }
+        private fun shouldTick(): Boolean = !returnInventory.isEmpty()
 
         private fun insertReturnedItems(): Boolean {
             val inventory = mainNode.grid?.storageService?.inventory ?: return false
@@ -449,26 +400,20 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
         updatePatterns()
     }
 
-    fun writeToNBT(tag: CompoundTag, registries: HolderLookup.Provider) {
+    fun writeToNBT(tag: ValueOutput) {
         tag.putInt("priority", priority)
 
-        tag.put("return_inventory", returnInventory.writeToTag(registries))
+        returnInventory.writeToTag(tag.childrenList("return_inventory"))
 
-        upgrades.writeToNBT(tag, "upgrades", registries)
-
-        // TODO(next major): Remove legacy pending-task persistence when bumping the mod major version.
-        pendingTask?.let { tag.putCodec(PENDING_TASK_CODEC, it) }
+        upgrades.writeToNBT(tag, "upgrades")
     }
 
-    fun readFromNBT(tag: CompoundTag, registries: HolderLookup.Provider) {
-        _priority = tag.getInt("priority")
+    fun readFromNBT(tag: ValueInput) {
+        _priority = tag.getIntOr("priority", 0)
 
-        returnInventory.readFromTag(tag.getList("return_inventory", Tag.TAG_COMPOUND.toInt()), registries)
+        returnInventory.readFromTag(tag.childrenListOrEmpty("return_inventory"))
 
-        upgrades.readFromNBT(tag, "upgrades", registries)
-
-        // TODO(next major): Remove legacy pending-task migration when bumping the mod major version.
-        pendingTask = tag.getCodec(PENDING_TASK_CODEC)
+        upgrades.readFromNBT(tag, "upgrades")
     }
 
     private fun remountStorage() {

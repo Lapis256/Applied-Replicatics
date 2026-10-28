@@ -16,6 +16,7 @@ import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.entity.BlockEntityTicker
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.level.block.state.BlockBehaviour
 import net.neoforged.neoforge.registries.DeferredRegister
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.reflect.KClass
@@ -30,13 +31,14 @@ fun <ITEM : Item> DeferredRegister.Items.register(englishName: String, name: Str
 fun <BLOCK : Block> DeferredRegister.Blocks.register(
     englishName: String,
     name: String,
-    supplier: () -> BLOCK,
+    supplier: (BlockBehaviour.Properties) -> BLOCK,
     itemRegistry: DeferredRegister.Items,
     itemSupplier: ((Block, Item.Properties) -> BlockItem)? = null
 ): BlockDefinition<BLOCK> {
-    val deferredBlock = register(name, supplier)
+    val deferredBlock = registerBlock(name, supplier)
     val deferredItem = itemRegistry.registerItem(name) { properties ->
         val block = deferredBlock.get()
+        properties.useBlockDescriptionPrefix()
         when {
             itemSupplier != null -> itemSupplier(block, properties)
             block is AEBaseBlock -> AEBaseBlockItem(block, properties)
@@ -58,13 +60,13 @@ inline fun <reified ENTITY : AEBaseBlockEntity, BLOCK : AEBaseEntityBlock<ENTITY
     }
 
     val deferred = register(name) { ->
-        val blocks = deferredBlocks.map(BlockDefinition<BLOCK>::block).toTypedArray()
+        val blocks = deferredBlocks.map { it.block() }.toTypedArray<AEBaseEntityBlock<ENTITY>>()
         val typeHolder = AtomicReference<BlockEntityType<ENTITY>>()
 
-        BlockEntityType.Builder.of(
+        BlockEntityType(
             { pos, state -> factory(typeHolder.get(), pos, state) },
             *blocks
-        ).build(@Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS") null)
+        )
             .also { type ->
                 typeHolder.plain = type
 

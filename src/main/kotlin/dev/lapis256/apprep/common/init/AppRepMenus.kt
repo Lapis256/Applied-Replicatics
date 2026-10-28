@@ -9,14 +9,14 @@ import net.minecraft.core.registries.Registries
 import net.minecraft.world.inventory.MenuType
 import net.neoforged.neoforge.registries.DeferredHolder
 import net.neoforged.neoforge.registries.DeferredRegister
-import thedarkcolour.kotlinforforge.neoforge.forge.getValue
 import kotlin.reflect.KClass
 
 
 object AppRepMenus {
     val REGISTRY: DeferredRegister<MenuType<*>> = DeferredRegister.create(Registries.MENU, AppliedReplicaticsAPI.MOD_ID)
 
-    val REPLICATION_CONNECTOR by register("replication_connector", ::ReplicationConnectorMenu, ReplicationConnectorLogicHost::class)
+    private val connector = register("replication_connector", ::ReplicationConnectorMenu, ReplicationConnectorLogicHost::class)
+    val REPLICATION_CONNECTOR get() = connector.get()
 
 
     private fun <MENU : AEBaseMenu, HOST : Any> register(

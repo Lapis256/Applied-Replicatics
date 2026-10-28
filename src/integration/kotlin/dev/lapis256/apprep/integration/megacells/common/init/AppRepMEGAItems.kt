@@ -1,3 +1,4 @@
+/*
 package dev.lapis256.apprep.integration.megacells.common.init
 
 import appeng.core.definitions.ItemDefinition
@@ -42,3 +43,5 @@ object AppRepMEGAItems {
             .also(AppRepItems.CELLS::add)
             .also(AppRepCreativeTab::registerItem)
 }
+
+*/

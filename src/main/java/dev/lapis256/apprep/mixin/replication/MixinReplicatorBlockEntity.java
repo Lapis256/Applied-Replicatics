@@ -10,7 +10,8 @@ import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import dev.lapis256.apprep.common.logic.ReplicationConnectorLogicHost;
 import dev.lapis256.apprep.mixin_impl.replication.MixinImplReplicatorBlockEntityKt;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -31,8 +32,8 @@ public abstract class MixinReplicatorBlockEntity {
         return MixinImplReplicatorBlockEntityKt.setConnectorHost(original, ((ReplicatorBlockEntity) (Object) this), hostRef, cachedReplicationTask);
     }
 
-    @WrapOperation(method = "replicateItem", at = @At(value = "INVOKE", target = "Lnet/neoforged/neoforge/items/ItemHandlerHelper;insertItem(Lnet/neoforged/neoforge/items/IItemHandler;Lnet/minecraft/world/item/ItemStack;Z)Lnet/minecraft/world/item/ItemStack;", ordinal = 3))
-    private ItemStack apprep$insertResultToConnector(IItemHandler i, ItemStack dest, boolean stack, Operation<ItemStack> original, @Share("connectorHost") LocalRef<ReplicationConnectorLogicHost> hostRef) {
+    @WrapOperation(method = "replicateItem", at = @At(value = "INVOKE", target = "Lcom/buuz135/replication/util/TransferUtil;insertItem(Lnet/neoforged/neoforge/transfer/ResourceHandler;Lnet/minecraft/world/item/ItemStack;Z)Lnet/minecraft/world/item/ItemStack;", ordinal = 3))
+    private ItemStack apprep$insertResultToConnector(ResourceHandler<ItemResource> i, ItemStack dest, boolean stack, Operation<ItemStack> original, @Share("connectorHost") LocalRef<ReplicationConnectorLogicHost> hostRef) {
         if (MixinImplReplicatorBlockEntityKt.insertResultToConnector(hostRef.get(), cachedReplicationTask)) {
             return ItemStack.EMPTY;
         }

@@ -1,11 +1,11 @@
 package dev.lapis256.apprep.common.ae2.strategies
 
 import appeng.api.behaviors.GenericInternalInventory
-import appeng.api.config.Actionable
 import com.buuz135.replication.api.matter_fluid.IMatterHandler
 import com.buuz135.replication.api.matter_fluid.MatterStack
 import dev.lapis256.apprep.api.ae2.stack.MatterKey
 import dev.lapis256.apprep.api.ae2.stack.MatterKeyType
+import dev.lapis256.apprep.common.util.toActionable
 import net.neoforged.neoforge.fluids.capability.IFluidHandler
 
 
@@ -31,17 +31,11 @@ class GenericStackMatterStorage(val inventory: GenericInternalInventory) : IMatt
 
     override fun fill(stack: MatterStack, action: IFluidHandler.FluidAction): Double {
         val key = MatterKey.of(stack) ?: return 0.0
-        val remainder = stack.amount - inventory.insert(0, key, stack.amount.toLong(), Actionable.of(action))
-
-        if (remainder <= 0.0) {
-            return 0.0
-        }
-
-        return key.toStack(remainder.toLong()).amount
+        return inventory.insert(0, key, stack.amount.toLong(), action.toActionable()).toDouble()
     }
 
     override fun drain(resource: MatterStack, action: IFluidHandler.FluidAction): MatterStack {
-        if (resource.isEmpty || !resource.isMatterEqual(resource)) {
+        if (resource.isEmpty || !resource.isMatterEqual(getMatterInTank(0))) {
             return MatterStack.EMPTY
         }
         return drain(resource.amount, action)
@@ -49,7 +43,7 @@ class GenericStackMatterStorage(val inventory: GenericInternalInventory) : IMatt
 
     override fun drain(maxDrain: Double, action: IFluidHandler.FluidAction): MatterStack {
         val key = getKey(0) ?: return MatterStack.EMPTY
-        val extracted = inventory.extract(0, key, maxDrain.toLong(), Actionable.of(action))
+        val extracted = inventory.extract(0, key, maxDrain.toLong(), action.toActionable())
 
         if (extracted == 0L) {
             return MatterStack.EMPTY

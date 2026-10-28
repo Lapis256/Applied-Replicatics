@@ -6,7 +6,7 @@
   },
   "package": "dev.lapis256.apprep.mixin",
   "refmap": "apprep.refmap.json",
-  "compatibilityLevel": "JAVA_21",
+  "compatibilityLevel": "JAVA_25",
   "mixins": [
     "replication.AccessorNetworkBlockEntity",
     "replication.MixinMatterNetwork",

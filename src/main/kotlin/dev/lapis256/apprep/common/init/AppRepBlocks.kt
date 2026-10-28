@@ -7,6 +7,7 @@ import dev.lapis256.apprep.common.block.ReplicationConnectorBlock
 import net.minecraft.world.item.BlockItem
 import net.minecraft.world.item.Item
 import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.state.BlockBehaviour
 import net.neoforged.neoforge.registries.DeferredRegister
 
 
@@ -23,7 +24,7 @@ object AppRepBlocks {
     private fun <BLOCK : Block> register(
         englishName: String,
         name: String,
-        supplier: () -> BLOCK,
+        supplier: (BlockBehaviour.Properties) -> BLOCK,
         itemSupplier: ((Block, Item.Properties) -> BlockItem)? = null
     ) = REGISTRY
         .register(englishName, name, supplier, AppRepItems.REGISTRY, itemSupplier)

@@ -47,10 +47,6 @@ base {
 repositories {
     mavenLocal()
     maven {
-        name = "Kotlin for Forge"
-        url = uri("https://thedarkcolour.github.io/KotlinForForge/")
-    }
-    maven {
         name = "JEI"
         url = uri("https://modmaven.dev/")
     }
@@ -69,6 +65,11 @@ val generateModMetadata by tasks.registering(ProcessResources::class)
 
 val apiSourceSet by sourceSets.register("api")
 
+sourceSets.test {
+    compileClasspath += apiSourceSet.output
+    runtimeClasspath += apiSourceSet.output
+}
+
 val mainSourceSet by sourceSets.named("main") {
     compileClasspath += apiSourceSet.output
     runtimeClasspath += apiSourceSet.output
@@ -81,6 +82,14 @@ val mainSourceSet by sourceSets.named("main") {
         exclude("**/.cache")
     }
 }
+
+val gameTestSourceSet by sourceSets.register("gameTest") {
+    compileClasspath += mainSourceSet.output + mainSourceSet.compileClasspath
+    runtimeClasspath += mainSourceSet.output + apiSourceSet.output
+}
+
+configurations[gameTestSourceSet.implementationConfigurationName].extendsFrom(configurations.implementation.get())
+configurations[gameTestSourceSet.runtimeClasspathConfigurationName].exclude(group = "mezz.jei")
 
 val optionalModsSourceSet by sourceSets.register("optionalMods") {
     compileClasspath += mainSourceSet.output + mainSourceSet.compileClasspath
@@ -106,7 +115,9 @@ dependencies {
         configuration(bundle)
     }
 
-    "integrationCompileOnly"(variantOf(libs.emi, "api"))
+    // "integrationCompileOnly"(libs.emi)
+    "apiImplementation"(kotlin("reflect"))
+    implementation(kotlin("reflect"))
 
     "apiImplementation"(libs.bundles.implementation)
     "optionalModsRuntimeOnly"(libs.bundles.integrationImplementation)
@@ -121,6 +132,7 @@ neoForge {
 
     addModdingDependenciesTo(apiSourceSet)
     addModdingDependenciesTo(integrationSourceSet)
+    addModdingDependenciesTo(gameTestSourceSet)
 
     accessTransformers {
         val files = rootProject.fileTree("src").matching { include("*/resources/META-INF/accesstransformer.cfg") }
@@ -132,18 +144,13 @@ neoForge {
         }
     }
 
-    parchment {
-        mappingsVersion = libs.versions.parchmentmc.get()
-        minecraftVersion = mcVersion
-    }
-
     runs {
         val mainResources = file("src/main/resources/").absolutePath
 
         fun RunModel.setupGuideMELivePreview() {
             systemProperty("guideme.ae2.guide.sources", "$mainResources/assets/$modId/ae2guide")
             systemProperty("guideme.ae2.guide.sourcesNamespace", modId)
-            jvmArgument("--add-modules jdk.incubator.vector")
+            jvmArgument("--add-modules=jdk.incubator.vector")
         }
 
         register("client") {
@@ -167,8 +174,14 @@ neoForge {
             gameDirectory.set(rootProject.file("run-server"))
         }
 
+        register("gameTestServer") {
+            type.set("gameTestServer")
+            sourceSet = gameTestSourceSet
+            gameDirectory.set(rootProject.file("build/run-gametest"))
+        }
+
         register("data") {
-            data()
+            clientData()
             sourceSet = dataSourceSet
             gameDirectory.set(rootProject.file("run-data"))
             programArguments.addAll(
@@ -177,13 +190,12 @@ neoForge {
                 "--all",
                 "--output", file("src/generated/resources/").absolutePath,
                 "--existing", mainResources,
-                "--existing-mod", "ae2",
             )
         }
 
         configureEach {
             systemProperty("forge.logging.markers", "REGISTRIES")
-            logLevel = Level.DEBUG
+            logLevel = Level.INFO
             disableIdeRun()
 
             if (!type.get().lowercase().endsWith("data")) {
@@ -228,6 +240,7 @@ neoForge {
             sourceSet(apiSourceSet)
             sourceSet(integrationSourceSet)
             sourceSet(dataSourceSet)
+            sourceSet(gameTestSourceSet)
         }
     }
 
@@ -245,13 +258,12 @@ val mixin = arrayOf(
 )
 
 val modDependencies = listOf(
-    ModDep("neoforge", libs.versions.neoforge..<"21.2"),
+    ModDep("neoforge", libs.versions.neoforge..<"26.2"),
     ModDep("minecraft", mcVersion.eq()),
-    ModDep("kotlinforforge", libs.versions.kotlinForForge.gte()),
     ModDep("ae2", libs.versions.ae2.gte(), ordering = Order.AFTER),
-    ModDep("replication", "1.21.1-1.2.6".gte(), ordering = Order.AFTER),
-    ModDep.optional("megacells", "4.10.1".gte(), ordering = Order.AFTER),
-    ModDep.optional("appflux", "1.21-2.1.5-neoforge".gte(), ordering = Order.AFTER),
+    ModDep("replication", "26.1.2-1.2.8".gte(), ordering = Order.AFTER),
+    // ModDep.optional("megacells", "4.10.1".gte(), ordering = Order.AFTER),
+    ModDep.optional("appflux", "26.1-1.0.4-neoforge".gte(), ordering = Order.AFTER),
 )
 
 java {
@@ -512,10 +524,10 @@ publishMods {
     modLoaders.add("neoforge")
 
     curseforge {
-        requires("kotlin-for-forge")
+        requires("kotlinlangforge")
         requires("applied-energistics-2")
         requires("replication")
-        optional("mega-cells")
+//        optional("mega-cells")
         optional("applied-flux")
 
         minecraftVersions.add(mcVersion)
@@ -529,10 +541,10 @@ publishMods {
     }
 
     modrinth {
-        requires("kotlin-for-forge")
+        requires("kotlin-lang-forge")
         requires("ae2")
         requires("replication")
-        optional("mega")
+//        optional("mega")
         optional("appflux")
 
         minecraftVersions.add(mcVersion)

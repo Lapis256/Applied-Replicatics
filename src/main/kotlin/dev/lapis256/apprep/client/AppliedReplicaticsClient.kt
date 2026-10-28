@@ -1,23 +1,19 @@
 package dev.lapis256.apprep.client
 
-import appeng.api.client.AEKeyRendering
+import appeng.client.api.AEKeyRendering
 import appeng.api.client.StorageCellModels
-import appeng.init.client.InitScreens
-import appeng.items.storage.BasicStorageCell
+import appeng.client.InitScreens
 import dev.lapis256.apprep.api.AppliedReplicaticsAPI
 import dev.lapis256.apprep.api.ae2.stack.MatterKey
 import dev.lapis256.apprep.api.ae2.stack.MatterKeyType
 import dev.lapis256.apprep.client.gui.ReplicationConnectorScreen
 import dev.lapis256.apprep.common.init.AppRepItems
 import dev.lapis256.apprep.common.init.AppRepMenus
-import net.minecraft.client.color.item.ItemColor
-import net.minecraft.util.FastColor
 import net.neoforged.api.distmarker.Dist
 import net.neoforged.bus.api.IEventBus
 import net.neoforged.fml.common.Mod
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent
-import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent
 
 
@@ -27,7 +23,6 @@ class AppliedReplicaticsClient(modBus: IEventBus) {
     init {
         modBus.addListener(::onCommonSetup)
         modBus.addListener(::onClientSetup)
-        modBus.addListener(::onRegisterItemColors)
         modBus.addListener(::registerMenuScreens)
     }
 
@@ -55,14 +50,6 @@ class AppliedReplicaticsClient(modBus: IEventBus) {
         event.enqueueWork {
             AEKeyRendering.register(MatterKeyType, MatterKey::class.java, AE2MatterStackRenderer())
         }
-    }
-
-    private fun makeOpaque(itemColor: ItemColor) = ItemColor { stack, tintIndex ->
-        FastColor.ARGB32.opaque(itemColor.getColor(stack, tintIndex))
-    }
-
-    private fun onRegisterItemColors(event: RegisterColorHandlersEvent.Item) {
-        event.register(makeOpaque(BasicStorageCell::getColor), *AppRepItems.CELLS.toTypedArray())
     }
 
     private fun registerMenuScreens(event: RegisterMenuScreensEvent) {

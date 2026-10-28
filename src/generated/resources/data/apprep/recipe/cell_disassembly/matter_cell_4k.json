@@ -3,11 +3,9 @@
   "cell": "apprep:matter_cell_4k",
   "cell_disassembly_items": [
     {
-      "count": 1,
       "id": "ae2:cell_component_4k"
     },
     {
-      "count": 1,
       "id": "apprep:matter_cell_housing"
     }
   ]

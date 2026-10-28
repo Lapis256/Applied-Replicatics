@@ -1,3 +1,4 @@
+/*
 package dev.lapis256.apprep.integration.megacells.common.init
 
 import appeng.block.AEBaseBlockItem
@@ -9,6 +10,8 @@ import dev.lapis256.apprep.api.extension.register
 import dev.lapis256.apprep.common.init.AppRepCreativeTab
 import net.minecraft.world.item.BlockItem
 import net.minecraft.world.item.Item
+import net.minecraft.core.registries.Registries
+import net.minecraft.resources.ResourceKey
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.state.BlockBehaviour
 import net.neoforged.neoforge.registries.DeferredRegister
@@ -22,9 +25,10 @@ object AppRepMEGABlocks {
     val SKY_REPLICA_BLOCK = register(
         "Sky Replica Block",
         "sky_replica_block",
-        {
+        { _ ->
             AEDecorativeBlock(
                 BlockBehaviour.Properties.ofFullCopy(ReplicationRegistry.Blocks.REPLICA_BLOCK.get())
+                    .setId(ResourceKey.create(Registries.BLOCK, AppliedReplicaticsAPI.rl("sky_replica_block")))
                     .strength(4.5F, 6.0F)
             )
         },
@@ -34,10 +38,12 @@ object AppRepMEGABlocks {
     private fun <BLOCK : Block> register(
         englishName: String,
         name: String,
-        supplier: () -> BLOCK,
+        supplier: (BlockBehaviour.Properties) -> BLOCK,
         itemSupplier: ((Block, Item.Properties) -> BlockItem)? = null
     ) = REGISTRY
         .register(englishName, name, supplier, AppRepMEGAItems.REGISTRY, itemSupplier)
         .also(AppRepCreativeTab::registerItem)
         .also(BLOCKS::add)
 }
+
+*/

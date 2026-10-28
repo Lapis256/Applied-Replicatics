@@ -1,34 +1,31 @@
 [versions]
-plugin-kotlin = "2.3.0"
-plugin-moddev = "2.0.137"
+plugin-kotlin = "2.4.21"
+plugin-moddev = "2.0.141"
 plugin-modPublishPlugin = "1.1.0"
 plugin-dokka= "2.1.0"
 
 
-minecraft = "1.21.1"
-neoforge = "21.1.217"
-kotlinForForge = "5.11.0"
-parchmentmc = "2024.11.17"
+minecraft = "26.1.2"
+neoforge = "26.1.2.124"
 
 junit = "6.0.1"
 
 spark = "6225208" # 1.10.124
-jei = "19.21.0.247"
-emi = "1.1.22+1.21.1"
-ae2 = "19.2.17"
+jei = "29.47.0.111"
+# emi = "1.1.22+1.21.1" # No official 26.1.2 release yet.
+ae2 = "26.1.13-beta"
 ae2JeiIntegration = "5748513" # 1.2.0
-titanium = "1.21-4.0.32"
-replication = "7331983" # 1.21.1-1.2.6
+titanium = "26.1.2-4.0.14"
+replication = "9244276" # 26.1.2-1.2.8
 megaCells = "6853076" # 4.10.1
-goldium = "5821676" # 1.21-2.2-neoforge
-extendedAE = "7478960" # 1.21-2.2.28-neoforge
-geckolib = "7415496" # 4.8.3
-advancedAE = "7374386" # 1.6.9-1.21.1
-appliedFlux = "8204513" # 1.21-2.1.5-neoforge
+goldium = "8196173" # 26.1-1.2-neoforge
+extendedAE = "9129055" # 26.1-1.0.5-neoforge
+geckolib = "8327201" # 5.5.2
+advancedAE = "8603081" # 26.1.7
+appliedFlux = "9304490" # 26.1-1.0.4-neoforge
 
 
 [libraries]
-kotlinForForge = { module = "thedarkcolour:kotlinforforge-neoforge", version.ref = "kotlinForForge" }
 
 junit = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
 junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }
@@ -37,9 +34,9 @@ testframework = { module = "net.neoforged:testframework", version.ref = "neoforg
 dokka-versioning = { module = "org.jetbrains.dokka:versioning-plugin", version.ref = "plugin-dokka" }
 
 spark = { module = "curse.maven:spark-361579", version.ref = "spark" }
-jei = { module = "mezz.jei:jei-1.21.1-neoforge", version.ref = "jei" }
-jei-api = { module = "mezz.jei:jei-1.21.1-neoforge-api", version.ref = "jei" }
-emi = { module = "dev.emi:emi-neoforge", version.ref = "emi" }
+jei = { module = "mezz.jei:jei-26.1.2-neoforge", version.ref = "jei" }
+jei-api = { module = "mezz.jei:jei-26.1.2-neoforge-api", version.ref = "jei" }
+# emi = { module = "dev.emi:emi-neoforge", version.ref = "emi" }
 ae2 = { module = "org.appliedenergistics:appliedenergistics2", version.ref = "ae2" }
 ae2JeiIntegration = { module = "curse.maven:ae2-jei-integration-1074338", version.ref = "ae2JeiIntegration" }
 titanium = { module = "com.hrznstudio:titanium", version.ref = "titanium" }
@@ -63,7 +60,6 @@ dokka-javadoc = { id = "org.jetbrains.dokka-javadoc", version.ref = "plugin-dokk
 
 [bundles]
 implementation = [
-    "kotlinForForge",
     "ae2",
     "titanium",
     "replication"
@@ -71,12 +67,11 @@ implementation = [
 
 runtimeOnly = [
     "spark",
-    "jei",
-    "ae2JeiIntegration"
+    "jei"
 ]
 
 integrationImplementation = [
-    "megaCells",
+    # "megaCells", # No 26.1.2 release yet.
     "goldium",
     "extendedAE",
     "geckolib",
@@ -85,8 +80,7 @@ integrationImplementation = [
 ]
 
 integrationCompileOnly = [
-    "jei-api",
-    "ae2JeiIntegration"
+    "jei-api"
 ]
 
 optionalModsRuntimeOnly = [

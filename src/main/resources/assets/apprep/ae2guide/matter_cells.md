@@ -10,12 +10,12 @@ item_ids:
     - matter_cell_16k
     - matter_cell_64k
     - matter_cell_256k
-    - mega_matter_cell_housing
-    - matter_cell_1m
-    - matter_cell_4m
-    - matter_cell_16m
-    - matter_cell_64m
-    - matter_cell_256m
+#    - mega_matter_cell_housing
+#    - matter_cell_1m
+#    - matter_cell_4m
+#    - matter_cell_16m
+#    - matter_cell_64m
+#    - matter_cell_256m
 ---
 
 # Applied Replicatics: ME Matter Storage Cell
@@ -43,7 +43,6 @@ item_ids:
 
 The basic specs are the same as [Storage Cells](ae2:items-blocks-machines/storage_cells.md), but it consumes 1 byte per 256 matter.
 
-As part of integration with MEGA Cells, MEGA Storage Cells are also available.
 
 ---
 

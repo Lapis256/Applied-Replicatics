@@ -4,37 +4,45 @@ import appeng.core.definitions.AEBlocks
 import appeng.core.definitions.AEItems
 import appeng.core.definitions.AEParts
 import appeng.core.definitions.ItemDefinition
-import appeng.datagen.providers.tags.ConventionTags
+import appeng.core.ConventionTags
 import appeng.recipes.game.StorageCellDisassemblyRecipe
 import appeng.recipes.game.StorageCellUpgradeRecipe
-import appeng.recipes.transform.TransformCircumstance
-import appeng.recipes.transform.TransformRecipeBuilder
 import com.buuz135.replication.ReplicationRegistry
-import com.glodblock.github.extendedae.recipe.CrystalAssemblerRecipeBuilder
-import dev.lapis256.apprep.integration.megacells.common.MEGACellsIntegration
-import dev.lapis256.apprep.integration.megacells.common.init.AppRepMEGABlocks
-import dev.lapis256.apprep.integration.megacells.common.init.AppRepMEGAItems
-import dev.lapis256.apprep.integration.megacells.common.init.AppRepMEGATags
+// import com.glodblock.github.extendedae.recipe.CrystalAssemblerRecipeBuilder
+// import dev.lapis256.apprep.integration.megacells.common.MEGACellsIntegration
+// import dev.lapis256.apprep.integration.megacells.common.init.AppRepMEGABlocks
+// import dev.lapis256.apprep.integration.megacells.common.init.AppRepMEGAItems
+// import dev.lapis256.apprep.integration.megacells.common.init.AppRepMEGATags
 import dev.lapis256.apprep.api.AppliedReplicaticsAPI
 import dev.lapis256.apprep.common.init.AppRepBlocks
 import dev.lapis256.apprep.common.init.AppRepItems
 import dev.lapis256.apprep.data.provider.server.tags.AppRepTags
 import dev.lapis256.apprep.extension.MatterCellDefinition
 import net.minecraft.core.HolderLookup
+import net.minecraft.core.registries.Registries
 import net.minecraft.data.PackOutput
 import net.minecraft.data.recipes.*
-import net.minecraft.tags.FluidTags
 import net.minecraft.tags.TagKey
+import net.minecraft.resources.Identifier
+import net.minecraft.resources.ResourceKey
 import net.minecraft.world.item.Item
-import net.minecraft.world.item.crafting.Ingredient
+import net.minecraft.world.item.ItemStackTemplate
+import net.minecraft.world.item.crafting.Recipe
 import net.minecraft.world.level.ItemLike
 import net.neoforged.neoforge.common.conditions.ModLoadedCondition
-import net.pedroksl.advanced_ae.recipes.ReactionChamberRecipeBuilder
+// import net.pedroksl.advanced_ae.recipes.ReactionChamberRecipeBuilder
 import java.util.concurrent.CompletableFuture
 
 
-class AppRepRecipeProvider(output: PackOutput, provider: CompletableFuture<HolderLookup.Provider>) : RecipeProvider(output, provider) {
-    override fun buildRecipes(output: RecipeOutput) {
+class AppRepRecipeProvider(registries: HolderLookup.Provider, output: RecipeOutput) : RecipeProvider(registries, output) {
+    class Runner(output: PackOutput, provider: CompletableFuture<HolderLookup.Provider>) : RecipeProvider.Runner(output, provider) {
+        override fun createRecipeProvider(registries: HolderLookup.Provider, output: RecipeOutput) = AppRepRecipeProvider(registries, output)
+        override fun getName() = "Applied Replicatics Recipes"
+    }
+
+    private fun recipeKey(id: Identifier): ResourceKey<Recipe<*>> = ResourceKey.create(Registries.RECIPE, id)
+
+    override fun buildRecipes() {
         val basicMaterials = CellMaterials(
             AppRepItems.MATTER_CELL_HOUSING,
             AEBlocks.QUARTZ_GLASS,
@@ -48,6 +56,7 @@ class AppRepRecipeProvider(output: PackOutput, provider: CompletableFuture<Holde
         matterCell(output, AppRepItems.MATTER_CELL_64K, basicMaterials)
         matterCell(output, AppRepItems.MATTER_CELL_256K, basicMaterials)
 
+        /*
         val megaMaterials = CellMaterials(
             AppRepMEGAItems.MEGA_MATTER_CELL_HOUSING,
             AEBlocks.QUARTZ_VIBRANT_GLASS,
@@ -60,9 +69,10 @@ class AppRepRecipeProvider(output: PackOutput, provider: CompletableFuture<Holde
         matterCell(output.withMEGACells(), AppRepMEGAItems.MEGA_CELL_16M, megaMaterials)
         matterCell(output.withMEGACells(), AppRepMEGAItems.MEGA_CELL_64M, megaMaterials)
         matterCell(output.withMEGACells(), AppRepMEGAItems.MEGA_CELL_256M, megaMaterials)
+        */
 
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, AppRepBlocks.REPLICATION_CONNECTOR)
+        shaped(RecipeCategory.MISC, AppRepBlocks.REPLICATION_CONNECTOR)
             .pattern("aea")
             .pattern("bcd")
             .pattern("aea")
@@ -74,6 +84,7 @@ class AppRepRecipeProvider(output: PackOutput, provider: CompletableFuture<Holde
             .unlockedBy("has_replica_block", has(AppRepTags.REPLICA_STORAGE_BLOCK))
             .save(output)
 
+        /*
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, AppRepMEGABlocks.SKY_REPLICA_BLOCK)
             .pattern("aaa")
             .pattern("aaa")
@@ -92,6 +103,7 @@ class AppRepRecipeProvider(output: PackOutput, provider: CompletableFuture<Holde
             Ingredient.of(AppRepTags.REPLICA_INGOT),
             Ingredient.of(AEBlocks.SKY_STONE_BLOCK)
         )
+        */
 
 
         cellUpgradeRecipes(
@@ -104,6 +116,7 @@ class AppRepRecipeProvider(output: PackOutput, provider: CompletableFuture<Holde
             AppRepItems.MATTER_CELL_256K
         )
 
+        /*
         cellUpgradeRecipes(
             output.withMEGACells(),
             AppRepMEGAItems.MEGA_MATTER_CELL_HOUSING,
@@ -128,6 +141,7 @@ class AppRepRecipeProvider(output: PackOutput, provider: CompletableFuture<Holde
             .input(AEBlocks.SKY_STONE_BLOCK, 4)
             .fluid(FluidTags.LAVA, 100)
             .save(output.withMEGACells("extendedae"), AppliedReplicaticsAPI.rl("crystal_assembler/sky_replica_ingot"))
+        */
     }
 
     private data class CellMaterials(
@@ -138,7 +152,7 @@ class AppRepRecipeProvider(output: PackOutput, provider: CompletableFuture<Holde
     )
 
     private fun cellHousing(output: RecipeOutput, materials: CellMaterials) {
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, materials.housing)
+        shaped(RecipeCategory.MISC, materials.housing)
             .pattern("aba")
             .pattern("b b")
             .pattern("ddd")
@@ -146,14 +160,14 @@ class AppRepRecipeProvider(output: PackOutput, provider: CompletableFuture<Holde
             .define('b', materials.dust)
             .define('d', materials.ingot)
             .unlockedBy("has/${materials.dust.location.path}", has(materials.dust))
-            .save(output, AppliedReplicaticsAPI.rl("cells/${materials.housing.id().path}"))
+            .save(output, recipeKey(AppliedReplicaticsAPI.rl("cells/${materials.housing.id().path}")))
     }
 
     private fun matterCell(output: RecipeOutput, cell: MatterCellDefinition, materials: CellMaterials) {
         val component = cell.tier.componentSupplier.get()
         val tierPrefix = cell.tier.namePrefix.lowercase()
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, cell)
+        shaped(RecipeCategory.MISC, cell)
             .pattern("aba")
             .pattern("bcb")
             .pattern("ddd")
@@ -162,13 +176,13 @@ class AppRepRecipeProvider(output: PackOutput, provider: CompletableFuture<Holde
             .define('c', component)
             .define('d', materials.ingot)
             .unlockedBy("has_cell_component_$tierPrefix", has(component))
-            .save(output, AppliedReplicaticsAPI.rl("cells/matter_cell_$tierPrefix"))
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, cell)
+            .save(output, recipeKey(AppliedReplicaticsAPI.rl("cells/matter_cell_$tierPrefix")))
+        shapeless(RecipeCategory.MISC, cell)
             .requires(materials.housing)
             .requires(component)
             .unlockedBy("has_cell_component_$tierPrefix", has(component))
             .unlockedBy("has_matter_cell_housing", has(materials.housing))
-            .save(output, AppliedReplicaticsAPI.rl("cells/matter_cell_${tierPrefix}_storage"))
+            .save(output, recipeKey(AppliedReplicaticsAPI.rl("cells/matter_cell_${tierPrefix}_storage")))
     }
 
     private fun cellUpgradeRecipes(output: RecipeOutput, housing: ItemLike, vararg cells: MatterCellDefinition) {
@@ -183,7 +197,7 @@ class AppRepRecipeProvider(output: PackOutput, provider: CompletableFuture<Holde
                 val recipeId = inputId.withPath { path: String? -> "upgrade/${path}_to_${toCellDef.tier.namePrefix.lowercase()}" }
 
                 output.accept(
-                    recipeId,
+                    recipeKey(recipeId),
                     StorageCellUpgradeRecipe(
                         cellDef.asItem(), inputComponent.asItem(),
                         toCellDef.asItem(), resultComponent.asItem()
@@ -197,10 +211,10 @@ class AppRepRecipeProvider(output: PackOutput, provider: CompletableFuture<Holde
     private fun cellDisassembly(consumer: RecipeOutput, housing: ItemLike, cellDef: MatterCellDefinition) {
         val results = listOf(cellDef.tier.componentSupplier.get(), housing)
         consumer.accept(
-            cellDef.id().withPrefix("cell_disassembly/"),
+            recipeKey(cellDef.id().withPrefix("cell_disassembly/")),
             StorageCellDisassemblyRecipe(
                 cellDef.asItem(),
-                results.map { it.asItem().defaultInstance }
+                results.map { ItemStackTemplate(it.asItem()) }
             ),
             null
         )
@@ -209,5 +223,5 @@ class AppRepRecipeProvider(output: PackOutput, provider: CompletableFuture<Holde
     private fun RecipeOutput.withModLoaded(vararg modId: String) =
         withConditions(*modId.map(::ModLoadedCondition).toTypedArray())
 
-    private fun RecipeOutput.withMEGACells(vararg others: String) = withModLoaded(MEGACellsIntegration.MOD_ID, *others)
+    // private fun RecipeOutput.withMEGACells(vararg others: String) = withModLoaded(MEGACellsIntegration.MOD_ID, *others)
 }
