@@ -12,7 +12,9 @@ import appeng.core.definitions.DeferredBlockEntityType
 import appeng.core.localization.GuiText
 import appeng.parts.automation.StackWorldBehaviors
 import com.buuz135.replication.ReplicationRegistry
+import com.buuz135.replication.api.matter_fluid.IMatterHandler
 import com.buuz135.replication.block.MatterPipeBlock
+import com.buuz135.replication.block.tile.BaseMatterTankBlockEntity
 import dev.lapis256.apprep.api.AppliedReplicaticsAPI
 import dev.lapis256.apprep.api.ae2.stack.MatterKey
 import dev.lapis256.apprep.api.ae2.stack.MatterKeyType
@@ -90,6 +92,12 @@ class AppliedReplicatics(eventBus: IEventBus) {
     }
 
     private fun registerCapabilities(event: RegisterCapabilitiesEvent) {
+        for (tank in listOf(ReplicationRegistry.Blocks.MATTER_TANK, ReplicationRegistry.Blocks.CREATIVE_MATTER_TANK)) {
+            event.registerBlockEntity(ReplicationRegistry.Capabilities.MATTER_HANDLER, tank.type().get()) { entity, _ ->
+                (entity as? BaseMatterTankBlockEntity<*>)?.tanks?.singleOrNull() as? IMatterHandler
+            }
+        }
+
         AppRepBlockEntities.BLOCK_ENTITY_TYPES
             .asSequence()
             .filter { IInWorldGridNodeHost::class.java.isAssignableFrom(it.blockEntityClass) }
