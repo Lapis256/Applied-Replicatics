@@ -85,8 +85,11 @@ val mainSourceSet by sourceSets.named("main") {
 
 val gameTestSourceSet by sourceSets.register("gameTest") {
     compileClasspath += mainSourceSet.output + mainSourceSet.compileClasspath
-    runtimeClasspath += mainSourceSet.output + mainSourceSet.runtimeClasspath
+    runtimeClasspath += mainSourceSet.output + apiSourceSet.output
 }
+
+configurations[gameTestSourceSet.implementationConfigurationName].extendsFrom(configurations.implementation.get())
+configurations[gameTestSourceSet.runtimeClasspathConfigurationName].exclude(group = "mezz.jei")
 
 val optionalModsSourceSet by sourceSets.register("optionalMods") {
     compileClasspath += mainSourceSet.output + mainSourceSet.compileClasspath
