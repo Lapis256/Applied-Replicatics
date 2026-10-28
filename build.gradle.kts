@@ -524,7 +524,7 @@ publishMods {
         requires("kotlinlangforge")
         requires("applied-energistics-2")
         requires("replication")
-        optional("mega-cells")
+//        optional("mega-cells")
         optional("applied-flux")
 
         minecraftVersions.add(mcVersion)
@@ -541,7 +541,7 @@ publishMods {
         requires("kotlin-lang-forge")
         requires("ae2")
         requires("replication")
-        optional("mega")
+//        optional("mega")
         optional("appflux")
 
         minecraftVersions.add(mcVersion)
