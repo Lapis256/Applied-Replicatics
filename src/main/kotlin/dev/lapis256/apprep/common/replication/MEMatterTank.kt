@@ -1,6 +1,5 @@
 package dev.lapis256.apprep.common.replication
 
-import appeng.api.config.Actionable
 import appeng.api.networking.security.IActionSource
 import appeng.api.storage.MEStorage
 import com.buuz135.replication.api.IMatterType

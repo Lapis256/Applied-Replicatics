@@ -7,8 +7,6 @@ import appeng.core.definitions.ItemDefinition
 import appeng.core.ConventionTags
 import appeng.recipes.game.StorageCellDisassemblyRecipe
 import appeng.recipes.game.StorageCellUpgradeRecipe
-import appeng.recipes.transform.TransformCircumstance
-import appeng.recipes.transform.TransformRecipeBuilder
 import com.buuz135.replication.ReplicationRegistry
 // import com.glodblock.github.extendedae.recipe.CrystalAssemblerRecipeBuilder
 // import dev.lapis256.apprep.integration.megacells.common.MEGACellsIntegration
@@ -24,13 +22,11 @@ import net.minecraft.core.HolderLookup
 import net.minecraft.core.registries.Registries
 import net.minecraft.data.PackOutput
 import net.minecraft.data.recipes.*
-import net.minecraft.tags.FluidTags
 import net.minecraft.tags.TagKey
 import net.minecraft.resources.Identifier
 import net.minecraft.resources.ResourceKey
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStackTemplate
-import net.minecraft.world.item.crafting.Ingredient
 import net.minecraft.world.item.crafting.Recipe
 import net.minecraft.world.level.ItemLike
 import net.neoforged.neoforge.common.conditions.ModLoadedCondition

@@ -16,8 +16,6 @@ import dev.lapis256.apprep.common.logic.ReplicationConnectorLogic
 import dev.lapis256.apprep.common.logic.ReplicationConnectorLogicHost
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
-import net.minecraft.core.HolderLookup
-import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.entity.BlockEntityType

@@ -8,7 +8,6 @@ import dev.lapis256.apprep.api.ae2.util.toGenericStackOrNull
 import dev.lapis256.apprep.common.util.ItemMatterTankWrapper
 import dev.lapis256.apprep.common.util.transferWholeMatter
 import net.minecraft.sounds.SoundEvents
-import net.minecraft.sounds.SoundSource
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.item.ItemStack
