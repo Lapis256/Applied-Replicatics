@@ -87,6 +87,14 @@ val mainSourceSet by sourceSets.named("main") {
     }
 }
 
+val gameTestSourceSet by sourceSets.register("gameTest") {
+    compileClasspath += mainSourceSet.output + mainSourceSet.compileClasspath
+    runtimeClasspath += mainSourceSet.output + apiSourceSet.output
+}
+
+configurations[gameTestSourceSet.implementationConfigurationName].extendsFrom(configurations.implementation.get())
+configurations[gameTestSourceSet.runtimeClasspathConfigurationName].exclude(group = "mezz.jei")
+
 val optionalModsSourceSet by sourceSets.register("optionalMods") {
     compileClasspath += mainSourceSet.output + mainSourceSet.compileClasspath
     runtimeClasspath += mainSourceSet.output + mainSourceSet.runtimeClasspath
@@ -126,6 +134,7 @@ neoForge {
 
     addModdingDependenciesTo(apiSourceSet)
     addModdingDependenciesTo(integrationSourceSet)
+    addModdingDependenciesTo(gameTestSourceSet)
 
     accessTransformers {
         val files = rootProject.fileTree("src").matching { include("*/resources/META-INF/accesstransformer.cfg") }
@@ -170,6 +179,12 @@ neoForge {
         register("server") {
             server()
             gameDirectory.set(rootProject.file("run-server"))
+        }
+
+        register("gameTestServer") {
+            type.set("gameTestServer")
+            sourceSet = gameTestSourceSet
+            gameDirectory.set(rootProject.file("build/run-gametest"))
         }
 
         register("data") {
@@ -233,6 +248,7 @@ neoForge {
             sourceSet(apiSourceSet)
             sourceSet(integrationSourceSet)
             sourceSet(dataSourceSet)
+            sourceSet(gameTestSourceSet)
         }
     }
 
