@@ -69,6 +69,11 @@ val generateModMetadata by tasks.registering(ProcessResources::class)
 
 val apiSourceSet by sourceSets.register("api")
 
+sourceSets.test {
+    compileClasspath += apiSourceSet.output
+    runtimeClasspath += apiSourceSet.output
+}
+
 val mainSourceSet by sourceSets.named("main") {
     compileClasspath += apiSourceSet.output
     runtimeClasspath += apiSourceSet.output
@@ -143,7 +148,7 @@ neoForge {
         fun RunModel.setupGuideMELivePreview() {
             systemProperty("guideme.ae2.guide.sources", "$mainResources/assets/$modId/ae2guide")
             systemProperty("guideme.ae2.guide.sourcesNamespace", modId)
-            jvmArgument("--add-modules jdk.incubator.vector")
+            jvmArgument("--add-modules=jdk.incubator.vector")
         }
 
         register("client") {

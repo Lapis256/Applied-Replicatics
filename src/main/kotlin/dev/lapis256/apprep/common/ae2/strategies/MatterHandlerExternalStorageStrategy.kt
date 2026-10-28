@@ -20,6 +20,9 @@ class MatterHandlerExternalStorageStrategy(
 
     override fun createWrapper(extractableOnly: Boolean, injectOrExtractCallback: Runnable): MEStorage? {
         val tank = cache.capability ?: return null
-        return MatterHandlerExternalStorageFacade(tank)
+        return MatterHandlerExternalStorageFacade(tank).apply {
+            setExtractableOnly(extractableOnly)
+            setChangeListener(injectOrExtractCallback)
+        }
     }
 }
