@@ -12,12 +12,11 @@
     "replication.MixinMatterNetwork",
     "replication.MixinReplicationTask",
     "replication.MixinReplicatorBlockEntity",
-    "titanium.MixinNetworkElement"
+    "titanium.MixinNetworkElement",
+    "ae2.LegacyMatterKeyMixin"
   ],
-  "client": [
-  ],
-  "server": [
-  ],
+  "client": [],
+  "server": [],
   "injectors": {
     "defaultRequire": 1
   }
