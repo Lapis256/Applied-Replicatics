@@ -28,12 +28,10 @@ class AppRepItemModelProvider(
     }
 
     private fun cellTexture(cell: MatterCellDefinition) {
-        val isMEGA = cell.tier.index in 6..10
-        val megaPrefix = if (isMEGA) "mega_" else ""
-        withExistingParent(cell.id().path, parent)
-            .texture("layer0", modLoc("item/${megaPrefix}matter_cell_housing"))
+        val path = cell.id().path
+        withExistingParent(path, parent)
+            .texture("layer0", modLoc("item/$path"))
             .texture("layer1", cellLed)
-            .texture("layer2", modLoc("item/cell_tier/tier_${cell.tier.namePrefix.lowercase()}"))
     }
 
     private fun simpleTexture(item: ItemDefinition<*>) =
