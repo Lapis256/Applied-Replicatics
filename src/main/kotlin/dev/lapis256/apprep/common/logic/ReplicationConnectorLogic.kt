@@ -368,7 +368,7 @@ class ReplicationConnectorLogic(
         }
 
         override fun onTankValueChanged() {
-            delegatingStorage.storage?.invalidateStacks()
+            delegatingStorage.storage?.invalidateContents()
         }
 
         override fun onAddedChipSupplier() {

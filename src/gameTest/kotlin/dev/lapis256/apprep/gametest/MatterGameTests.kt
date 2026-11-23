@@ -3,12 +3,16 @@ package dev.lapis256.apprep.gametest
 import appeng.api.config.Actionable
 import appeng.api.networking.security.IActionSource
 import appeng.api.stacks.AEItemKey
+import appeng.api.stacks.KeyCounter
 import appeng.api.storage.StorageCells
 import appeng.core.definitions.AEItems
 import com.buuz135.replication.ReplicationRegistry
 import com.buuz135.replication.api.IMatterType
 import com.buuz135.replication.api.MatterType
 import com.buuz135.replication.api.matter_fluid.MatterStack
+import com.buuz135.replication.block.tile.MatterTankBlockEntity
+import com.buuz135.replication.network.MatterNetwork
+import com.hrznstudio.titanium.block_network.NetworkManager
 import dev.lapis256.apprep.api.ae2.stack.MatterKey
 import dev.lapis256.apprep.api.replication.task.MEReplicationTask
 import dev.lapis256.apprep.api.replication.task.internalMatterStacks
@@ -60,6 +64,41 @@ class MatterGameTests {
             } else {
                 helper.succeed()
             }
+        }
+    }
+
+    @GameTest(template = "empty")
+    fun extractsMatterAfterNativeTankFill(helper: GameTestHelper) {
+        val tankPos = BlockPos(0, 1, 0)
+        helper.setBlock(BlockPos.ZERO, AppRepBlocks.REPLICATION_CONNECTOR.block())
+        helper.setBlock(
+            tankPos,
+            ReplicationRegistry.Blocks.MATTER_TANK.left
+                .get(),
+        )
+        val connector = helper.getBlockEntity(BlockPos.ZERO) as ReplicationConnectorBlockEntity
+        val entity = helper.getBlockEntity(tankPos) as MatterTankBlockEntity
+        helper.runAfterDelay(10) {
+            val network = checkNotNull(connector.matterNetwork)
+            val element = checkNotNull(NetworkManager.get(helper.level).getElement(entity.blockPos))
+            if (element.network !== network) {
+                (element.network as? MatterNetwork)?.removeElement(element)
+                element.joinNetwork(network)
+                network.update(helper.level)
+            }
+
+            val storage = checkNotNull(connector.logic.delegatingStorage.storage)
+            val source = IActionSource.empty()
+            val earth = MatterKey.of(MatterType.EARTH)
+            val tank = entity.tanks.single()
+            check(storage.extract(earth, 40, Actionable.SIMULATE, source) == 0L)
+            check(KeyCounter().also(storage::getAvailableStacks)[earth] == 0L)
+            check(tank.fill(MatterStack(MatterType.EARTH, 40), FluidAction.EXECUTE) == 40)
+            val listed = KeyCounter().also(storage::getAvailableStacks)[earth]
+            val extracted = storage.extract(earth, 40, Actionable.MODULATE, source)
+            check(listed == 40L) { "Expected 40 Matter in storage, got $listed" }
+            check(extracted == 40L) { "Expected to extract 40 Matter after filling the native tank, got $extracted" }
+            helper.succeed()
         }
     }
 

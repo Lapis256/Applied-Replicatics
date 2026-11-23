@@ -17,8 +17,9 @@ class MatterNetworkStorage(
     private val cache = MatterNetworkStorageCache(matterNetwork)
     private val tankOperations = GroupedMatterTanks { cache.cachedTanks }
 
-    fun invalidateStacks() {
+    fun invalidateContents() {
         cache.invalidateStacks()
+        tankOperations.invalidate()
     }
 
     fun invalidateAll() {
