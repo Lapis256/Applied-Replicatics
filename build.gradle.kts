@@ -81,10 +81,6 @@ base {
 
 repositories {
     mavenLocal()
-    maven {
-        name = "Kotlin for Forge"
-        url = uri("https://thedarkcolour.github.io/KotlinForForge/")
-    }
     exclusiveContent {
         forRepository {
             maven {
@@ -159,6 +155,7 @@ dependencies {
         configuration(bundle)
     }
 
+    implementation(kotlin("reflect"))
     jarJar(libs.mixinextras.forge.get())
     annotationProcessor(variantOf(libs.mixin, "processor"))
 
@@ -247,6 +244,7 @@ legacyForge {
         }
 
         configureEach {
+            dependencies { add(additionalRuntimeClasspathConfiguration.name, kotlin("reflect")) }
             systemProperty("forge.logging.markers", "REGISTRIES")
             logLevel = Level.DEBUG
             disableIdeRun()
@@ -308,7 +306,6 @@ val modDependencies =
     listOf(
         ModDep("forge", libs.versions.forge..<"48"),
         ModDep("minecraft", mcVersion.eq()),
-        ModDep("kotlinforforge", libs.versions.kotlinForForge.gte()),
         ModDep("ae2", libs.versions.ae2Mod.gte(), ordering = Order.AFTER),
         ModDep("replication", libs.versions.replicationMod.gte(), ordering = Order.AFTER),
         ModDep.optional("megacells", libs.versions.megaCellsMod.gte(), ordering = Order.AFTER),
@@ -576,7 +573,7 @@ publishMods {
     modLoaders.add("forge")
 
     curseforge {
-        requires("kotlin-for-forge")
+        requires("kotlinlangforge")
         requires("applied-energistics-2")
         requires("replication")
         optional("mega-cells")
@@ -593,7 +590,7 @@ publishMods {
     }
 
     modrinth {
-        requires("kotlin-for-forge")
+        requires("kotlin-lang-forge")
         requires("ae2")
         requires("replication")
         optional("mega")
