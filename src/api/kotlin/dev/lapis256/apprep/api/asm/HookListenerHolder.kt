@@ -1,6 +1,5 @@
 package dev.lapis256.apprep.api.asm
 
-
 interface HookListenerHolder<LISTENER : HookListener> {
     fun `apprep$addListener`(listener: LISTENER): Boolean
 
