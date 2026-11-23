@@ -303,7 +303,7 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
         }
 
         override fun onTankValueChanged() {
-            delegatingStorage.storage?.invalidateAll()
+            delegatingStorage.storage?.invalidateContents()
         }
 
         override fun onAddedChipSupplier() {
