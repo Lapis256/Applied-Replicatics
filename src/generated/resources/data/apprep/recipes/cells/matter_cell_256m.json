@@ -1,0 +1,40 @@
+{
+  "type": "forge:conditional",
+  "recipes": [
+    {
+      "conditions": [
+        {
+          "type": "forge:mod_loaded",
+          "modid": "megacells"
+        }
+      ],
+      "recipe": {
+        "type": "minecraft:crafting_shaped",
+        "category": "misc",
+        "key": {
+          "a": {
+            "item": "ae2:quartz_vibrant_glass"
+          },
+          "b": {
+            "tag": "forge:dusts/sky_stone"
+          },
+          "c": {
+            "item": "megacells:cell_component_256m"
+          },
+          "d": {
+            "tag": "forge:ingots/sky_replica"
+          }
+        },
+        "pattern": [
+          "aba",
+          "bcb",
+          "ddd"
+        ],
+        "result": {
+          "item": "apprep:matter_cell_256m"
+        },
+        "show_notification": true
+      }
+    }
+  ]
+}

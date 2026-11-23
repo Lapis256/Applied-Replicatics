@@ -8,13 +8,15 @@ import net.neoforged.moddevgradle.dsl.InternalModelHelper
 import net.neoforged.moddevgradle.dsl.RunModel
 import net.neoforged.moddevgradle.internal.RunGameTask
 import org.apache.tools.ant.filters.ReplaceTokens
+import org.ec4j.core.Resource
+import org.ec4j.core.ResourcePropertiesService
 import org.jetbrains.dokka.gradle.engine.parameters.VisibilityModifier
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.slf4j.event.Level
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
 
 
 plugins {
@@ -26,9 +28,43 @@ plugins {
     alias(libs.plugins.kotlin)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.moddev)
+    alias(libs.plugins.spotless)
     alias(libs.plugins.modPublishPlugin)
     alias(libs.plugins.dokka)
     alias(libs.plugins.dokka.javadoc)
+}
+
+spotless {
+    encoding("UTF-8")
+    lineEndings = com.diffplug.spotless.LineEnding.UNIX
+    java {
+        target("src/**/*.java")
+        val editorConfig =
+            ResourcePropertiesService
+                .builder()
+                .build()
+                .queryProperties(
+                    Resource.Resources.ofPath(file("src/main/java/Formatting.java").toPath(), Charsets.UTF_8),
+                ).properties
+        eclipse("4.41").configProperties(
+            """
+            org.eclipse.jdt.core.formatter.tabulation.char=${editorConfig.getValue("indent_style").sourceValue}
+            org.eclipse.jdt.core.formatter.tabulation.size=${editorConfig.getValue("indent_size").sourceValue}
+            org.eclipse.jdt.core.formatter.indentation.size=${editorConfig.getValue("indent_size").sourceValue}
+            org.eclipse.jdt.core.formatter.lineSplit=${editorConfig.getValue("max_line_length").sourceValue}
+            """.trimIndent(),
+        )
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+    kotlin {
+        target("src/**/*.kt", "buildSrc/src/**/*.kt")
+        ktlint(libs.versions.ktlint.get()).setEditorConfigPath(rootProject.file(".editorconfig"))
+    }
+    kotlinGradle {
+        target("*.gradle.kts", "buildSrc/*.gradle.kts")
+        ktlint(libs.versions.ktlint.get()).setEditorConfigPath(rootProject.file(".editorconfig"))
+    }
 }
 
 val modId = Constants.Mod.ID
@@ -36,7 +72,6 @@ val mcVersion: String = libs.versions.minecraft.get()
 
 val jdkVersion = Constants.Dev.JDK_VERSION
 val jvmVendor = Constants.Dev.JVM_VENDOR
-
 
 base {
     archivesName = Constants.Mod.PROJECT_NAME
@@ -50,17 +85,14 @@ repositories {
         name = "Kotlin for Forge"
         url = uri("https://thedarkcolour.github.io/KotlinForForge/")
     }
-    maven {
-        name = "JEI"
-        url = uri("https://modmaven.dev/")
-    }
-    maven {
-        name = "EMI"
-        url = uri("https://maven.terraformersmc.com/")
-    }
-    maven {
-        name = "Curse Maven"
-        url = uri("https://cursemaven.com")
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = "Curse Maven"
+                url = uri("https://cursemaven.com")
+            }
+        }
+        filter { includeGroup("curse.maven") }
     }
     mavenCentral()
 }
@@ -81,7 +113,7 @@ val mainSourceSet by sourceSets.named("main") {
     resources {
         srcDirs(
             "src/generated/resources",
-            generateModMetadata.get().outputs.files
+            generateModMetadata.get().outputs.files,
         )
         exclude("**/.cache")
     }
@@ -92,8 +124,8 @@ val gameTestSourceSet by sourceSets.register("gameTest") {
     runtimeClasspath += mainSourceSet.output + apiSourceSet.output
 }
 
-configurations[gameTestSourceSet.implementationConfigurationName].extendsFrom(configurations.implementation.get())
-configurations[gameTestSourceSet.runtimeClasspathConfigurationName].exclude(group = "mezz.jei")
+configurations[gameTestSourceSet.implementationConfigurationName].extendsFrom(configurations.implementation.get(), configurations.runtimeOnly.get())
+configurations[gameTestSourceSet.runtimeClasspathConfigurationName].exclude(group = "curse.maven", module = "jei-238222")
 
 val optionalModsSourceSet by sourceSets.register("optionalMods") {
     compileClasspath += mainSourceSet.output + mainSourceSet.compileClasspath
@@ -110,6 +142,14 @@ val dataSourceSet by sourceSets.register("data") {
     runtimeClasspath += integrationSourceSet.output + integrationSourceSet.runtimeClasspath
 }
 
+obfuscation {
+    createRemappingConfiguration(configurations[integrationSourceSet.implementationConfigurationName])
+    createRemappingConfiguration(configurations[integrationSourceSet.compileOnlyConfigurationName])
+    createRemappingConfiguration(configurations[optionalModsSourceSet.runtimeOnlyConfigurationName])
+    createRemappingConfiguration(configurations[dataSourceSet.runtimeOnlyConfigurationName])
+    createRemappingConfiguration(configurations[dataSourceSet.implementationConfigurationName])
+}
+
 dependencies {
     // バンドルの名前から依存関係を追加する。
     val catalog = project.versionCatalogs.named("libs")
@@ -119,16 +159,18 @@ dependencies {
         configuration(bundle)
     }
 
-    "integrationCompileOnly"(variantOf(libs.emi, "api"))
+    jarJar(libs.mixinextras.forge.get())
+    annotationProcessor(variantOf(libs.mixin, "processor"))
 
-    "apiImplementation"(libs.bundles.implementation)
-    "optionalModsRuntimeOnly"(libs.bundles.integrationImplementation)
+    configurations[apiSourceSet.implementationConfigurationName].extendsFrom(configurations.implementation.get())
+    "modOptionalModsRuntimeOnly"(libs.bundles.modIntegrationImplementation)
+    "modDataRuntimeOnly"(libs.bundles.modIntegrationImplementation)
 
     dokkaHtmlPlugin(libs.dokka.versioning)
 }
 
-neoForge {
-    version = libs.versions.neoforge.get()
+legacyForge {
+    version = "$mcVersion-${libs.versions.forge.get()}"
 
     validateAccessTransformers = true
 
@@ -195,9 +237,12 @@ neoForge {
                 "--mod",
                 modId,
                 "--all",
-                "--output", file("src/generated/resources/").absolutePath,
-                "--existing", mainResources,
-                "--existing-mod", "ae2",
+                "--output",
+                file("src/generated/resources/").absolutePath,
+                "--existing",
+                mainResources,
+                "--existing-mod",
+                "ae2",
             )
         }
 
@@ -207,9 +252,8 @@ neoForge {
             disableIdeRun()
 
             if (!type.get().lowercase().endsWith("data")) {
-                systemProperty("neoforge.enabledGameTestNamespaces", modId)
+                systemProperty("forge.enabledGameTestNamespaces", modId)
                 systemProperty("mixin.debug.export", "true")
-                jvmArgument("-XX:+AllowEnhancedClassRedefinition")
             }
 
             if (type.get().startsWith("server")) {
@@ -252,28 +296,24 @@ neoForge {
         }
     }
 
-    unitTest {
-        enable()
-
-        testedMod = mods[modId]
-    }
-
     ideSyncTask(generateModMetadata)
 }
 
-val mixin = arrayOf(
-    "$modId.mixins.json"
-)
+mixin {
+    add(mainSourceSet, "$modId.refmap.json")
+    config("$modId.mixins.json")
+}
 
-val modDependencies = listOf(
-    ModDep("neoforge", libs.versions.neoforge..<"21.2"),
-    ModDep("minecraft", mcVersion.eq()),
-    ModDep("kotlinforforge", libs.versions.kotlinForForge.gte()),
-    ModDep("ae2", libs.versions.ae2.gte(), ordering = Order.AFTER),
-    ModDep("replication", "1.21.1-1.2.6".gte(), ordering = Order.AFTER),
-    ModDep.optional("megacells", "4.10.1".gte(), ordering = Order.AFTER),
-    ModDep.optional("appflux", "1.21-2.1.5-neoforge".gte(), ordering = Order.AFTER),
-)
+val modDependencies =
+    listOf(
+        ModDep("forge", libs.versions.forge..<"48"),
+        ModDep("minecraft", mcVersion.eq()),
+        ModDep("kotlinforforge", libs.versions.kotlinForForge.gte()),
+        ModDep("ae2", libs.versions.ae2Mod.gte(), ordering = Order.AFTER),
+        ModDep("replication", libs.versions.replicationMod.gte(), ordering = Order.AFTER),
+        ModDep.optional("megacells", libs.versions.megaCellsMod.gte(), ordering = Order.AFTER),
+        ModDep.optional("appflux", libs.versions.appliedFluxMod.gte(), ordering = Order.AFTER),
+    )
 
 java {
     withSourcesJar()
@@ -298,7 +338,11 @@ kotlin {
 
 fun Jar.setJarManifest() {
     manifest {
-        val javaCompilerMetadata = project.javaToolchains.compilerFor(java.toolchain).get().metadata
+        val javaCompilerMetadata =
+            project.javaToolchains
+                .compilerFor(java.toolchain)
+                .get()
+                .metadata
 
         @OptIn(ExperimentalBuildToolsApi::class, ExperimentalKotlinGradlePluginApi::class)
         val kotlinCompilerVersion = kotlin.compilerVersion.get()
@@ -323,7 +367,6 @@ dokka {
     dokkaSourceSets {
         listOf("main", "api", "integration").forEach {
             named(it) {
-                sourceRoots.from(file("src/$it"))
                 suppress.set(false)
             }
         }
@@ -359,24 +402,33 @@ dokka {
         outputDirectory.set(docDir)
     }
 
-    val latestDocVersion = docDir.resolve("version.json")
-        .takeIf(File::exists)
-        ?.readText()
-        ?.let { Json.parseToJsonElement(it).jsonObject["version"]?.jsonPrimitive?.contentOrNull }
-        ?.trim()
-        ?: currentVersion
+    val latestDocVersion =
+        docDir
+            .resolve("version.json")
+            .takeIf(File::exists)
+            ?.readText()
+            ?.let {
+                Json
+                    .parseToJsonElement(it)
+                    .jsonObject["version"]
+                    ?.jsonPrimitive
+                    ?.contentOrNull
+            }?.trim()
+            ?: currentVersion
 
-    val orderedVersions = docVersionDir.listFiles(File::isDirectory)
-        ?.asSequence()
-        ?.map(File::getName)
-        ?.plus(latestDocVersion)
-        ?.plus(currentVersion)
-        ?.map(::DefaultArtifactVersion)
-        ?.sortedDescending()
-        ?.map(DefaultArtifactVersion::toString)
-        ?.toSet()
-        ?.toList()
-        ?: emptyList()
+    val orderedVersions =
+        docVersionDir
+            .listFiles(File::isDirectory)
+            ?.asSequence()
+            ?.map(File::getName)
+            ?.plus(latestDocVersion)
+            ?.plus(currentVersion)
+            ?.map(::DefaultArtifactVersion)
+            ?.sortedDescending()
+            ?.map(DefaultArtifactVersion::toString)
+            ?.toSet()
+            ?.toList()
+            ?: emptyList()
 
     pluginsConfiguration {
         versioning {
@@ -411,7 +463,8 @@ tasks {
 
     jar {
         setJarManifest()
-        from(mainSourceSet.output, apiSourceSet.output, integrationSourceSet.output)
+        manifest.attributes("MixinConfigs" to "$modId.mixins.json")
+        from(apiSourceSet.output, integrationSourceSet.output)
     }
 
     val apiJar by registering(Jar::class) {
@@ -429,15 +482,17 @@ tasks {
         from(
             mainSourceSet.allSource,
             apiSourceSet.allSource,
-            integrationSourceSet.allSource
+            integrationSourceSet.allSource,
         )
     }
 
     withType<RunGameTask>().configureEach {
-        javaLauncher.set(project.javaToolchains.launcherFor {
-            languageVersion.set(JavaLanguageVersion.of(jdkVersion))
-            vendor.set(jvmVendor)
-        })
+        javaLauncher.set(
+            project.javaToolchains.launcherFor {
+                languageVersion.set(JavaLanguageVersion.of(jdkVersion))
+                vendor.set(jvmVendor)
+            },
+        )
         standardInput = System.`in`
     }
 
@@ -450,34 +505,22 @@ tasks {
     }
 
     generateModMetadata {
-        val replaceProperties: MutableMap<String, String> = mutableMapOf(
-            "version" to Constants.Mod.VERSION,
-            "group" to Constants.Mod.GROUP,
-            "minecraft_version" to mcVersion,
-            "mod_loader" to "javafml",
-            "mod_loader_version_range" to "1",
-            "mod_name" to Constants.Mod.NAME,
-            "mod_author" to Constants.Mod.AUTHOR,
-            "mod_id" to modId,
-            "license" to Constants.Mod.LICENSE,
-            "description" to Constants.Mod.DESCRIPTION,
-            "display_url" to Constants.Mod.REPOSITORY_URL,
-            "issue_tracker_url" to Constants.Mod.ISSUE_TRACKER_URL,
-            "mixins" to "",
-            "access_transformers" to "",
-            "dependencies" to buildDeps(*modDependencies.toTypedArray(), modId = modId),
-        )
-
-        val atFiles = neoForge.accessTransformers.files
-        if (!atFiles.isEmpty) {
-            val atArrays = atFiles.joinToString("\n") { "[[accessTransformers]]\nfile = \"${it.name}\"" }
-            replaceProperties["access_transformers"] = "\n$atArrays\n"
-        }
-
-        if (mixin.isNotEmpty()) {
-            val mixinArrays = mixin.joinToString("\n") { "[[mixins]]\nconfig = \"$it\"" }
-            replaceProperties["mixins"] = "\n$mixinArrays\n"
-        }
+        val replaceProperties: MutableMap<String, String> =
+            mutableMapOf(
+                "version" to Constants.Mod.VERSION,
+                "group" to Constants.Mod.GROUP,
+                "minecraft_version" to mcVersion,
+                "mod_loader" to "javafml",
+                "mod_loader_version_range" to "[47,48)",
+                "mod_name" to Constants.Mod.NAME,
+                "mod_author" to Constants.Mod.AUTHOR,
+                "mod_id" to modId,
+                "license" to Constants.Mod.LICENSE,
+                "description" to Constants.Mod.DESCRIPTION,
+                "display_url" to Constants.Mod.REPOSITORY_URL,
+                "issue_tracker_url" to Constants.Mod.ISSUE_TRACKER_URL,
+                "dependencies" to buildDeps(*modDependencies.toTypedArray(), modId = modId),
+            )
 
         inputs.properties(replaceProperties)
         filter<ReplaceTokens>("beginToken" to $$"${", "endToken" to "}", "tokens" to replaceProperties)
@@ -530,7 +573,7 @@ idea {
 
 publishMods {
     type = ReleaseType.STABLE
-    modLoaders.add("neoforge")
+    modLoaders.add("forge")
 
     curseforge {
         requires("kotlin-for-forge")
@@ -564,10 +607,13 @@ publishMods {
 
     val releaseFilesDir = providers.gradleProperty("releaseFilesDir").orElse("dist")
     val releaseDirFileProvider = releaseFilesDir.map { layout.projectDirectory.dir(it).asFile }
-    val (mainJar, otherJars) = releaseDirFileProvider.pickJars(
-        "${Constants.Mod.PROJECT_NAME}-${Constants.Mod.VERSION}",
-        "sources", "javadoc", "api"
-    )
+    val (mainJar, otherJars) =
+        releaseDirFileProvider.pickJars(
+            "${Constants.Mod.PROJECT_NAME}-${Constants.Mod.VERSION}",
+            "sources",
+            "javadoc",
+            "api",
+        )
 
     file = mainJar
     additionalFiles.from(otherJars)

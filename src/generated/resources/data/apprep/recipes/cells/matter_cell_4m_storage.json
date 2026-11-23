@@ -1,0 +1,28 @@
+{
+  "type": "forge:conditional",
+  "recipes": [
+    {
+      "conditions": [
+        {
+          "type": "forge:mod_loaded",
+          "modid": "megacells"
+        }
+      ],
+      "recipe": {
+        "type": "minecraft:crafting_shapeless",
+        "category": "misc",
+        "ingredients": [
+          {
+            "item": "apprep:mega_matter_cell_housing"
+          },
+          {
+            "item": "megacells:cell_component_4m"
+          }
+        ],
+        "result": {
+          "item": "apprep:matter_cell_4m"
+        }
+      }
+    }
+  ]
+}

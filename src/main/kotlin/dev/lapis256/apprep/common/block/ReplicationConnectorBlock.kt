@@ -12,13 +12,25 @@ import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.phys.BlockHitResult
 
+class ReplicationConnectorBlock :
+    AEBaseEntityBlock<ReplicationConnectorBlockEntity>(metalProps()),
+    INetworkDirectionalConnection {
+    override fun canConnect(
+        state: BlockState?,
+        side: Direction?,
+    ) = true
 
-class ReplicationConnectorBlock : AEBaseEntityBlock<ReplicationConnectorBlockEntity>(metalProps()), INetworkDirectionalConnection {
-    override fun canConnect(level: Level?, pos: BlockPos?, state: BlockState?, side: Direction?) = true
-
-    override fun useWithoutItem(state: BlockState, level: Level, pos: BlockPos, player: Player, hitResult: BlockHitResult): InteractionResult {
-        val blockEntity = level.getBlockEntity(pos) as? ReplicationConnectorBlockEntity
-            ?: return super.useWithoutItem(state, level, pos, player, hitResult)
+    override fun use(
+        state: BlockState,
+        level: Level,
+        pos: BlockPos,
+        player: Player,
+        hand: net.minecraft.world.InteractionHand,
+        hitResult: BlockHitResult,
+    ): InteractionResult {
+        val blockEntity =
+            level.getBlockEntity(pos) as? ReplicationConnectorBlockEntity
+                ?: return super.use(state, level, pos, player, hand, hitResult)
 
         if (!level.isClientSide) {
             blockEntity.openMenu(player, MenuLocators.forBlockEntity(blockEntity))

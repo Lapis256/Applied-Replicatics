@@ -1,10 +1,10 @@
 package dev.lapis256.apprep.common.logic
 
-import appeng.helpers.IPriorityHost
 import appeng.api.upgrades.IUpgradeableObject
+import appeng.helpers.IPriorityHost
 import appeng.menu.ISubMenu
 import appeng.menu.MenuOpener
-import appeng.menu.locator.MenuHostLocator
+import appeng.menu.locator.MenuLocator
 import com.buuz135.replication.api.matter_fluid.IMatterTank
 import com.buuz135.replication.api.network.IMatterTanksConsumer
 import com.buuz135.replication.api.network.IMatterTanksSupplier
@@ -14,12 +14,14 @@ import com.hrznstudio.titanium.block_network.NetworkManager
 import dev.lapis256.apprep.api.extension.takeIfServer
 import dev.lapis256.apprep.common.init.AppRepMenus
 import net.minecraft.world.entity.player.Player
-import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.ItemLike
+import net.minecraft.world.level.block.entity.BlockEntity
 
-
-interface ReplicationConnectorLogicHost : IMatterTanksConsumer, IMatterTanksSupplier, IPriorityHost, IUpgradeableObject {
-
+interface ReplicationConnectorLogicHost :
+    IMatterTanksConsumer,
+    IMatterTanksSupplier,
+    IPriorityHost,
+    IUpgradeableObject {
     fun getBlockEntity(): BlockEntity?
 
     fun saveChanges()
@@ -44,7 +46,10 @@ interface ReplicationConnectorLogicHost : IMatterTanksConsumer, IMatterTanksSupp
         logic.onMainNodeStateChanged()
     }
 
-    fun openMenu(player: Player, locator: MenuHostLocator) {
+    fun openMenu(
+        player: Player,
+        locator: MenuLocator,
+    ) {
         MenuOpener.open(AppRepMenus.REPLICATION_CONNECTOR, player, locator)
     }
 
@@ -57,10 +62,13 @@ interface ReplicationConnectorLogicHost : IMatterTanksConsumer, IMatterTanksSupp
     // IPriorityHost
 
     override fun setPriority(newValue: Int) {
-        logic.priority = newValue
+        logic.setPriority(newValue)
     }
 
-    override fun returnToMainMenu(player: Player, subMenu: ISubMenu) {
+    override fun returnToMainMenu(
+        player: Player,
+        subMenu: ISubMenu,
+    ) {
         MenuOpener.returnTo(AppRepMenus.REPLICATION_CONNECTOR, player, subMenu.locator)
     }
 }

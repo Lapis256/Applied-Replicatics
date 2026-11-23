@@ -12,23 +12,27 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.item.ItemStack
 
-
 @Suppress("UnstableApiUsage")
 object MatterTankItemStrategy : ContainerItemStrategy<MatterKey, MatterTankItemStrategy.Context> {
-
     override fun getContainedStack(stack: ItemStack): GenericStack? {
         val wrapper = ItemMatterTankWrapper.of(stack) ?: return null
         return wrapper.matter.toGenericStackOrNull()
     }
 
-    override fun findCarriedContext(player: Player, menu: AbstractContainerMenu): Context? {
+    override fun findCarriedContext(
+        player: Player,
+        menu: AbstractContainerMenu,
+    ): Context? {
         if (ItemMatterTankWrapper.isMatterTank(menu.carried)) {
             return Context.Carried(player, menu)
         }
         return null
     }
 
-    override fun findPlayerSlotContext(player: Player, slot: Int): Context? {
+    override fun findPlayerSlotContext(
+        player: Player,
+        slot: Int,
+    ): Context? {
         val slotStack = player.inventory.getItem(slot)
         if (ItemMatterTankWrapper.isMatterTank(slotStack)) {
             return Context.PlayerInventory(player, slot)
@@ -36,14 +40,20 @@ object MatterTankItemStrategy : ContainerItemStrategy<MatterKey, MatterTankItemS
         return null
     }
 
-    override fun extract(context: Context, what: MatterKey, amount: Long, mode: Actionable): Long {
+    override fun extract(
+        context: Context,
+        what: MatterKey,
+        amount: Long,
+        mode: Actionable,
+    ): Long {
         val stack = context.stack
         val copy = stack.copyWithCount(1)
         val wrapper = ItemMatterTankWrapper.of(copy) ?: return 0L
 
-        val extracted = transferWholeMatter(amount, mode) { count, action ->
-            wrapper.drain(what.toStack(count), action).amount
-        }
+        val extracted =
+            transferWholeMatter(amount, mode) { count, action ->
+                wrapper.drain(what.toStack(count), action).amount
+            }
         if (mode == Actionable.MODULATE && extracted > 0) {
             stack.shrink(1)
             context.addOverflow(wrapper.getChangedStack())
@@ -51,14 +61,20 @@ object MatterTankItemStrategy : ContainerItemStrategy<MatterKey, MatterTankItemS
         return extracted
     }
 
-    override fun insert(context: Context, what: MatterKey, amount: Long, mode: Actionable): Long {
+    override fun insert(
+        context: Context,
+        what: MatterKey,
+        amount: Long,
+        mode: Actionable,
+    ): Long {
         val stack = context.stack
         val copy = stack.copyWithCount(1)
         val wrapper = ItemMatterTankWrapper.of(copy) ?: return 0L
 
-        val filled = transferWholeMatter(amount, mode) { count, action ->
-            wrapper.fill(what.toStack(count), action)
-        }
+        val filled =
+            transferWholeMatter(amount, mode) { count, action ->
+                wrapper.fill(what.toStack(count), action)
+            }
         if (mode == Actionable.MODULATE && filled > 0) {
             stack.shrink(1)
             context.addOverflow(wrapper.getChangedStack())
@@ -66,26 +82,35 @@ object MatterTankItemStrategy : ContainerItemStrategy<MatterKey, MatterTankItemS
         return filled
     }
 
-    override fun playFillSound(player: Player, what: MatterKey) {
+    override fun playFillSound(
+        player: Player,
+        what: MatterKey,
+    ) {
         player.playSound(SoundEvents.BUCKET_FILL, 1.0F, 1.0F)
     }
 
-    override fun playEmptySound(player: Player, what: MatterKey) {
+    override fun playEmptySound(
+        player: Player,
+        what: MatterKey,
+    ) {
         player.playSound(SoundEvents.BUCKET_EMPTY, 1.0F, 1.0F)
     }
 
-    override fun getExtractableContent(context: Context): GenericStack? {
-        return getContainedStack(context.stack)
-    }
+    override fun getExtractableContent(context: Context): GenericStack? = getContainedStack(context.stack)
 
-    sealed class Context(open val player: Player) {
+    sealed class Context(
+        open val player: Player,
+    ) {
         abstract var stack: ItemStack
 
         open fun addOverflow(stack: ItemStack) {
             player.inventory.placeItemBackInInventory(stack)
         }
 
-        data class Carried(override val player: Player, val menu: AbstractContainerMenu) : Context(player) {
+        data class Carried(
+            override val player: Player,
+            val menu: AbstractContainerMenu,
+        ) : Context(player) {
             override var stack: ItemStack
                 get() = menu.carried
                 set(value) {
@@ -101,7 +126,10 @@ object MatterTankItemStrategy : ContainerItemStrategy<MatterKey, MatterTankItemS
             }
         }
 
-        data class PlayerInventory(override val player: Player, val slot: Int) : Context(player) {
+        data class PlayerInventory(
+            override val player: Player,
+            val slot: Int,
+        ) : Context(player) {
             override var stack: ItemStack
                 get() = player.inventory.getItem(slot)
                 set(value) {

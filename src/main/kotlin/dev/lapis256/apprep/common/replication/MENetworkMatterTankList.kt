@@ -9,48 +9,49 @@ import dev.lapis256.apprep.api.ae2.stack.MatterKey
 import dev.lapis256.apprep.api.util.ResettableLazy
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
 
-
 /**
  * ME ネットワーク内のすべてのマターをタンクのリストとして扱う為のクラス
  */
 class MENetworkMatterTankList(
     cachedMatters: Map<IMatterType, Long>,
     private val storage: MEStorage,
-    private val source: IActionSource
+    private val source: IActionSource,
 ) : List<MEMatterTank> {
     companion object {
-        fun empty(): MENetworkMatterTankList {
-            return MENetworkMatterTankList(
+        fun empty(): MENetworkMatterTankList =
+            MENetworkMatterTankList(
                 mapOf(),
                 NullInventory.of(),
-                IActionSource.empty()
+                IActionSource.empty(),
             )
+    }
+
+    private fun createTank(
+        type: IMatterType,
+        amount: Long,
+    ): MEMatterTank = MEMatterTank(type, amount, storage, source)
+
+    private val tankMap =
+        Object2ObjectOpenHashMap<IMatterType, MEMatterTank>().apply {
+            cachedMatters.forEach { (type, amount) ->
+                put(type, createTank(type, amount))
+            }
         }
-    }
 
-    private fun createTank(type: IMatterType, amount: Long): MEMatterTank {
-        return MEMatterTank(type, amount, storage, source)
-    }
-
-    private val tankMap = Object2ObjectOpenHashMap<IMatterType, MEMatterTank>().apply {
-        cachedMatters.forEach { (type, amount) ->
-            put(type, createTank(type, amount))
-        }
-    }
-
-    private fun getTankOrCreate(type: IMatterType): MEMatterTank {
-        return tankMap.getOrPut(type) {
+    private fun getTankOrCreate(type: IMatterType): MEMatterTank =
+        tankMap.getOrPut(type) {
             val tank = createTank(type, 0L)
             _tankList.reset()
             tank
         }
-    }
 
     /**
      * タンク内のマター量を更新する。
-     * AE2 のストレージは Long で数量を扱うため、Long を受け取って Double に変換する。
      */
-    fun updateCache(key: AEKey, amount: Long) {
+    fun updateCache(
+        key: AEKey,
+        amount: Long,
+    ) {
         val matterKey = key as? MatterKey ?: return
         val tank = getTankOrCreate(matterKey.type)
         tank.updateAmount(amount)
@@ -60,14 +61,27 @@ class MENetworkMatterTankList(
     private val tankList by _tankList
 
     override val size get() = tankList.size
+
     override fun isEmpty() = tankList.isEmpty()
+
     override fun contains(element: MEMatterTank) = tankList.contains(element)
+
     override fun iterator() = tankList.iterator()
+
     override fun containsAll(elements: Collection<MEMatterTank>) = tankList.containsAll(elements)
+
     override fun get(index: Int): MEMatterTank = tankList[index]
+
     override fun indexOf(element: MEMatterTank) = tankList.indexOf(element)
+
     override fun lastIndexOf(element: MEMatterTank) = tankList.lastIndexOf(element)
+
     override fun listIterator() = tankList.listIterator()
+
     override fun listIterator(index: Int) = tankList.listIterator(index)
-    override fun subList(fromIndex: Int, toIndex: Int) = tankList.subList(fromIndex, toIndex)
+
+    override fun subList(
+        fromIndex: Int,
+        toIndex: Int,
+    ) = tankList.subList(fromIndex, toIndex)
 }

@@ -1,25 +1,25 @@
 package dev.lapis256.apprep.data.provider.client
 
 import appeng.datagen.providers.models.AE2BlockStateProvider
-import dev.lapis256.apprep.integration.megacells.common.init.AppRepMEGABlocks
 import dev.lapis256.apprep.api.AppliedReplicaticsAPI
 import dev.lapis256.apprep.common.init.AppRepBlocks
 import dev.lapis256.apprep.common.init.AppRepItems
 import dev.lapis256.apprep.extension.MatterCellDefinition
+import dev.lapis256.apprep.integration.megacells.common.init.AppRepMEGABlocks
 import net.minecraft.core.Direction
 import net.minecraft.data.PackOutput
-import net.neoforged.neoforge.common.data.ExistingFileHelper
+import net.minecraftforge.common.data.ExistingFileHelper
 
-
-class AppRepBlockModelProvider(output: PackOutput, helper: ExistingFileHelper) :
-    AE2BlockStateProvider(output, AppliedReplicaticsAPI.MOD_ID, helper) {
-
+class AppRepBlockModelProvider(
+    output: PackOutput,
+    helper: ExistingFileHelper,
+) : AE2BlockStateProvider(output, AppliedReplicaticsAPI.MOD_ID, helper) {
     override fun registerStatesAndModels() {
         AppRepItems.CELLS.forEach(::matterCell)
 
-        simpleBlockAndItem(AppRepBlocks.REPLICATION_CONNECTOR)
+        AppRepBlocks.REPLICATION_CONNECTOR.block().let { simpleBlockWithItem(it, cubeAll(it)) }
 
-        simpleBlockAndItem(AppRepMEGABlocks.SKY_REPLICA_BLOCK)
+        AppRepMEGABlocks.SKY_REPLICA_BLOCK.block().let { simpleBlockWithItem(it, cubeAll(it)) }
     }
 
     private fun matterCell(drive: MatterCellDefinition) {
@@ -38,9 +38,14 @@ class AppRepBlockModelProvider(output: PackOutput, helper: ExistingFileHelper) :
      *
      * For the full text of the LGPL-3.0 License, please refer to the above URL or the LICENSE file of the original project.
      */
-    private fun cell(cell: String, texture: String, offset: Int) {
+    private fun cell(
+        cell: String,
+        texture: String,
+        offset: Int,
+    ) {
         val texturePrefix = "block/drive/cells/"
-        models().getBuilder(texturePrefix + cell)
+        models()
+            .getBuilder(texturePrefix + cell)
             .ao(false)
             .texture("cell", texturePrefix + texture)
             .texture("particle", texturePrefix + texture)
@@ -57,7 +62,6 @@ class AppRepBlockModelProvider(output: PackOutput, helper: ExistingFileHelper) :
             .end()
             .faces { _, builder ->
                 builder.texture("#cell").cullface(Direction.NORTH).end()
-            }
-            .end()
+            }.end()
     }
 }

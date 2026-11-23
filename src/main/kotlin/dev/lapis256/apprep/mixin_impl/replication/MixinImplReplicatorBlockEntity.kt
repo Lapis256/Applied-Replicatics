@@ -8,10 +8,9 @@ import dev.lapis256.apprep.api.replication.task.internalMatterStacks
 import dev.lapis256.apprep.common.logic.ReplicationConnectorLogicHost
 import dev.lapis256.apprep.mixin.replication.AccessorNetworkBlockEntity
 
-
 fun keepTaskOnChunkUnload(
     original: IReplicationTask?,
-    blockEntity: ReplicatorBlockEntity
+    blockEntity: ReplicatorBlockEntity,
 ): IReplicationTask? {
     val task = original as? ReplicationTask ?: return original
     val isUnloaded = (blockEntity as AccessorNetworkBlockEntity).isUnloaded
@@ -23,17 +22,21 @@ fun setConnectorHost(
     original: Boolean,
     blockEntity: ReplicatorBlockEntity,
     hostRef: LocalRef<ReplicationConnectorLogicHost>,
-    task: IReplicationTask
+    task: IReplicationTask,
 ): Boolean {
     val level = blockEntity.getLevel() ?: return original
-    val entity = level.getBlockEntity(task.source)
-        as? ReplicationConnectorLogicHost ?: return original
+    val entity =
+        level.getBlockEntity(task.source)
+            as? ReplicationConnectorLogicHost ?: return original
 
     hostRef.set(entity)
     return true
 }
 
-fun insertResultToConnector(host: ReplicationConnectorLogicHost?, task: IReplicationTask): Boolean {
+fun insertResultToConnector(
+    host: ReplicationConnectorLogicHost?,
+    task: IReplicationTask,
+): Boolean {
     if (host == null) {
         return false
     }

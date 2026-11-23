@@ -10,8 +10,12 @@ import kotlin.collections.component2
 import kotlin.collections.component3
 import kotlin.collections.component4
 
-
-fun renderMatterTypeOnGui(guiGraphics: GuiGraphics, type: IMatterType, x: Int = 0, y: Int = 0) {
+fun renderMatterTypeOnGui(
+    guiGraphics: GuiGraphics,
+    type: IMatterType,
+    x: Int = 0,
+    y: Int = 0,
+) {
     val (r, g, b, a) = type.color.get()
     val icon = ResourceLocation.fromNamespaceAndPath(Replication.MOD_ID, "textures/gui/mattertypes/${type.name.lowercase()}.png")
 

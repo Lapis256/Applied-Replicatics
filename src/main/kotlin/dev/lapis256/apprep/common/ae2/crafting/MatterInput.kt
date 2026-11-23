@@ -9,26 +9,34 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import kotlin.math.ceil
 
-
-class MatterInput(private val stack: GenericStack, private val amount: Long) : IPatternDetails.IInput {
+class MatterInput(
+    private val stack: GenericStack,
+    private val amount: Long,
+) : IPatternDetails.IInput {
     constructor(key: MatterKey, amount: Long) : this(GenericStack(key, 1), amount)
 
     companion object {
         fun calculateFromOutput(output: ItemStack): Array<MatterInput> {
             val compound = ReplicationCalculation.getMatterCompound(output) ?: return arrayOf()
-            val inputs = compound.values.values.map {
-                MatterInput(MatterKey.of(it.matter), ceil(it.amount).toLong())
-            }.toTypedArray()
+            val inputs =
+                compound.values.values
+                    .map {
+                        MatterInput(MatterKey.of(it.matter), ceil(it.amount).toInt().toLong())
+                    }.toTypedArray()
             return inputs
         }
     }
 
     private val inputs = arrayOf(stack)
+
     override fun getPossibleInputs(): Array<GenericStack> = inputs
 
     override fun getMultiplier() = amount
 
-    override fun isValid(input: AEKey, level: Level?): Boolean = input.matches(stack)
+    override fun isValid(
+        input: AEKey,
+        level: Level?,
+    ): Boolean = input.matches(stack)
 
     override fun getRemainingKey(template: AEKey?): AEKey? = null
 }

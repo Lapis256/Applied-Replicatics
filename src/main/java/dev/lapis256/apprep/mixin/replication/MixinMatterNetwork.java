@@ -2,6 +2,8 @@ package dev.lapis256.apprep.mixin.replication;
 
 import com.buuz135.replication.api.IMatterType;
 import com.buuz135.replication.api.task.IReplicationTask;
+import com.buuz135.replication.api.pattern.IMatterPatternHolder;
+import net.minecraft.core.BlockPos;
 import com.buuz135.replication.network.MatterNetwork;
 import com.llamalad7.mixinextras.expression.Definition;
 import com.llamalad7.mixinextras.expression.Expression;
@@ -19,8 +21,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-
-@Mixin(MatterNetwork.class)
+@Mixin(value = MatterNetwork.class, remap = false)
 public class MixinMatterNetwork implements MatterNetworkListenerHolder {
     @Unique
     private final MixinImplMatterNetwork apprep$impl = new MixinImplMatterNetwork();
@@ -113,7 +114,7 @@ public class MixinMatterNetwork implements MatterNetworkListenerHolder {
     }
 
     @Inject(method = "onChipValuesChanged", at = @At("TAIL"))
-    private void apprep$onChipValuesChanged(CallbackInfo ci) {
+    private void apprep$onChipValuesChanged(IMatterPatternHolder<?> holder, BlockPos pos, CallbackInfo ci) {
         apprep$impl.onChipValuesChanged();
     }
 

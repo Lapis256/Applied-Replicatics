@@ -1,20 +1,20 @@
 package dev.lapis256.apprep.data.provider.client
 
 import appeng.core.AppEng
-import appeng.core.definitions.ItemDefinition
-import dev.lapis256.apprep.integration.megacells.common.init.AppRepMEGAItems
 import dev.lapis256.apprep.api.AppliedReplicaticsAPI
+import dev.lapis256.apprep.api.extension.ItemDefinition
 import dev.lapis256.apprep.common.init.AppRepItems
 import dev.lapis256.apprep.extension.MatterCellDefinition
+import dev.lapis256.apprep.integration.megacells.common.init.AppRepMEGAItems
 import net.minecraft.data.PackOutput
 import net.minecraft.resources.ResourceLocation
-import net.neoforged.neoforge.client.model.generators.ItemModelProvider
-import net.neoforged.neoforge.common.data.ExistingFileHelper
+import net.minecraftforge.client.model.generators.ItemModelProvider
+import net.minecraftforge.common.data.ExistingFileHelper
 
-
-class AppRepItemModelProvider(output: PackOutput, helper: ExistingFileHelper) :
-    ItemModelProvider(output, AppliedReplicaticsAPI.MOD_ID, helper) {
-
+class AppRepItemModelProvider(
+    output: PackOutput,
+    helper: ExistingFileHelper,
+) : ItemModelProvider(output, AppliedReplicaticsAPI.MOD_ID, helper) {
     private val parent = mcLoc("item/generated")
     private val cellLed: ResourceLocation = AppEng.makeId("item/storage_cell_led")
 

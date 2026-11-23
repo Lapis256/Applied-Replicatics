@@ -7,8 +7,7 @@ import com.buuz135.replication.api.IMatterType
 import com.buuz135.replication.api.matter_fluid.IMatterTank
 import com.buuz135.replication.api.matter_fluid.MatterStack
 import dev.lapis256.apprep.api.ae2.stack.MatterKey
-import net.neoforged.neoforge.fluids.capability.IFluidHandler
-
+import net.minecraftforge.fluids.capability.IFluidHandler
 
 /**
  * ME ネットワークのマターを扱う [IMatterTank] 実装
@@ -17,14 +16,17 @@ class MEMatterTank(
     private val type: IMatterType,
     private var amount: Long,
     private val storage: MEStorage,
-    private val source: IActionSource
+    private val source: IActionSource,
 ) : IMatterTank {
-    private val doubleAmount get() = amount.toDouble()
-    private val stack get() = MatterStack(type, doubleAmount)
+    private val matterAmountForReplication get() = amount.coerceIn(0, Int.MAX_VALUE.toLong()).toInt()
+    private val stack get() = MatterStack(type, matterAmountForReplication)
 
     override fun getMatter(): MatterStack = stack
-    override fun getMatterAmount() = doubleAmount
-    override fun getCapacity() = Long.MAX_VALUE.toDouble()
+
+    override fun getMatterAmount() = matterAmountForReplication
+
+    override fun getCapacity() = Int.MAX_VALUE
+
     override fun isMatterValid(stack: MatterStack?): Boolean = true
 
     fun updateAmount(newAmount: Long) {
@@ -36,27 +38,36 @@ class MEMatterTank(
      *
      * TODO: StorageHelper を使ってエネルギーコストを考慮した挿入処理を実装すると良いかも?
      */
-    override fun fill(resource: MatterStack, action: IFluidHandler.FluidAction): Double {
+    override fun fill(
+        resource: MatterStack,
+        action: IFluidHandler.FluidAction,
+    ): Int {
         if (resource.isEmpty || resource.matterType != type) {
-            return 0.0
+            return 0
         }
-        return storage.insert(MatterKey.of(type), resource.amount.toLong(), Actionable.of(action), source).toDouble()
+        return storage.insert(MatterKey.of(type), resource.amount.toLong(), Actionable.of(action), source).toInt()
     }
 
     /**
      * マターを [MEStorage] から搬出する。
      * TODO: StorageHelper を使ってエネルギーコストを考慮した挿入処理を実装すると良いかも?
      */
-    override fun drain(maxDrain: Double, action: IFluidHandler.FluidAction): MatterStack {
+    override fun drain(
+        maxDrain: Int,
+        action: IFluidHandler.FluidAction,
+    ): MatterStack {
         val extracted = storage.extract(MatterKey.of(type), maxDrain.toLong(), Actionable.of(action), source)
-        return MatterStack(type, extracted.toDouble())
+        return MatterStack(type, extracted.toInt())
     }
 
     /**
      * マターを [MEStorage] から搬出する。
      * TODO: StorageHelper を使ってエネルギーコストを考慮した挿入処理を実装すると良いかも?
      */
-    override fun drain(resource: MatterStack, action: IFluidHandler.FluidAction): MatterStack {
+    override fun drain(
+        resource: MatterStack,
+        action: IFluidHandler.FluidAction,
+    ): MatterStack {
         if (resource.isEmpty || resource.matterType != type) {
             return MatterStack.EMPTY
         }

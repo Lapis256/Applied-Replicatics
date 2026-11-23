@@ -10,14 +10,13 @@ import dev.lapis256.apprep.api.replication.util.MATTER_TYPE_NAME_CODEC
 import it.unimi.dsi.fastutil.objects.Object2LongMap
 import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap
 import net.minecraft.core.BlockPos
-import net.minecraft.core.HolderLookup
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.nbt.NbtOps
 import kotlin.math.max
 
-
 interface MEReplicationTask {
     fun `apprep$setInternalMatterStacks`(stacks: Object2LongMap<IMatterType>)
+
     fun `apprep$getInternalMatterStacks`(): Object2LongMap<IMatterType>
 
     /**
@@ -27,26 +26,33 @@ interface MEReplicationTask {
         get() = `apprep$getInternalMatterStacks`()
         set(value) = `apprep$setInternalMatterStacks`(value)
 
-    fun deserializeAdditionalNBT(provider: HolderLookup.Provider, compoundTag: CompoundTag) {
-        val ops = provider.createSerializationContext(NbtOps.INSTANCE)
-        INTERNAL_MATTER_STACKS_CODEC.parse(ops, compoundTag)
-            .ifSuccess {
+    fun deserializeAdditionalNBT(compoundTag: CompoundTag) {
+        val ops = NbtOps.INSTANCE
+        INTERNAL_MATTER_STACKS_CODEC
+            .parse(ops, compoundTag)
+            .result()
+            .ifPresent {
                 internalMatterStacks = it
             }
     }
 
-    fun serializeAdditionalNBT(provider: HolderLookup.Provider, compoundTag: CompoundTag): CompoundTag {
-        val ops = provider.createSerializationContext(NbtOps.INSTANCE)
+    fun serializeAdditionalNBT(compoundTag: CompoundTag): CompoundTag {
+        val ops = NbtOps.INSTANCE
 
-        INTERNAL_MATTER_STACKS_CODEC.encodeStart(ops, internalMatterStacks)
-            .ifSuccess {
+        INTERNAL_MATTER_STACKS_CODEC
+            .encodeStart(ops, internalMatterStacks)
+            .result()
+            .ifPresent {
                 compoundTag.merge(it as CompoundTag)
             }
 
         return compoundTag
     }
 
-    fun extractMatter(type: IMatterType, amount: Long): Long {
+    fun extractMatter(
+        type: IMatterType,
+        amount: Long,
+    ): Long {
         val maxAmount = internalMatterStacks.getLong(type)
         val toExtract = minOf(amount, maxAmount)
         if (toExtract > 0) {
@@ -56,10 +62,12 @@ interface MEReplicationTask {
     }
 
     companion object {
-        val MATTER_COUNT_CODEC: Codec<Object2LongMap<IMatterType>> = Codec.unboundedMap(
-            MATTER_TYPE_NAME_CODEC,
-            Codec.LONG
-        ).xmap(::Object2LongOpenHashMap, Map<IMatterType, Long>::toMap)
+        val MATTER_COUNT_CODEC: Codec<Object2LongMap<IMatterType>> =
+            Codec
+                .unboundedMap(
+                    MATTER_TYPE_NAME_CODEC,
+                    Codec.LONG,
+                ).xmap(::Object2LongOpenHashMap, Map<IMatterType, Long>::toMap)
 
         val INTERNAL_MATTER_STACKS_CODEC: Codec<Object2LongMap<IMatterType>> =
             MATTER_COUNT_CODEC.fieldOf("${AppliedReplicaticsAPI.MOD_ID}:internal_matter_stacks").codec()
@@ -70,17 +78,15 @@ interface MEReplicationTask {
             output: AEItemKey,
             totalAmount: Long,
             source: BlockPos,
-            mode: IReplicationTask.Mode = IReplicationTask.Mode.MULTIPLE
-        ): ReplicationTask {
-            return ReplicationTask(
+            mode: IReplicationTask.Mode = IReplicationTask.Mode.MULTIPLE,
+        ): ReplicationTask =
+            ReplicationTask(
                 output.toStack(),
                 max(1, totalAmount.toInt()),
                 mode,
                 source,
-                false
             ).apply {
                 this.internalMatterStacks = internalMatterStacks
             }
-        }
     }
 }

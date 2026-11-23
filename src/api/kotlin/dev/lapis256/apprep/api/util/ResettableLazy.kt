@@ -2,8 +2,9 @@ package dev.lapis256.apprep.api.util
 
 import kotlin.reflect.KProperty
 
-
-class ResettableLazy<T>(private val initializer: () -> T) {
+class ResettableLazy<T>(
+    private val initializer: () -> T,
+) {
     @Volatile
     private var value: T? = null
 
@@ -18,7 +19,10 @@ class ResettableLazy<T>(private val initializer: () -> T) {
         }
     }
 
-    operator fun getValue(thisRef: Any?, property: KProperty<*>): T = get()
+    operator fun getValue(
+        thisRef: Any?,
+        property: KProperty<*>,
+    ): T = get()
 
     fun reset() {
         synchronized(this) {

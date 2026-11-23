@@ -5,7 +5,7 @@ import appeng.api.networking.IGridNode
 import appeng.api.networking.IGridNodeListener
 import appeng.api.networking.IManagedGridNode
 import appeng.api.util.AECableType
-import appeng.blockentity.grid.AENetworkedBlockEntity
+import appeng.blockentity.grid.AENetworkBlockEntity
 import appeng.helpers.IPriorityHost
 import appeng.me.helpers.BlockEntityNodeListener
 import com.buuz135.replication.network.DefaultMatterNetworkElement
@@ -16,19 +16,19 @@ import dev.lapis256.apprep.common.logic.ReplicationConnectorLogic
 import dev.lapis256.apprep.common.logic.ReplicationConnectorLogicHost
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
-import net.minecraft.core.HolderLookup
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
 
-
-class ReplicationConnectorBlockEntity(type: BlockEntityType<*>, pos: BlockPos, state: BlockState) :
-    AENetworkedBlockEntity(type, pos, state),
+class ReplicationConnectorBlockEntity(
+    type: BlockEntityType<*>,
+    pos: BlockPos,
+    state: BlockState,
+) : AENetworkBlockEntity(type, pos, state),
     IPriorityHost,
     ReplicationConnectorLogicHost {
-
     private var isChunkUnloaded = false
 
     override fun onLoad() {
@@ -73,34 +73,37 @@ class ReplicationConnectorBlockEntity(type: BlockEntityType<*>, pos: BlockPos, s
     }
 
     private object NodeListener : BlockEntityNodeListener<ReplicationConnectorBlockEntity>() {
-        override fun onGridChanged(nodeOwner: ReplicationConnectorBlockEntity, node: IGridNode) {
+        override fun onGridChanged(
+            nodeOwner: ReplicationConnectorBlockEntity,
+            node: IGridNode,
+        ) {
             nodeOwner.logic.gridChanged()
         }
     }
 
-    override fun createMainNode(): IManagedGridNode {
-        return GridHelper.createManagedNode(this, NodeListener)
-    }
+    override fun createMainNode(): IManagedGridNode = GridHelper.createManagedNode(this, NodeListener)
 
     override fun onMainNodeStateChanged(reason: IGridNodeListener.State?) {
         super<ReplicationConnectorLogicHost>.onMainNodeStateChanged()
     }
 
-    override fun saveAdditional(data: CompoundTag, registries: HolderLookup.Provider) {
-        super.saveAdditional(data, registries)
-        logic.writeToNBT(data, registries)
+    override fun saveAdditional(data: CompoundTag) {
+        super.saveAdditional(data)
+        logic.writeToNBT(data)
     }
 
-    override fun loadTag(data: CompoundTag, registries: HolderLookup.Provider) {
-        super.loadTag(data, registries)
-        logic.readFromNBT(data, registries)
+    override fun loadTag(data: CompoundTag) {
+        super.loadTag(data)
+        logic.readFromNBT(data)
     }
 
-    override fun getCableConnectionType(dir: Direction?): AECableType {
-        return logic.getCableConnectionType(dir)
-    }
+    override fun getCableConnectionType(dir: Direction?): AECableType = logic.getCableConnectionType(dir)
 
-    override fun addAdditionalDrops(level: Level, pos: BlockPos, drops: MutableList<ItemStack>) {
+    override fun addAdditionalDrops(
+        level: Level,
+        pos: BlockPos,
+        drops: MutableList<ItemStack>,
+    ) {
         super.addAdditionalDrops(level, pos, drops)
         logic.addDrops(level, pos, drops)
     }

@@ -1,17 +1,14 @@
 package dev.lapis256.apprep.common
 
-import appeng.api.AECapabilities
 import appeng.api.behaviors.ContainerItemStrategy
 import appeng.api.behaviors.GenericSlotCapacities
 import appeng.api.crafting.PatternDetailsHelper
-import appeng.api.networking.IInWorldGridNodeHost
 import appeng.api.stacks.AEKeyTypes
 import appeng.api.upgrades.Upgrades
+import appeng.capabilities.Capabilities
 import appeng.core.definitions.AEItems
-import appeng.core.definitions.DeferredBlockEntityType
 import appeng.core.localization.GuiText
 import com.buuz135.replication.ReplicationRegistry
-import com.buuz135.replication.block.MatterPipeBlock
 import dev.lapis256.apprep.api.AppliedReplicaticsAPI
 import dev.lapis256.apprep.api.ae2.stack.MatterKey
 import dev.lapis256.apprep.api.ae2.stack.MatterKeyType
@@ -20,35 +17,41 @@ import dev.lapis256.apprep.api.connector.ReplicationConnectorUpgrades
 import dev.lapis256.apprep.common.ae2.crafting.ReplicationPatternDecoder
 import dev.lapis256.apprep.common.ae2.strategies.GenericStackMatterStorage
 import dev.lapis256.apprep.common.ae2.strategies.MatterTankItemStrategy
-import dev.lapis256.apprep.common.block.ReplicationConnectorBlock
-import dev.lapis256.apprep.common.init.*
-import net.minecraft.core.registries.BuiltInRegistries
+import dev.lapis256.apprep.common.init.AppRepBlockEntities
+import dev.lapis256.apprep.common.init.AppRepBlocks
+import dev.lapis256.apprep.common.init.AppRepCreativeTab
+import dev.lapis256.apprep.common.init.AppRepItems
+import dev.lapis256.apprep.common.init.AppRepMenus
+import dev.lapis256.apprep.common.init.AppRepParts
+import net.minecraft.core.Direction
 import net.minecraft.core.registries.Registries
-import net.neoforged.bus.api.IEventBus
-import net.neoforged.fml.common.Mod
-import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent
-import net.neoforged.neoforge.registries.RegisterEvent
-
+import net.minecraft.world.level.block.entity.BlockEntity
+import net.minecraftforge.common.MinecraftForge
+import net.minecraftforge.common.capabilities.Capability
+import net.minecraftforge.common.capabilities.ICapabilityProvider
+import net.minecraftforge.common.util.LazyOptional
+import net.minecraftforge.event.AttachCapabilitiesEvent
+import net.minecraftforge.fml.common.Mod
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext
+import net.minecraftforge.registries.RegisterEvent
 
 @Mod(AppliedReplicaticsAPI.MOD_ID)
-class AppliedReplicatics(eventBus: IEventBus) {
-
+class AppliedReplicatics(
+    context: FMLJavaModLoadingContext,
+) {
     init {
+        val eventBus = context.modEventBus
         AppRepParts.init()
         AppRepBlockEntities.REGISTRY.register(eventBus)
         AppRepBlocks.REGISTRY.register(eventBus)
-        AppRepComponents.REGISTRY.register(eventBus)
         AppRepItems.REGISTRY.register(eventBus)
         AppRepCreativeTab.REGISTRY.register(eventBus)
-        AppRepMenus.REGISTRY.register(eventBus)
-
-        MatterPipeBlock.ALLOWED_CONNECTION_BLOCKS.add { it is ReplicationConnectorBlock }
+        AppRepMenus.REPLICATION_CONNECTOR
 
         eventBus.addListener(::onCommonSetup)
         eventBus.addListener(::onRegister)
-        eventBus.addListener(::registerCapabilities)
-        eventBus.addListener(::registerGenericAdapters)
+        MinecraftForge.EVENT_BUS.addGenericListener(BlockEntity::class.java, ::attachMatterHandler)
 
         PatternDetailsHelper.registerDecoder(ReplicationPatternDecoder)
 
@@ -85,27 +88,22 @@ class AppliedReplicatics(eventBus: IEventBus) {
         AEKeyTypes.register(MatterKeyType)
     }
 
-    private fun registerCapabilities(event: RegisterCapabilitiesEvent) {
-        AppRepBlockEntities.BLOCK_ENTITY_TYPES
-            .asSequence()
-            .filter { IInWorldGridNodeHost::class.java.isAssignableFrom(it.blockEntityClass) }
-            .map(DeferredBlockEntityType<*>::get)
-            .forEach { type ->
-                event.registerBlockEntity(AECapabilities.IN_WORLD_GRID_NODE_HOST, type) { blockEntity, _ ->
-                    blockEntity as IInWorldGridNodeHost
+    private fun attachMatterHandler(event: AttachCapabilitiesEvent<BlockEntity>) {
+        val blockEntity = event.`object`
+        event.addCapability(
+            AppliedReplicaticsAPI.rl("matter_handler"),
+            object : ICapabilityProvider {
+                override fun <T : Any> getCapability(
+                    cap: Capability<T>,
+                    side: Direction?,
+                ): LazyOptional<T> {
+                    if (cap !== ReplicationRegistry.Capabilities.MATTER_HANDLER) return LazyOptional.empty()
+                    return blockEntity
+                        .getCapability(Capabilities.GENERIC_INTERNAL_INV, side)
+                        .lazyMap(::GenericStackMatterStorage)
+                        .cast()
                 }
-            }
-    }
-
-    @Suppress("UnstableApiUsage")
-    private fun registerGenericAdapters(event: RegisterCapabilitiesEvent) {
-        for (block in BuiltInRegistries.BLOCK) {
-            if (event.isBlockRegistered(AECapabilities.GENERIC_INTERNAL_INV, block)) {
-                event.registerBlock(ReplicationRegistry.Capabilities.MATTER_HANDLER, { level, pos, state, blockEntity, context ->
-                    val inv = level.getCapability(AECapabilities.GENERIC_INTERNAL_INV, pos, state, blockEntity, context) ?: return@registerBlock null
-                    GenericStackMatterStorage(inv)
-                }, block)
-            }
-        }
+            },
+        )
     }
 }

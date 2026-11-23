@@ -8,7 +8,6 @@ import dev.lapis256.apprep.api.replication.task.internalMatterStacks
 import dev.lapis256.apprep.common.logic.ReplicationConnectorLogicHost
 import net.minecraft.world.level.Level
 
-
 class MixinImplMatterNetwork : HookListenerHolderForImpl<MatterNetworkListener>() {
     fun onAddedTanksSupplier() {
         fire { it.onAddedTanksSupplier() }
@@ -39,18 +38,21 @@ class MixinImplMatterNetwork : HookListenerHolderForImpl<MatterNetworkListener>(
     }
 }
 
-
 /**
  * 自動クラフトのキャンセル時に、内部タンクに保持されているマターをネットワークに返却します
  */
-fun returnInternalMatterStacks(level: Level, task: IReplicationTask) {
+fun returnInternalMatterStacks(
+    level: Level,
+    task: IReplicationTask,
+) {
     val replicationTask = task as? ReplicationTask ?: return
     if (replicationTask.internalMatterStacks.isEmpty()) {
         return
     }
 
-    val host = level.getBlockEntity(replicationTask.source)
-        as? ReplicationConnectorLogicHost ?: return
+    val host =
+        level.getBlockEntity(replicationTask.source)
+            as? ReplicationConnectorLogicHost ?: return
 
     host.logic.returnMatterStacksToNetwork(replicationTask.internalMatterStacks)
 }
