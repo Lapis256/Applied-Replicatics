@@ -1,3 +1,4 @@
+
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonObject
@@ -18,6 +19,15 @@ import org.slf4j.event.Level
 import java.text.SimpleDateFormat
 import java.util.Date
 
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath(libs.ec4j)
+    }
+}
 
 plugins {
     id("java")
@@ -81,6 +91,15 @@ base {
 
 repositories {
     mavenLocal()
+    maven("https://modmaven.dev") {
+        content { includeGroup("com.hrznstudio") }
+    }
+    maven("https://maven.blamejared.com") {
+        content { includeGroup("mezz.jei") }
+    }
+    maven("https://maven.terraformersmc.com/releases") {
+        content { includeGroup("dev.emi") }
+    }
     exclusiveContent {
         forRepository {
             maven {
@@ -121,7 +140,7 @@ val gameTestSourceSet by sourceSets.register("gameTest") {
 }
 
 configurations[gameTestSourceSet.implementationConfigurationName].extendsFrom(configurations.implementation.get(), configurations.runtimeOnly.get())
-configurations[gameTestSourceSet.runtimeClasspathConfigurationName].exclude(group = "curse.maven", module = "jei-238222")
+configurations[gameTestSourceSet.runtimeClasspathConfigurationName].exclude(group = "mezz.jei")
 
 val optionalModsSourceSet by sourceSets.register("optionalMods") {
     compileClasspath += mainSourceSet.output + mainSourceSet.compileClasspath
