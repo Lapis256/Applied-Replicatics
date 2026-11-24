@@ -5,17 +5,21 @@ import appeng.api.networking.security.IActionSource
 import appeng.api.stacks.AEItemKey
 import appeng.api.stacks.KeyCounter
 import appeng.api.storage.StorageCells
+import appeng.blockentity.storage.DriveBlockEntity
+import appeng.core.definitions.AEBlocks
 import appeng.core.definitions.AEItems
 import com.buuz135.replication.ReplicationRegistry
 import com.buuz135.replication.api.IMatterType
 import com.buuz135.replication.api.MatterType
 import com.buuz135.replication.api.matter_fluid.MatterStack
+import com.buuz135.replication.block.tile.DisintegratorBlockEntity
 import com.buuz135.replication.block.tile.MatterTankBlockEntity
 import com.buuz135.replication.network.MatterNetwork
 import com.hrznstudio.titanium.block_network.NetworkManager
 import dev.lapis256.apprep.api.ae2.stack.MatterKey
 import dev.lapis256.apprep.api.replication.task.MEReplicationTask
 import dev.lapis256.apprep.api.replication.task.internalMatterStacks
+import dev.lapis256.apprep.api.replication.util.MATTER_TYPES
 import dev.lapis256.apprep.common.block.entity.ReplicationConnectorBlockEntity
 import dev.lapis256.apprep.common.init.AppRepBlocks
 import dev.lapis256.apprep.common.init.AppRepItems
@@ -39,6 +43,51 @@ import net.minecraftforge.gametest.PrefixGameTestTemplate
 @GameTestHolder("apprep")
 @PrefixGameTestTemplate(false)
 class MatterGameTests {
+    @GameTest(template = "empty")
+    fun exportsNewMatterFromDisintegratorToME(helper: GameTestHelper) {
+        val connectorPos = BlockPos.ZERO
+        val drivePos = connectorPos.east()
+        val disintegratorPos = connectorPos.above()
+        helper.setBlock(connectorPos, AppRepBlocks.REPLICATION_CONNECTOR.block())
+        helper.setBlock(drivePos, AEBlocks.DRIVE.block())
+        helper.setBlock(drivePos.east(), AEBlocks.CREATIVE_ENERGY_CELL.block())
+        helper.setBlock(
+            disintegratorPos,
+            ReplicationRegistry.Blocks.DISINTEGRATOR.left
+                .get(),
+        )
+        val connector = helper.getBlockEntity(connectorPos) as ReplicationConnectorBlockEntity
+        val drive = helper.getBlockEntity(drivePos) as DriveBlockEntity
+        drive.internalInventory.setItemDirect(0, ItemStack(AppRepItems.MATTER_CELL_1K))
+        val disintegrator = helper.getBlockEntity(disintegratorPos) as DisintegratorBlockEntity
+        helper.runAfterDelay(20) {
+            val network = checkNotNull(connector.matterNetwork)
+            val element = checkNotNull(NetworkManager.get(helper.level).getElement(disintegrator.blockPos))
+            if (element.network !== network) {
+                (element.network as? MatterNetwork)?.removeElement(element)
+                element.joinNetwork(network)
+                network.update(helper.level)
+            }
+
+            val tanks = connector.tanks
+            check(tanks.size > 1 && tanks.all { it.matter.isEmpty }) { "Expected several empty connector tanks" }
+            val type =
+                MATTER_TYPES.firstOrNull { type ->
+                    val sample = MatterStack(type, 40)
+                    tanks.first().fill(sample, FluidAction.SIMULATE) == 0 &&
+                        tanks.drop(1).any { it.fill(sample, FluidAction.SIMULATE) == 40 }
+                } ?: error("Expected an empty ME cell that accepts a type other than the first tank's type")
+            check(disintegrator.matterTankComponents.first().fillForced(MatterStack(type, 40), FluidAction.EXECUTE) == 40) {
+                "Could not fill the disintegrator's output tank"
+            }
+            val cellInventory = checkNotNull(drive.getOriginalCellInventory(0))
+            helper.succeedWhen {
+                val amount = KeyCounter().also(cellInventory::getAvailableStacks)[MatterKey.of(type)]
+                helper.assertTrue(amount == 40L, "Expected 40 new Matter in the ME cell, got $amount")
+            }
+        }
+    }
+
     @GameTest(template = "empty")
     fun connectorPersistence(helper: GameTestHelper) {
         val block = AppRepBlocks.REPLICATION_CONNECTOR.block()
