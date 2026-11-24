@@ -28,8 +28,6 @@ enum class DisplayTest {
 enum class DependencyType {
     REQUIRED,
     OPTIONAL,
-    INCOMPATIBLE,
-    DISCOURAGED,
 }
 
 sealed class VersionRange(
@@ -140,7 +138,6 @@ data class ModDep(
     val type: DependencyType = DependencyType.REQUIRED,
     val ordering: Order = Order.NONE,
     val side: Side = Side.BOTH,
-    val reason: String? = null,
 ) {
     companion object {
         fun optional(
@@ -148,14 +145,7 @@ data class ModDep(
             versionRange: VersionRange,
             ordering: Order = Order.NONE,
             side: Side = Side.BOTH,
-            reason: String? = null,
-        ) = ModDep(id, versionRange, DependencyType.OPTIONAL, ordering, side, reason)
-
-        fun incompatible(
-            id: String,
-            versionRange: VersionRange,
-            reason: String,
-        ) = ModDep(id, versionRange, DependencyType.INCOMPATIBLE, Order.NONE, Side.BOTH, reason)
+        ) = ModDep(id, versionRange, DependencyType.OPTIONAL, ordering, side)
     }
 }
 
@@ -163,7 +153,7 @@ fun buildDeps(
     vararg deps: ModDep,
     modId: String = Constants.Mod.ID,
 ): String =
-    deps.joinToString(separator = "\n") { (id, versionRange, type, ordering, side, reason) ->
+    deps.joinToString(separator = "\n") { (id, versionRange, type, ordering, side) ->
         """
         [[dependencies.$modId]]
         modId = "$id"
@@ -171,11 +161,7 @@ fun buildDeps(
         mandatory = ${type == DependencyType.REQUIRED}
         ordering = "$ordering"
         side = "$side"
-        """.trimIndent() + (
-            reason?.let {
-                "\nreason = \"$it\""
-            } ?: ""
-        )
+        """.trimIndent()
     }
 
 fun extractVersionSegments(
