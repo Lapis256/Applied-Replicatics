@@ -15,16 +15,15 @@ import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(ReplicatorBlockEntity.class)
 public abstract class MixinReplicatorBlockEntity {
     @Shadow(remap = false)
     private IReplicationTask cachedReplicationTask;
 
-    @Redirect(method = "setRemoved", at = @At(value = "FIELD", target = "Lcom/buuz135/replication/block/tile/ReplicatorBlockEntity;cachedReplicationTask:Lcom/buuz135/replication/api/task/IReplicationTask;", opcode = Opcodes.GETFIELD, ordinal = 0, remap = false))
-    private IReplicationTask apprep$keepTaskOnChunkUnload(ReplicatorBlockEntity replicator) {
-        return MixinImplReplicatorBlockEntityKt.keepTaskOnChunkUnload(cachedReplicationTask, replicator);
+    @ModifyExpressionValue(method = "setRemoved", at = @At(value = "FIELD", target = "Lcom/buuz135/replication/block/tile/ReplicatorBlockEntity;cachedReplicationTask:Lcom/buuz135/replication/api/task/IReplicationTask;", opcode = Opcodes.GETFIELD, ordinal = 0, remap = false))
+    private IReplicationTask apprep$keepTaskOnChunkUnload(IReplicationTask original) {
+        return MixinImplReplicatorBlockEntityKt.keepTaskOnChunkUnload(original, (ReplicatorBlockEntity) (Object) this);
     }
 
     @ModifyExpressionValue(method = "replicateItem", remap = false, at = @At(value = "INVOKE", target = "Lnet/minecraft/core/BlockPos;equals(Ljava/lang/Object;)Z"))
