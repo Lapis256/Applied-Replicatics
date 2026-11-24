@@ -4,11 +4,13 @@
       "advancement": {
         "parent": "minecraft:recipes/root",
         "criteria": {
-          "has/dusts/sky_stone": {
+          "has/sky_dust": {
             "conditions": {
               "items": [
                 {
-                  "tag": "forge:dusts/sky_stone"
+                  "items": [
+                    "ae2:sky_dust"
+                  ]
                 }
               ]
             },
@@ -23,7 +25,7 @@
         },
         "requirements": [
           [
-            "has/dusts/sky_stone",
+            "has/sky_dust",
             "has_the_recipe"
           ]
         ],

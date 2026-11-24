@@ -16,7 +16,7 @@
             "item": "ae2:quartz_vibrant_glass"
           },
           "b": {
-            "tag": "forge:dusts/sky_stone"
+            "item": "ae2:sky_dust"
           },
           "d": {
             "tag": "forge:ingots/sky_replica"

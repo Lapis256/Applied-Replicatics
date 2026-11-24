@@ -1,7 +1,7 @@
 package dev.lapis256.apprep.data.provider.server.tags
 
-import appeng.core.definitions.AEItems
 import dev.lapis256.apprep.api.AppliedReplicaticsAPI
+import dev.lapis256.apprep.integration.megacells.common.init.AppRepMEGABlocks
 import dev.lapis256.apprep.integration.megacells.common.init.AppRepMEGAItems
 import dev.lapis256.apprep.integration.megacells.common.init.AppRepMEGATags
 import net.minecraft.core.HolderLookup
@@ -19,7 +19,7 @@ class AppRepItemTagsProvider(
     helper: ExistingFileHelper,
 ) : ItemTagsProvider(output, provider, blockTags, AppliedReplicaticsAPI.MOD_ID, helper) {
     override fun addTags(provider: HolderLookup.Provider) {
-        tag(AppRepTags.SKY_STONE_DUST).add(AEItems.SKY_DUST.asItem())
+        tag(AppRepTags.OPTIONAL_SKY_REPLICA_BLOCK).addOptional(AppRepMEGABlocks.SKY_REPLICA_BLOCK.id())
         tag(Tags.Items.INGOTS)
             .addOptional(AppRepMEGAItems.SKY_REPLICA_INGOT.id())
 

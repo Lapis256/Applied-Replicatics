@@ -17,6 +17,7 @@ import dev.lapis256.apprep.integration.megacells.common.MEGACellsIntegration
 import dev.lapis256.apprep.integration.megacells.common.init.AppRepMEGABlocks
 import dev.lapis256.apprep.integration.megacells.common.init.AppRepMEGAItems
 import dev.lapis256.apprep.integration.megacells.common.init.AppRepMEGATags
+import net.minecraft.advancements.critereon.InventoryChangeTrigger
 import net.minecraft.data.PackOutput
 import net.minecraft.data.recipes.FinishedRecipe
 import net.minecraft.data.recipes.RecipeCategory
@@ -42,7 +43,8 @@ class AppRepRecipeProvider(
             CellMaterials(
                 AppRepItems.MATTER_CELL_HOUSING,
                 AEBlocks.QUARTZ_GLASS,
-                ConventionTags.REDSTONE,
+                Ingredient.of(ConventionTags.REDSTONE),
+                "has/${ConventionTags.REDSTONE.location.path}" to has(ConventionTags.REDSTONE),
                 AppRepTags.REPLICA_INGOT,
             )
         cellHousing(output, basicMaterials)
@@ -56,7 +58,8 @@ class AppRepRecipeProvider(
             CellMaterials(
                 AppRepMEGAItems.MEGA_MATTER_CELL_HOUSING,
                 AEBlocks.QUARTZ_VIBRANT_GLASS,
-                AppRepTags.SKY_STONE_DUST,
+                Ingredient.of(AEItems.SKY_DUST),
+                "has/sky_dust" to has(AEItems.SKY_DUST),
                 AppRepMEGATags.Items.SKY_REPLICA_INGOT,
             )
         cellHousing(output.withMEGACells(), megaMaterials)
@@ -114,7 +117,8 @@ class AppRepRecipeProvider(
     private data class CellMaterials(
         val housing: ItemDefinition<*>,
         val glass: ItemLike,
-        val dust: TagKey<Item>,
+        val dust: Ingredient,
+        val dustCriterion: Pair<String, InventoryChangeTrigger.TriggerInstance>,
         val ingot: TagKey<Item>,
     )
 
@@ -130,7 +134,7 @@ class AppRepRecipeProvider(
             .define('a', materials.glass)
             .define('b', materials.dust)
             .define('d', materials.ingot)
-            .unlockedBy("has/${materials.dust.location.path}", has(materials.dust))
+            .unlockedBy(materials.dustCriterion.first, materials.dustCriterion.second)
             .save(output, AppliedReplicaticsAPI.rl("cells/${materials.housing.id().path}"))
     }
 
