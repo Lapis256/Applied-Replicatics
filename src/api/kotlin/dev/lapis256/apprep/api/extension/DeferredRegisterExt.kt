@@ -70,7 +70,8 @@ inline fun <reified ENTITY : AEBaseBlockEntity, BLOCK : AEBaseEntityBlock<ENTITY
                 { pos, state -> factory(typeHolder.get(), pos, state) },
                 *blocks.toTypedArray<Block>(),
             )
-        BlockEntityTypes.withoutDataFixer(builder).also { type ->
+        @Suppress("TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+        builder.build(null).also { type ->
             typeHolder.plain = type
 
             AEBaseBlockEntity.registerBlockEntityItem(type, blocks[0].asItem())
