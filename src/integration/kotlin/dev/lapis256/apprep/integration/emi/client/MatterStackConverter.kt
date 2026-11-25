@@ -7,7 +7,6 @@ import dev.emi.emi.api.stack.EmiStack
 import dev.lapis256.apprep.api.ae2.stack.MatterKey
 import dev.lapis256.apprep.api.ae2.util.toGenericStackOrNull
 
-
 object MatterStackConverter : EmiStackConverter {
     override fun getKeyType(): Class<*> = IMatterType::class.java
 

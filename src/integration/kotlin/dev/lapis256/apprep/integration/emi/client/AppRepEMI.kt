@@ -6,7 +6,6 @@ import dev.emi.emi.api.EmiInitRegistry
 import dev.emi.emi.api.EmiPlugin
 import dev.emi.emi.api.EmiRegistry
 
-
 @EmiEntrypoint
 class AppRepEMI : EmiPlugin {
     override fun initialize(registry: EmiInitRegistry) {

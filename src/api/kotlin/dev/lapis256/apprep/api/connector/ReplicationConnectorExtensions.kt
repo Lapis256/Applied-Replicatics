@@ -3,7 +3,6 @@ package dev.lapis256.apprep.api.connector
 import appeng.api.networking.IGridNodeService
 import appeng.api.networking.IManagedGridNode
 
-
 object ReplicationConnectorExtensions {
     private data class Registration<T : IGridNodeService>(
         val serviceType: Class<T>,
@@ -25,9 +24,7 @@ object ReplicationConnectorExtensions {
         registrations += Registration(serviceType, factory)
     }
 
-    inline fun <reified T : IGridNodeService> registerNodeService(
-        noinline factory: (ReplicationConnectorExtensionContext) -> T,
-    ) {
+    inline fun <reified T : IGridNodeService> registerNodeService(noinline factory: (ReplicationConnectorExtensionContext) -> T) {
         registerNodeService(T::class.java, factory)
     }
 

@@ -10,43 +10,52 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap
 import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet
 import java.util.function.Supplier
 
-
 class GroupedMatterTanks(
-    private val tanksSupplier: Supplier<Collection<MatterTank>>
+    private val tanksSupplier: Supplier<Collection<MatterTank>>,
 ) {
     private val _groupedTanks = ResettableLazy { groupTanksByType() }
     private val groupedTanks by _groupedTanks
 
-    private val _emptyTanks = ResettableLazy {
-        tanksSupplier.get()
-            .filter { it.matter.isEmpty }
-            .toCollection(ObjectLinkedOpenHashSet())
-    }
+    private val _emptyTanks =
+        ResettableLazy {
+            tanksSupplier
+                .get()
+                .filter { it.matter.isEmpty }
+                .toCollection(ObjectLinkedOpenHashSet())
+        }
     private val emptyTanks by _emptyTanks
 
-    private fun groupTanksByType() = Object2ObjectLinkedOpenHashMap<IMatterType, ObjectLinkedOpenHashSet<MatterTank>>()
-        .apply {
-            tanksSupplier.get()
-                .filterNot { it.matter.isEmpty }
-                .forEach { tank ->
-                    this.computeIfAbsent(tank.matter.matterType) { ObjectLinkedOpenHashSet() }
-                        .add(tank)
-                }
-        }
+    private fun groupTanksByType() =
+        Object2ObjectLinkedOpenHashMap<IMatterType, ObjectLinkedOpenHashSet<MatterTank>>()
+            .apply {
+                tanksSupplier
+                    .get()
+                    .filterNot { it.matter.isEmpty }
+                    .forEach { tank ->
+                        this
+                            .computeIfAbsent(tank.matter.matterType) { ObjectLinkedOpenHashSet() }
+                            .add(tank)
+                    }
+            }
 
     fun invalidate() {
         _groupedTanks.reset()
         _emptyTanks.reset()
     }
 
-    fun insert(key: MatterKey, amount: Long, mode: Actionable): Long {
+    fun insert(
+        key: MatterKey,
+        amount: Long,
+        mode: Actionable,
+    ): Long {
         val type = key.type
         var remaining = amount
 
         groupedTanks[type]?.forEach { tank ->
-            val inserted = transferWholeMatter(remaining, mode) { count, action ->
-                tank.fill(key.toStack(count), action)
-            }
+            val inserted =
+                transferWholeMatter(remaining, mode) { count, action ->
+                    tank.fill(key.toStack(count), action)
+                }
             remaining -= inserted
 
             if (remaining <= 0L) {
@@ -57,9 +66,10 @@ class GroupedMatterTanks(
         val iterator = emptyTanks.iterator()
         while (iterator.hasNext() && remaining > 0L) {
             val tank = iterator.next()
-            val inserted = transferWholeMatter(remaining, mode) { count, action ->
-                tank.fill(key.toStack(count), action)
-            }
+            val inserted =
+                transferWholeMatter(remaining, mode) { count, action ->
+                    tank.fill(key.toStack(count), action)
+                }
             if (inserted > 0L && mode == Actionable.MODULATE) {
                 iterator.remove()
                 groupedTanks.computeIfAbsent(type) { ObjectLinkedOpenHashSet() }.add(tank)
@@ -70,16 +80,21 @@ class GroupedMatterTanks(
         return amount - remaining
     }
 
-    fun extract(key: MatterKey, amount: Long, mode: Actionable): Long {
+    fun extract(
+        key: MatterKey,
+        amount: Long,
+        mode: Actionable,
+    ): Long {
         val tanks = groupedTanks[key.type] ?: return 0L
 
         var remaining = amount
         val iterator = tanks.iterator()
         while (iterator.hasNext() && remaining > 0L) {
             val tank = iterator.next()
-            val extracted = transferWholeMatter(remaining, mode) { count, action ->
-                tank.drain(key.toStack(count), action).amount
-            }
+            val extracted =
+                transferWholeMatter(remaining, mode) { count, action ->
+                    tank.drain(key.toStack(count), action).amount
+                }
             if (tank.isEmpty) {
                 iterator.remove()
                 emptyTanks.add(tank)

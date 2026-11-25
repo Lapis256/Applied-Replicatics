@@ -1,0 +1,31 @@
+{
+  "type": "forge:conditional",
+  "recipes": [
+    {
+      "conditions": [
+        {
+          "type": "forge:mod_loaded",
+          "modid": "megacells"
+        }
+      ],
+      "recipe": {
+        "type": "minecraft:crafting_shaped",
+        "category": "misc",
+        "key": {
+          "a": {
+            "tag": "forge:ingots/sky_replica"
+          }
+        },
+        "pattern": [
+          "aaa",
+          "aaa",
+          "aaa"
+        ],
+        "result": {
+          "item": "apprep:sky_replica_block"
+        },
+        "show_notification": true
+      }
+    }
+  ]
+}

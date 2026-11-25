@@ -6,15 +6,21 @@ import dev.emi.emi.api.EmiRegistry
 import dev.emi.emi.api.stack.EmiStack
 import dev.emi.emi.api.stack.serializer.EmiStackSerializer
 import dev.lapis256.apprep.api.replication.util.MATTER_TYPES
-import net.minecraft.core.component.DataComponentPatch
+import net.minecraft.nbt.CompoundTag
 import net.minecraft.resources.ResourceLocation
 
-
 object MatterEmiStackSerializer : EmiStackSerializer<MatterEmiStack> {
-    override fun create(id: ResourceLocation, componentChanges: DataComponentPatch, amount: Long): EmiStack {
-        val type = ReplicationRegistry.MATTER_TYPES_REGISTRY.get(id)
-            .takeIf { it != MatterType.EMPTY }
-            ?: return EmiStack.EMPTY
+    override fun create(
+        id: ResourceLocation,
+        nbt: CompoundTag?,
+        amount: Long,
+    ): EmiStack {
+        val type =
+            ReplicationRegistry.MATTER_TYPES_REGISTRY
+                .get()
+                .getValue(id)
+                .takeIf { it != MatterType.EMPTY }
+                ?: return EmiStack.EMPTY
 
         return MatterEmiStack(type, amount)
     }

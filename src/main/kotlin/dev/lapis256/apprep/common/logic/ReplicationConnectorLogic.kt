@@ -30,14 +30,11 @@ import com.buuz135.replication.network.MatterNetwork
 import com.hrznstudio.titanium.block_network.Network
 import com.hrznstudio.titanium.block_network.element.NetworkElement
 import com.mojang.logging.LogUtils
-import com.mojang.serialization.Codec
 import dev.lapis256.apprep.api.ae2.stack.MatterKey
 import dev.lapis256.apprep.api.connector.ReplicationConnectorExtension
 import dev.lapis256.apprep.api.connector.ReplicationConnectorExtensionContext
 import dev.lapis256.apprep.api.connector.ReplicationConnectorExtensions
 import dev.lapis256.apprep.api.connector.ReplicationConnectorUpgrades
-import dev.lapis256.apprep.api.extension.getCodec
-import dev.lapis256.apprep.api.extension.putCodec
 import dev.lapis256.apprep.api.replication.matter_network.MatterNetworkListener
 import dev.lapis256.apprep.api.replication.matter_network.addListener
 import dev.lapis256.apprep.api.replication.matter_network.removeListener
@@ -57,7 +54,6 @@ import it.unimi.dsi.fastutil.objects.Object2LongMap
 import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
-import net.minecraft.core.HolderLookup
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.nbt.Tag
 import net.minecraft.server.level.ServerLevel
@@ -66,38 +62,37 @@ import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.entity.BlockEntity
 import org.slf4j.Logger
 
-
-class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: ReplicationConnectorLogicHost) :
-    IMatterTanksConsumer,
+class ReplicationConnectorLogic(
+    gridNode: IManagedGridNode,
+    val host: ReplicationConnectorLogicHost,
+) : IMatterTanksConsumer,
     IMatterTanksSupplier {
-
     companion object {
         val LOGGER: Logger = LogUtils.getLogger()
-
-        // TODO(next major): Remove legacy pending-task save compatibility when bumping the mod major version.
-        val PENDING_TASK_CODEC: Codec<PendingTask> = PendingTask.CODEC.fieldOf("pending_task").codec()
     }
 
     private val source: IActionSource get() = IActionSource.ofMachine(mainNode::getNode)
 
     private val extensions = mutableListOf<ReplicationConnectorExtension>()
 
-    val upgrades: IUpgradeInventory = UpgradeInventories.forMachine(
-        host.upgradableItem,
-        ReplicationConnectorUpgrades.slotCount,
-    ) {
-        host.saveChanges()
-        extensions.forEach(ReplicationConnectorExtension::onUpgradesChanged)
-    }
+    val upgrades: IUpgradeInventory =
+        UpgradeInventories.forMachine(
+            host.upgradableItem,
+            ReplicationConnectorUpgrades.slotCount,
+        ) {
+            host.saveChanges()
+            extensions.forEach(ReplicationConnectorExtension::onUpgradesChanged)
+        }
 
-    private val extensionContext = object : ReplicationConnectorExtensionContext {
-        override val managedNode: IManagedGridNode = gridNode
-        override val upgrades get() = this@ReplicationConnectorLogic.upgrades
-        override val actionSource: IActionSource get() = IActionSource.ofMachine(gridNode::getNode)
-        override val matterNetwork: MatterNetwork? get() = host.matterNetwork
+    private val extensionContext =
+        object : ReplicationConnectorExtensionContext {
+            override val managedNode: IManagedGridNode = gridNode
+            override val upgrades get() = this@ReplicationConnectorLogic.upgrades
+            override val actionSource: IActionSource get() = IActionSource.ofMachine(gridNode::getNode)
+            override val matterNetwork: MatterNetwork? get() = host.matterNetwork
 
-        override fun saveChanges() = host.saveChanges()
-    }
+            override fun saveChanges() = host.saveChanges()
+        }
 
     private var _priority: Int = 0
         set(value) {
@@ -110,9 +105,6 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
     fun setPriority(newValue: Int) {
         _priority = newValue
     }
-
-    // TODO(next major): Remove when save compatibility can be broken (e.g. 21.1-2.x or a new Minecraft line such as 26.1-x.y.z).
-    private var pendingTask: PendingTask? = null
 
     val delegatingStorage = DelegatingMatterNetworkStorage()
     private var connectedMatterNetwork: MatterNetwork? = null
@@ -137,28 +129,36 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
             }
         }
 
-        override fun onStackChange(what: AEKey, amount: Long) {
+        override fun onStackChange(
+            what: AEKey,
+            amount: Long,
+        ) {
             tanks.updateCache(what, amount)
         }
     }
 
-    val returnInventory = ReplicationConnectorReturnInventory {
-        alertDevice()
-        host.saveChanges()
-    }
+    val returnInventory =
+        ReplicationConnectorReturnInventory {
+            alertDevice()
+            host.saveChanges()
+        }
 
-    fun insertReplicatorResult(itemStack: ItemStack): Long {
-        return returnInventory.insert(
+    fun insertReplicatorResult(itemStack: ItemStack): Long =
+        returnInventory.insert(
             AEItemKey.of(itemStack),
             itemStack.count.toLong(),
             Actionable.MODULATE,
-            source
+            source,
         )
-    }
 
-    fun addDrops(level: Level, pos: BlockPos, drops: MutableList<ItemStack>) {
+    fun addDrops(
+        level: Level,
+        pos: BlockPos,
+        drops: MutableList<ItemStack>,
+    ) {
         returnInventory.addDrops(level, pos, drops)
-        upgrades.asSequence()
+        upgrades
+            .asSequence()
             .filterNot(ItemStack::isEmpty)
             .forEach(drops::add)
     }
@@ -168,24 +168,24 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
         upgrades.clear()
     }
 
-    private val _patterns = ResettableLazy {
-        val matterNetwork = connectedMatterNetwork ?: return@ResettableLazy emptyList()
-        matterNetwork.chipSuppliers
-            .asSequence()
-            .filter { it.level.isLoaded(it.pos) }
-            .mapNotNull { it.level.getBlockEntity(it.pos) }
-            .flatMap {
-                val level = it.level ?: return@flatMap emptyList()
-                if (it is IMatterPatternHolder<*>) {
-                    @Suppress("UNCHECKED_CAST")
-                    (it as IMatterPatternHolder<BlockEntity>).getPatterns(level, it).toList()
-                } else {
-                    emptyList()
-                }
-            }
-            .map { ReplicationPattern(it.stack) }
-            .toList()
-    }
+    private val _patterns =
+        ResettableLazy {
+            val matterNetwork = connectedMatterNetwork ?: return@ResettableLazy emptyList()
+            matterNetwork.chipSuppliers
+                .asSequence()
+                .filter { it.level.isLoaded(it.pos) }
+                .mapNotNull { it.level.getBlockEntity(it.pos) }
+                .flatMap {
+                    val level = it.level ?: return@flatMap emptyList()
+                    if (it is IMatterPatternHolder<*>) {
+                        @Suppress("UNCHECKED_CAST")
+                        (it as IMatterPatternHolder<BlockEntity>).getPatterns(it).toList()
+                    } else {
+                        emptyList()
+                    }
+                }.map { ReplicationPattern(it.stack) }
+                .toList()
+        }
     private val patterns by _patterns
 
     private fun updatePatterns() {
@@ -194,13 +194,7 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
     }
 
     inner class CraftingProvider : ICraftingProvider {
-
         private fun canPushNextPattern(): Boolean {
-            // Finish a queued legacy batch before accepting work using the new task model.
-            if (pendingTask != null) {
-                return false
-            }
-
             val matterNetwork = host.matterNetwork ?: return false
             val replicatorCount = matterNetwork.replicators.size
             if (replicatorCount == 0) {
@@ -209,20 +203,24 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
 
             // Match Replication's own worker accounting: every SINGLE task reserves one
             // Replicator, while MULTIPLE tasks only occupy the workers currently assigned.
-            val reservedReplicators = matterNetwork.taskManager.pendingTasks.values.sumOf { task ->
-                if (task.mode == IReplicationTask.Mode.SINGLE) {
-                    1
-                } else {
-                    task.replicatorsOnTask.size
+            val reservedReplicators =
+                matterNetwork.taskManager.pendingTasks.values.sumOf { task ->
+                    if (task.mode == IReplicationTask.Mode.SINGLE) {
+                        1
+                    } else {
+                        task.replicatorsOnTask.size
+                    }
                 }
-            }
 
             return reservedReplicators < replicatorCount
         }
 
         override fun getAvailablePatterns(): List<IPatternDetails> = patterns
 
-        override fun pushPattern(patternDetails: IPatternDetails, inputHolder: Array<KeyCounter>): Boolean {
+        override fun pushPattern(
+            patternDetails: IPatternDetails,
+            inputHolder: Array<KeyCounter>,
+        ): Boolean {
             if (!canPushNextPattern()) {
                 return false
             }
@@ -242,13 +240,14 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
                 }
             }
 
-            val task = MEReplicationTask.create(
-                extracted,
-                item,
-                1,
-                pos,
-                IReplicationTask.Mode.SINGLE
-            )
+            val task =
+                MEReplicationTask.create(
+                    extracted,
+                    item,
+                    1,
+                    pos,
+                    IReplicationTask.Mode.SINGLE,
+                )
 
             matterNetwork.taskManager.addTask(task)
             matterNetwork.onTaskValueChanged(task, level)
@@ -262,18 +261,19 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
     }
 
     inner class Ticker : IGridTickable {
-        override fun getTickingRequest(node: IGridNode) =
-            TickingRequest(5, 120, true)
+        override fun getTickingRequest(node: IGridNode) = TickingRequest(5, 120, true, true)
 
-        override fun tickingRequest(node: IGridNode, ticksSinceLastCall: Int): TickRateModulation {
+        override fun tickingRequest(
+            node: IGridNode,
+            ticksSinceLastCall: Int,
+        ): TickRateModulation {
             if (!shouldTick()) {
                 return TickRateModulation.SLEEP
             }
 
-            val taskPushed = pushLegacyPendingTask()
             val inserted = insertReturnedItems()
 
-            if (taskPushed || inserted) {
+            if (inserted) {
                 return TickRateModulation.FASTER
             }
 
@@ -284,40 +284,7 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
             }
         }
 
-        private fun shouldTick(): Boolean {
-            if (pendingTask != null) {
-                return true
-            }
-            if (!returnInventory.isEmpty()) {
-                return true
-            }
-            return false
-        }
-
-        // TODO(next major): Remove legacy batched-task migration when bumping the mod major version.
-        private fun pushLegacyPendingTask(): Boolean {
-            val toPushTask = pendingTask ?: return false
-
-            val matterNetwork = host.matterNetwork ?: return false
-            val level = host.matterNetworkElement?.level as? ServerLevel ?: return false
-            val pos = host.matterNetworkElement?.pos ?: return false
-
-            val extracted = Object2LongOpenHashMap<IMatterType>()
-            toPushTask.input.forEach {
-                val what = it.key as? MatterKey ?: return@forEach
-                extracted[what.type] = it.longValue * toPushTask.count
-            }
-
-            val task = MEReplicationTask.create(extracted, toPushTask.output, toPushTask.count, pos)
-
-            matterNetwork.taskManager.addTask(task)
-            matterNetwork.onTaskValueChanged(task, level)
-
-            pendingTask = null
-            host.saveChanges()
-
-            return true
-        }
+        private fun shouldTick(): Boolean = !returnInventory.isEmpty()
 
         private fun insertReturnedItems(): Boolean {
             val inventory = mainNode.grid?.storageService?.inventory ?: return false
@@ -334,13 +301,14 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
         stacks.clear()
     }
 
-    val mainNode: IManagedGridNode = gridNode
-        .setFlags(GridFlags.REQUIRE_CHANNEL)
-        .addService(IStorageProvider::class.java, StorageProvider())
-        .addService(IStorageWatcherNode::class.java, StackWatcher())
-        .addService(ICraftingProvider::class.java, CraftingProvider())
-        .addService(IGridTickable::class.java, Ticker())
-        .also { extensions += ReplicationConnectorExtensions.install(it, extensionContext) }
+    val mainNode: IManagedGridNode =
+        gridNode
+            .setFlags(GridFlags.REQUIRE_CHANNEL)
+            .addService(IStorageProvider::class.java, StorageProvider())
+            .addService(IStorageWatcherNode::class.java, StackWatcher())
+            .addService(ICraftingProvider::class.java, CraftingProvider())
+            .addService(IGridTickable::class.java, Ticker())
+            .also { extensions += ReplicationConnectorExtensions.install(it, extensionContext) }
 
     inner class MatterNetworkListenerImpl : MatterNetworkListener {
         override fun onAddedTanksSupplier() {
@@ -352,7 +320,7 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
         }
 
         override fun onTankValueChanged() {
-            delegatingStorage.storage?.invalidateStacks()
+            delegatingStorage.storage?.invalidateContents()
         }
 
         override fun onAddedChipSupplier() {
@@ -371,8 +339,9 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
     private val matterNetworkListener by lazy { MatterNetworkListenerImpl() }
 
     private fun connectMatterNetwork(network: Network) {
-        val matterNetwork = network as? MatterNetwork
-            ?: return LOGGER.error("Connected network is not MatterNetwork: {}", network)
+        val matterNetwork =
+            network as? MatterNetwork
+                ?: return LOGGER.error("Connected network is not MatterNetwork: {}", network)
 
         if (connectedMatterNetwork === matterNetwork) {
             return
@@ -389,8 +358,9 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
     }
 
     private fun disconnectMatterNetwork(network: Network) {
-        val matterNetwork = network as? MatterNetwork
-            ?: return LOGGER.error("Disconnected network is not MatterNetwork: {}", network)
+        val matterNetwork =
+            network as? MatterNetwork
+                ?: return LOGGER.error("Disconnected network is not MatterNetwork: {}", network)
 
         if (connectedMatterNetwork !== matterNetwork) {
             return
@@ -432,9 +402,9 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
         element.network?.let(::disconnectMatterNetwork)
     }
 
-    fun getCableConnectionType(@Suppress("unused") dir: Direction?): AECableType {
-        return AECableType.SMART
-    }
+    fun getCableConnectionType(
+        @Suppress("unused") dir: Direction?,
+    ): AECableType = AECableType.SMART
 
     private fun alertDevice() {
         if (mainNode.isActive) {
@@ -449,26 +419,20 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
         updatePatterns()
     }
 
-    fun writeToNBT(tag: CompoundTag, registries: HolderLookup.Provider) {
+    fun writeToNBT(tag: CompoundTag) {
         tag.putInt("priority", priority)
 
-        tag.put("return_inventory", returnInventory.writeToTag(registries))
+        tag.put("return_inventory", returnInventory.writeToTag())
 
-        upgrades.writeToNBT(tag, "upgrades", registries)
-
-        // TODO(next major): Remove legacy pending-task persistence when bumping the mod major version.
-        pendingTask?.let { tag.putCodec(PENDING_TASK_CODEC, it) }
+        upgrades.writeToNBT(tag, "upgrades")
     }
 
-    fun readFromNBT(tag: CompoundTag, registries: HolderLookup.Provider) {
+    fun readFromNBT(tag: CompoundTag) {
         _priority = tag.getInt("priority")
 
-        returnInventory.readFromTag(tag.getList("return_inventory", Tag.TAG_COMPOUND.toInt()), registries)
+        returnInventory.readFromTag(tag.getList("return_inventory", Tag.TAG_COMPOUND.toInt()))
 
-        upgrades.readFromNBT(tag, "upgrades", registries)
-
-        // TODO(next major): Remove legacy pending-task migration when bumping the mod major version.
-        pendingTask = tag.getCodec(PENDING_TASK_CODEC)
+        upgrades.readFromNBT(tag, "upgrades")
     }
 
     private fun remountStorage() {
@@ -492,17 +456,16 @@ class ReplicationConnectorLogic(gridNode: IManagedGridNode, val host: Replicatio
 
     // IMatterTanksConsumer / IMatterTanksSupplier
 
-    private val _tanks = ResettableLazy {
-        val grid = mainNode.grid ?: return@ResettableLazy MENetworkMatterTankList.empty()
-        val inventory = grid.storageService.cachedInventory
-        val cachedMatters = MATTER_TYPES.associateWith { inventory[MatterKey.of(it)] }
-        MENetworkMatterTankList(cachedMatters, grid.storageService.inventory, source)
-    }
+    private val _tanks =
+        ResettableLazy {
+            val grid = mainNode.grid ?: return@ResettableLazy MENetworkMatterTankList.empty()
+            val inventory = grid.storageService.cachedInventory
+            val cachedMatters = MATTER_TYPES.associateWith { inventory[MatterKey.of(it)] }
+            MENetworkMatterTankList(cachedMatters, grid.storageService.inventory, source)
+        }
     private val tanks by _tanks
 
-    override fun getTanks(): List<IMatterTank> {
-        return tanks
-    }
+    override fun getTanks(): List<IMatterTank> = tanks
 
-    override fun getPriority(): Int = _priority
+    val priority: Int get() = _priority
 }

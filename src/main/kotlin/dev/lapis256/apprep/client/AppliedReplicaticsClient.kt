@@ -11,32 +11,23 @@ import dev.lapis256.apprep.client.gui.ReplicationConnectorScreen
 import dev.lapis256.apprep.common.init.AppRepItems
 import dev.lapis256.apprep.common.init.AppRepMenus
 import net.minecraft.client.color.item.ItemColor
-import net.minecraft.util.FastColor
-import net.neoforged.api.distmarker.Dist
-import net.neoforged.bus.api.IEventBus
-import net.neoforged.fml.common.Mod
-import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent
-import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent
-import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent
-import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent
+import net.minecraftforge.api.distmarker.Dist
+import net.minecraftforge.client.event.RegisterColorHandlersEvent
+import net.minecraftforge.eventbus.api.SubscribeEvent
+import net.minecraftforge.fml.common.Mod
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent
 
-
-@Mod(value = AppliedReplicaticsAPI.MOD_ID, dist = [Dist.CLIENT])
-class AppliedReplicaticsClient(modBus: IEventBus) {
-
-    init {
-        modBus.addListener(::onCommonSetup)
-        modBus.addListener(::onClientSetup)
-        modBus.addListener(::onRegisterItemColors)
-        modBus.addListener(::registerMenuScreens)
-    }
-
+@Mod.EventBusSubscriber(modid = AppliedReplicaticsAPI.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = [Dist.CLIENT])
+object AppliedReplicaticsClient {
     /**
      * @see appeng.core.AppEngBase.commonSetup
      * @see appeng.core.AppEngBase.postRegistrationInitialization
      * @see appeng.init.internal.InitStorageCells.init
      */
-    private fun onCommonSetup(event: FMLCommonSetupEvent) {
+    @JvmStatic
+    @SubscribeEvent
+    fun onCommonSetup(event: FMLCommonSetupEvent) {
         event.enqueueWork {
             initModels()
         }
@@ -46,31 +37,36 @@ class AppliedReplicaticsClient(modBus: IEventBus) {
         AppRepItems.CELLS.forEach { cell ->
             StorageCellModels.registerModel(
                 cell,
-                AppliedReplicaticsAPI.rl("block/drive/cells/${cell.tier.namePrefix()}_matter_cell")
+                AppliedReplicaticsAPI.rl("block/drive/cells/${cell.tier.namePrefix()}_matter_cell"),
             )
         }
     }
 
-    private fun onClientSetup(event: FMLClientSetupEvent) {
+    @JvmStatic
+    @SubscribeEvent
+    fun onClientSetup(event: FMLClientSetupEvent) {
         event.enqueueWork {
             AEKeyRendering.register(MatterKeyType, MatterKey::class.java, AE2MatterStackRenderer())
+            registerMenuScreens()
         }
     }
 
-    private fun makeOpaque(itemColor: ItemColor) = ItemColor { stack, tintIndex ->
-        FastColor.ARGB32.opaque(itemColor.getColor(stack, tintIndex))
-    }
+    private fun makeOpaque(itemColor: ItemColor) =
+        ItemColor { stack, tintIndex ->
+            itemColor.getColor(stack, tintIndex) or 0xFF000000.toInt()
+        }
 
-    private fun onRegisterItemColors(event: RegisterColorHandlersEvent.Item) {
+    @JvmStatic
+    @SubscribeEvent
+    fun onRegisterItemColors(event: RegisterColorHandlersEvent.Item) {
         event.register(makeOpaque(BasicStorageCell::getColor), *AppRepItems.CELLS.toTypedArray())
     }
 
-    private fun registerMenuScreens(event: RegisterMenuScreensEvent) {
+    private fun registerMenuScreens() {
         InitScreens.register(
-            event,
             AppRepMenus.REPLICATION_CONNECTOR,
             ::ReplicationConnectorScreen,
-            "/screens/apprep/replication_connector.json"
+            "/screens/apprep/replication_connector.json",
         )
     }
 }

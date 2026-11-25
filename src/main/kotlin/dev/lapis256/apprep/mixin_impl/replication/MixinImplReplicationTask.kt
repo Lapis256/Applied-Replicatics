@@ -9,9 +9,11 @@ import it.unimi.dsi.fastutil.objects.Object2LongMap
 import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap
 import net.minecraft.core.BlockPos
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
+import kotlin.math.ceil
 
-
-class MixinImplReplicationTask(private val extractMatter: (type: IMatterType, amount: Long) -> Long) {
+class MixinImplReplicationTask(
+    private val extractMatter: (type: IMatterType, amount: Long) -> Long,
+) {
     var internalMatterStacks: Object2LongMap<IMatterType> = Object2LongOpenHashMap()
         set(value) {
             field.clear()
@@ -27,7 +29,7 @@ class MixinImplReplicationTask(private val extractMatter: (type: IMatterType, am
         pos: BlockPos,
         oldOriginalRef: LocalRef<MatterCompound>,
         ci: CallbackInfo,
-        storedMatterStack: HashMap<Long, List<MatterStack>>
+        storedMatterStack: HashMap<Long, List<MatterStack>>,
     ): MatterCompound? {
         if (original == null) {
             return null
@@ -42,7 +44,7 @@ class MixinImplReplicationTask(private val extractMatter: (type: IMatterType, am
         var isExtractedFromInternal = false
 
         for (matterValue in original.values.values) {
-            var amount = matterValue.amount.toLong()
+            var amount = ceil(matterValue.amount).toInt().toLong()
             val extracted: Long = extractMatter(matterValue.matter, amount)
 
             if (extracted > 0) {
@@ -55,7 +57,7 @@ class MixinImplReplicationTask(private val extractMatter: (type: IMatterType, am
                 continue
             }
 
-            extractedStacks.add(MatterStack(matterValue.matter, extracted.toDouble()))
+            extractedStacks.add(MatterStack(matterValue.matter, extracted.toInt()))
         }
 
         if (!isExtractedFromInternal) {
@@ -77,7 +79,11 @@ class MixinImplReplicationTask(private val extractMatter: (type: IMatterType, am
     /**
      * [extractMatterStacks] によって書き換えられた [MatterCompound] を元に戻します
      */
-    fun restoreMatterAmount(originalAmount: Double, oldOriginal: MatterCompound?, type: IMatterType): Double {
+    fun restoreMatterAmount(
+        originalAmount: Double,
+        oldOriginal: MatterCompound?,
+        type: IMatterType,
+    ): Double {
         val originalMatter = oldOriginal ?: return originalAmount
         val value = originalMatter.values[type] ?: return originalAmount
         return value.amount

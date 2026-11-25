@@ -9,9 +9,8 @@ import net.minecraft.resources.ResourceKey
 import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.ItemLike
-import net.neoforged.neoforge.registries.DeferredHolder
-import net.neoforged.neoforge.registries.DeferredRegister
-
+import net.minecraftforge.registries.DeferredRegister
+import net.minecraftforge.registries.RegistryObject
 
 @Suppress("Unused")
 object AppRepCreativeTab {
@@ -35,23 +34,31 @@ object AppRepCreativeTab {
         displayEntries.addAll(stacks.map(TabEntry::Stack))
     }
 
-    val MAIN: DeferredHolder<CreativeModeTab, CreativeModeTab> = REGISTRY.register("main") { ->
-        CreativeModeTab.builder()
-            .title(AppRepGuiText.CREATIVE_TAB.text())
-            .icon { ItemStack(AppRepItems.MATTER_CELL_256K) }
-            .withTabsBefore(AECreativeTabIds.MAIN, ResourceKey.create(Registries.CREATIVE_MODE_TAB, Replication.TAB.resourceLocation))
-            .displayItems { parameters, output ->
-                for (entry in displayEntries) {
-                    entry.register(output)
-                }
-            }
-            .build()
-    }
+    val MAIN: RegistryObject<CreativeModeTab> =
+        REGISTRY.register("main") {
+            CreativeModeTab
+                .builder()
+                .title(AppRepGuiText.CREATIVE_TAB.text())
+                .icon { ItemStack(AppRepItems.MATTER_CELL_256K) }
+                .withTabsBefore(AECreativeTabIds.MAIN, ResourceKey.create(Registries.CREATIVE_MODE_TAB, Replication.TAB.resourceLocation))
+                .displayItems { _, output ->
+                    for (entry in displayEntries) {
+                        entry.register(output)
+                    }
+                }.build()
+        }
 
-    private sealed class TabEntry(private val registerer: (CreativeModeTab.Output) -> Unit) {
+    private sealed class TabEntry(
+        private val registerer: (CreativeModeTab.Output) -> Unit,
+    ) {
         fun register(output: CreativeModeTab.Output) = registerer(output)
 
-        class Item(item: ItemLike) : TabEntry({ it.accept(item) })
-        class Stack(stack: ItemStack) : TabEntry({ it.accept(stack) })
+        class Item(
+            item: ItemLike,
+        ) : TabEntry({ it.accept(item) })
+
+        class Stack(
+            stack: ItemStack,
+        ) : TabEntry({ it.accept(stack) })
     }
 }

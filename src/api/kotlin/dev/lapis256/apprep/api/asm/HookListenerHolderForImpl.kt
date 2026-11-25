@@ -2,7 +2,6 @@ package dev.lapis256.apprep.api.asm
 
 import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet
 
-
 abstract class HookListenerHolderForImpl<LISTENER : HookListener> {
     private val listeners: ObjectLinkedOpenHashSet<LISTENER> = ObjectLinkedOpenHashSet()
 

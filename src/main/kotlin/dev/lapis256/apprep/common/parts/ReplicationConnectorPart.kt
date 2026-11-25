@@ -10,12 +10,13 @@ import appeng.api.util.AECableType
 import appeng.parts.AEBasePart
 import dev.lapis256.apprep.common.logic.ReplicationConnectorLogic
 import dev.lapis256.apprep.common.logic.ReplicationConnectorLogicHost
-import net.minecraft.core.HolderLookup
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.item.ItemStack
 
-
-class ReplicationConnectorPart(partItem: IPartItem<*>) : AEBasePart(partItem), ReplicationConnectorLogicHost {
+class ReplicationConnectorPart(
+    partItem: IPartItem<*>,
+) : AEBasePart(partItem),
+    ReplicationConnectorLogicHost {
     override fun getBoxes(helper: IPartCollisionHelper) {
         helper.addBox(2.0, 2.0, 14.0, 14.0, 14.0, 16.0)
         helper.addBox(5.0, 5.0, 12.0, 11.0, 11.0, 14.0)
@@ -25,14 +26,14 @@ class ReplicationConnectorPart(partItem: IPartItem<*>) : AEBasePart(partItem), R
         host.markForSave()
     }
 
-    override fun readFromNBT(data: CompoundTag, registries: HolderLookup.Provider) {
-        super.readFromNBT(data, registries)
-        logic.readFromNBT(data, registries)
+    override fun readFromNBT(data: CompoundTag) {
+        super.readFromNBT(data)
+        logic.readFromNBT(data)
     }
 
-    override fun writeToNBT(data: CompoundTag, registries: HolderLookup.Provider) {
-        super.writeToNBT(data, registries)
-        logic.writeToNBT(data, registries)
+    override fun writeToNBT(data: CompoundTag) {
+        super.writeToNBT(data)
+        logic.writeToNBT(data)
     }
 
     override fun getCableConnectionLength(cable: AECableType?): Float = 4.0F
@@ -43,14 +44,15 @@ class ReplicationConnectorPart(partItem: IPartItem<*>) : AEBasePart(partItem), R
     }
 
     private object PartNodeListener : NodeListener<ReplicationConnectorPart>() {
-        override fun onGridChanged(nodeOwner: ReplicationConnectorPart, node: IGridNode) {
+        override fun onGridChanged(
+            nodeOwner: ReplicationConnectorPart,
+            node: IGridNode,
+        ) {
             nodeOwner.logic.gridChanged()
         }
     }
 
-    override fun createMainNode(): IManagedGridNode {
-        return GridHelper.createManagedNode(this, PartNodeListener)
-    }
+    override fun createMainNode(): IManagedGridNode = GridHelper.createManagedNode(this, PartNodeListener)
 
     // ReplicationConnectorLogicHost
 

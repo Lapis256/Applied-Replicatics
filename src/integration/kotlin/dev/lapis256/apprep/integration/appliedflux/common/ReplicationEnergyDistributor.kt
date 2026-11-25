@@ -2,8 +2,7 @@ package dev.lapis256.apprep.integration.appliedflux.common
 
 import appeng.api.config.Actionable
 import com.buuz135.replication.network.MatterNetwork
-import com.glodblock.github.appflux.common.AFSingletons
-import com.glodblock.github.appflux.common.me.energy.EnergyTickRecord
+import com.glodblock.github.appflux.common.AFItemAndBlock
 import com.glodblock.github.appflux.common.me.key.FluxKey
 import com.glodblock.github.appflux.common.me.key.type.EnergyType
 import com.glodblock.github.appflux.common.me.service.EnergyDistributeService
@@ -12,18 +11,15 @@ import com.glodblock.github.appflux.config.AFConfig
 import dev.lapis256.apprep.api.connector.ReplicationConnectorExtension
 import dev.lapis256.apprep.api.connector.ReplicationConnectorExtensionContext
 
-
 class ReplicationEnergyDistributor(
     private val context: ReplicationConnectorExtensionContext,
-) : IEnergyDistributor, ReplicationConnectorExtension {
+) : IEnergyDistributor,
+    ReplicationConnectorExtension {
     companion object {
         private val FLUX_KEY = FluxKey.of(EnergyType.FE)
     }
 
-    private val tickRecord = EnergyTickRecord()
-
     private var service: EnergyDistributeService? = null
-    private var matterNetwork: MatterNetwork? = null
 
     override fun setServiceHost(service: EnergyDistributeService?) {
         this.service = service
@@ -32,22 +28,16 @@ class ReplicationEnergyDistributor(
 
     override fun isActive(): Boolean =
         context.managedNode.isActive &&
-            context.upgrades.isInstalled(AFSingletons.INDUCTION_CARD) &&
+            context.upgrades.isInstalled(AFItemAndBlock.INDUCTION_CARD) &&
             context.matterNetwork != null
 
-    override fun distribute(tickCounter: Long) {
+    override fun distribute() {
         val matterNetwork = context.matterNetwork ?: return
-        if (this.matterNetwork !== matterNetwork) {
-            this.matterNetwork = matterNetwork
-        }
-        if (!tickRecord.needTick(tickCounter)) {
-            return
-        }
-
         val inserted = transferEnergy(matterNetwork)
-        tickRecord.sent(inserted)
         if (inserted > 0) {
-            context.managedNode.node?.level?.let(matterNetwork::markDirty)
+            context.managedNode.node
+                ?.level
+                ?.let(matterNetwork::markDirty)
         }
     }
 
@@ -59,7 +49,10 @@ class ReplicationEnergyDistributor(
             return 0
         }
 
-        val storage = context.managedNode.grid?.storageService?.inventory ?: return 0
+        val storage =
+            context.managedNode.grid
+                ?.storageService
+                ?.inventory ?: return 0
 
         val extracted = storage.extract(FLUX_KEY, limit.toLong(), Actionable.MODULATE, context.actionSource)
         if (extracted == 0L) {
@@ -81,7 +74,7 @@ class ReplicationEnergyDistributor(
 
     private fun updateSleepingState() {
         val service = service ?: return
-        if (context.upgrades.isInstalled(AFSingletons.INDUCTION_CARD)) {
+        if (context.upgrades.isInstalled(AFItemAndBlock.INDUCTION_CARD)) {
             service.wake(this)
         } else {
             service.sleep(this)

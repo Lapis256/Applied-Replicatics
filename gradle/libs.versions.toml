@@ -1,61 +1,75 @@
 [versions]
-plugin-kotlin = "2.3.0"
+plugin-spotless = "8.11.0"
+ktlint = "1.8.0"
+ec4j = "1.1.0"
+mixin = "0.8.5"
+mixinextras = "0.5.0"
+plugin-kotlin = "2.4.21"
 plugin-moddev = "2.0.137"
 plugin-modPublishPlugin = "1.1.0"
 plugin-dokka= "2.1.0"
 
 
-minecraft = "1.21.1"
-neoforge = "21.1.217"
-kotlinForForge = "5.11.0"
-parchmentmc = "2024.11.17"
+minecraft = "1.20.1"
+forge = "47.4.10"
+parchmentmc = "2023.09.03"
 
-junit = "6.0.1"
+junit = "5.14.1"
 
-spark = "6225208" # 1.10.124
-jei = "19.21.0.247"
-emi = "1.1.22+1.21.1"
-ae2 = "19.2.17"
-ae2JeiIntegration = "5748513" # 1.2.0
-titanium = "1.21-4.0.32"
-replication = "7331983" # 1.21.1-1.2.6
-megaCells = "6853076" # 4.10.1
-goldium = "5821676" # 1.21-2.2-neoforge
-extendedAE = "7478960" # 1.21-2.2.28-neoforge
-geckolib = "7415496" # 4.8.3
-advancedAE = "7374386" # 1.6.9-1.21.1
-appliedFlux = "8204513" # 1.21-2.1.5-neoforge
+spark = "4738952" # 1.10.53
+jei = "15.75.0.242"
+emi = "1.1.24+1.20.1"
+ae2 = "9357405" # 15.4.12
+titanium = "1.20.1-3.8.37"
+replication = "6137645" # 1.20.1-1.1.3
+megaCells = "6175008" # 2.4.6
+goldium = "5226922" # 1.20-1.5-forge
+geckolib = "9730442" # 4.8.5
+advancedAE = "8564205" # 1.3.6-1.20.1
+appliedFlux = "7651647" # 1.20-1.3.7-forge
+mezzConfig = "9527933" # 0.7.1
+guideme = "8204776" # 20.1.15
+clothConfig = "5729105" # 11.1.136
+
+ae2Mod = "15.4.12"
+replicationMod = "1.20.1-1.1.3"
+megaCellsMod = "2.4.6"
+appliedFluxMod = "1.20-1.3.7-forge"
 
 
 [libraries]
-kotlinForForge = { module = "thedarkcolour:kotlinforforge-neoforge", version.ref = "kotlinForForge" }
 
 junit = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
 junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }
 junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
-testframework = { module = "net.neoforged:testframework", version.ref = "neoforge" }
 dokka-versioning = { module = "org.jetbrains.dokka:versioning-plugin", version.ref = "plugin-dokka" }
 
 spark = { module = "curse.maven:spark-361579", version.ref = "spark" }
-jei = { module = "mezz.jei:jei-1.21.1-neoforge", version.ref = "jei" }
-jei-api = { module = "mezz.jei:jei-1.21.1-neoforge-api", version.ref = "jei" }
-emi = { module = "dev.emi:emi-neoforge", version.ref = "emi" }
-ae2 = { module = "org.appliedenergistics:appliedenergistics2", version.ref = "ae2" }
-ae2JeiIntegration = { module = "curse.maven:ae2-jei-integration-1074338", version.ref = "ae2JeiIntegration" }
+jei = { module = "mezz.jei:jei-1.20.1-forge", version.ref = "jei" }
+emi = { module = "dev.emi:emi-forge", version.ref = "emi" }
+ae2 = { module = "curse.maven:applied-energistics-2-223794", version.ref = "ae2" }
 titanium = { module = "com.hrznstudio:titanium", version.ref = "titanium" }
 replication = { module = "curse.maven:replication-638351", version.ref = "replication" }
 megaCells = { module = "curse.maven:mega-cells-622112", version.ref = "megaCells" }
 goldium = { module = "curse.maven:glodium-957920", version.ref = "goldium" }
-extendedAE = { module = "curse.maven:extended-ae-892005", version.ref = "extendedAE" }
 geckolib = { module = "curse.maven:geckolib-388172", version.ref = "geckolib" }
 advancedAE = { module = "curse.maven:advancedae-1084104", version.ref = "advancedAE" }
 appliedFlux = { module = "curse.maven:applied-flux-965012", version.ref = "appliedFlux" }
+mezzConfig = { module = "curse.maven:mezzconfig-1689768", version.ref = "mezzConfig" }
+guideme = { module = "curse.maven:guideme-1173950", version.ref = "guideme" }
+clothConfig = { module = "curse.maven:cloth-config-348521", version.ref = "clothConfig" }
+
+ec4j = { module = "org.ec4j.core:ec4j-core", version.ref = "ec4j" }
+mixin = { module = "org.spongepowered:mixin", version.ref = "mixin" }
+mixinextras-forge = { module = "io.github.llamalad7:mixinextras-forge", version.ref = "mixinextras" }
+mixinextras-common = { module = "io.github.llamalad7:mixinextras-common", version.ref = "mixinextras" }
 
 
 [plugins]
+spotless = { id = "com.diffplug.spotless", version.ref = "plugin-spotless" }
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "plugin-kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "plugin-kotlin" }
-moddev = { id = "net.neoforged.moddev", version.ref = "plugin-moddev" }
+moddev = { id = "net.neoforged.moddev.legacyforge", version.ref = "plugin-moddev" }
 modPublishPlugin = { id = "me.modmuss50.mod-publish-plugin", version.ref = "plugin-modPublishPlugin" }
 dokka = { id = "org.jetbrains.dokka", version.ref = "plugin-dokka" }
 dokka-javadoc = { id = "org.jetbrains.dokka-javadoc", version.ref = "plugin-dokka" }
@@ -63,38 +77,52 @@ dokka-javadoc = { id = "org.jetbrains.dokka-javadoc", version.ref = "plugin-dokk
 
 [bundles]
 implementation = [
-    "kotlinForForge",
+    "mixinextras-forge"
+]
+
+compileOnly = [
+    "mixinextras-common"
+]
+
+modImplementation = [
     "ae2",
     "titanium",
     "replication"
 ]
 
-runtimeOnly = [
+modRuntimeOnly = [
+    "guideme",
     "spark",
-    "jei",
-    "ae2JeiIntegration"
+    "mezzConfig",
+    "jei"
 ]
 
-integrationImplementation = [
+modIntegrationImplementation = [
     "megaCells",
+    "clothConfig",
     "goldium",
-    "extendedAE",
-    "geckolib",
-    "advancedAE",
     "appliedFlux"
 ]
 
-integrationCompileOnly = [
-    "jei-api",
-    "ae2JeiIntegration"
+modIntegrationCompileOnly = [
+    "jei",
+    "emi"
 ]
 
-optionalModsRuntimeOnly = [
+modOptionalModsRuntimeOnly = [
+    "emi"
+]
+
+modDataImplementation = [
+    "advancedAE"
+]
+
+modDataRuntimeOnly = [
+    "geckolib"
 ]
 
 testImplementation = [
-    "junit",
-    "testframework"
+    "junit"
 ]
 
 testRuntimeOnly = [

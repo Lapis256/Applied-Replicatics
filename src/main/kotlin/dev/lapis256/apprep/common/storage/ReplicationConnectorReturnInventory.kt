@@ -10,15 +10,20 @@ import net.minecraft.core.BlockPos
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 
-
-class ReplicationConnectorReturnInventory(listener: Runnable) : GenericStackInv(listener, SLOT_SIZE) {
+class ReplicationConnectorReturnInventory(
+    listener: Runnable,
+) : GenericStackInv(listener, SLOT_SIZE) {
     companion object {
         const val SLOT_SIZE = 9
     }
 
     override fun getMaxAmount(key: AEKey?): Long = Long.MAX_VALUE
 
-    fun addDrops(level: Level, pos: BlockPos, drops: MutableList<ItemStack>) {
+    fun addDrops(
+        level: Level,
+        pos: BlockPos,
+        drops: MutableList<ItemStack>,
+    ) {
         stacks.asSequence().filterNotNull().forEach { stack ->
             stack.what().addDrops(stack.amount(), drops, level, pos)
         }
@@ -26,7 +31,10 @@ class ReplicationConnectorReturnInventory(listener: Runnable) : GenericStackInv(
 
     override fun canExtract(): Boolean = false
 
-    fun returnIntoStorage(storage: MEStorage, source: IActionSource): Boolean {
+    fun returnIntoStorage(
+        storage: MEStorage,
+        source: IActionSource,
+    ): Boolean {
         var didSomething = false
         stacks
             .forEachIndexed { i, stack ->
@@ -37,11 +45,12 @@ class ReplicationConnectorReturnInventory(listener: Runnable) : GenericStackInv(
                     didSomething = true
                 }
 
-                stacks[i] = if (inserted < sizeBefore) {
-                    GenericStack(stack.what(), sizeBefore - inserted)
-                } else {
-                    null
-                }
+                stacks[i] =
+                    if (inserted < sizeBefore) {
+                        GenericStack(stack.what(), sizeBefore - inserted)
+                    } else {
+                        null
+                    }
             }
 
         return didSomething

@@ -1,7 +1,10 @@
 package dev.lapis256.apprep.mixin.replication;
 
 import com.buuz135.replication.api.IMatterType;
+import com.buuz135.replication.api.matter_fluid.IMatterTank;
 import com.buuz135.replication.api.task.IReplicationTask;
+import com.buuz135.replication.api.pattern.IMatterPatternHolder;
+import net.minecraft.core.BlockPos;
 import com.buuz135.replication.network.MatterNetwork;
 import com.llamalad7.mixinextras.expression.Definition;
 import com.llamalad7.mixinextras.expression.Expression;
@@ -9,9 +12,11 @@ import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import dev.lapis256.apprep.api.replication.matter_network.MatterNetworkListener;
 import dev.lapis256.apprep.api.replication.matter_network.MatterNetworkListenerHolder;
+import dev.lapis256.apprep.common.replication.MEMatterTank;
 import dev.lapis256.apprep.mixin_impl.replication.MixinImplMatterNetwork;
 import dev.lapis256.apprep.mixin_impl.replication.MixinImplMatterNetworkKt;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -19,8 +24,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-
-@Mixin(MatterNetwork.class)
+@Mixin(value = MatterNetwork.class, remap = false)
 public class MixinMatterNetwork implements MatterNetworkListenerHolder {
     @Unique
     private final MixinImplMatterNetwork apprep$impl = new MixinImplMatterNetwork();
@@ -33,6 +37,13 @@ public class MixinMatterNetwork implements MatterNetworkListenerHolder {
     @Override
     public boolean apprep$removeListener(@NotNull MatterNetworkListener listener) {
         return apprep$impl.removeListener(listener);
+    }
+
+    @ModifyExpressionValue(method = "update", at = @At(value = "INVOKE", target = "Lcom/buuz135/replication/api/matter_fluid/MatterStack;isEmpty()Z", ordinal = 2))
+    private boolean apprep$canUseEmptyOutputTank(boolean empty, @Local(name = "inputTank") IMatterTank inputTank,
+            @Local(name = "outputTank") IMatterTank outputTank) {
+        // Replication stops looking for a destination even when its fill returns zero.
+        return empty && (!(outputTank instanceof MEMatterTank) || outputTank.fill(inputTank.getMatter(), FluidAction.SIMULATE) > 0);
     }
 
     @Definition(id = "add", method = "Ljava/util/List;add(Ljava/lang/Object;)Z")
@@ -113,7 +124,7 @@ public class MixinMatterNetwork implements MatterNetworkListenerHolder {
     }
 
     @Inject(method = "onChipValuesChanged", at = @At("TAIL"))
-    private void apprep$onChipValuesChanged(CallbackInfo ci) {
+    private void apprep$onChipValuesChanged(IMatterPatternHolder<?> holder, BlockPos pos, CallbackInfo ci) {
         apprep$impl.onChipValuesChanged();
     }
 

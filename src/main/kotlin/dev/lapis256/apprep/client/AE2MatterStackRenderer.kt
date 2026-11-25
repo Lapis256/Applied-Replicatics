@@ -9,20 +9,31 @@ import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.RenderType
-import net.minecraft.client.renderer.texture.OverlayTexture
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.level.Level
 
-
 class AE2MatterStackRenderer : AEKeyRenderHandler<MatterKey> {
     override fun getDisplayName(stack: MatterKey): Component = stack.displayName
 
-    override fun drawInGui(minecraft: Minecraft, guiGraphics: GuiGraphics, x: Int, y: Int, stack: MatterKey) {
+    override fun drawInGui(
+        minecraft: Minecraft,
+        guiGraphics: GuiGraphics,
+        x: Int,
+        y: Int,
+        stack: MatterKey,
+    ) {
         renderMatterTypeOnGui(guiGraphics, stack.stack.matterType, x, y)
     }
 
-    override fun drawOnBlockFace(poseStack: PoseStack, buffers: MultiBufferSource, stack: MatterKey, scale: Float, combinedLight: Int, level: Level) {
+    override fun drawOnBlockFace(
+        poseStack: PoseStack,
+        buffers: MultiBufferSource,
+        stack: MatterKey,
+        scale: Float,
+        combinedLight: Int,
+        level: Level,
+    ) {
         val type = stack.stack.matterType
         val (r, g, b, a) = type.color.get()
         val icon = ResourceLocation.fromNamespaceAndPath(Replication.MOD_ID, "textures/gui/mattertypes/${type.name.lowercase()}.png")
@@ -42,30 +53,30 @@ class AE2MatterStackRenderer : AEKeyRenderHandler<MatterKey> {
         val y1 = -scale / 2F
 
         val transform = poseStack.last().pose()
-        buffer.addVertex(transform, x0, y1, 0f)
-            .setColor(r, g, b, a)
-            .setUv(0F, 1F)
-            .setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(combinedLight)
-            .setNormal(0f, 0f, 1f)
-        buffer.addVertex(transform, x1, y1, 0f)
-            .setColor(r, g, b, a)
-            .setUv(1F, 1F)
-            .setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(combinedLight)
-            .setNormal(0f, 0f, 1f)
-        buffer.addVertex(transform, x1, y0, 0f)
-            .setColor(r, g, b, a)
-            .setUv(1F, 0F)
-            .setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(combinedLight)
-            .setNormal(0f, 0f, 1f)
-        buffer.addVertex(transform, x0, y0, 0f)
-            .setColor(r, g, b, a)
-            .setUv(0F, 0F)
-            .setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(combinedLight)
-            .setNormal(0f, 0f, 1f)
+        buffer
+            .vertex(transform, x0, y1, 0f)
+            .color(r, g, b, a)
+            .uv(0F, 1F)
+            .uv2(combinedLight)
+            .endVertex()
+        buffer
+            .vertex(transform, x1, y1, 0f)
+            .color(r, g, b, a)
+            .uv(1F, 1F)
+            .uv2(combinedLight)
+            .endVertex()
+        buffer
+            .vertex(transform, x1, y0, 0f)
+            .color(r, g, b, a)
+            .uv(1F, 0F)
+            .uv2(combinedLight)
+            .endVertex()
+        buffer
+            .vertex(transform, x0, y0, 0f)
+            .color(r, g, b, a)
+            .uv(0F, 0F)
+            .uv2(combinedLight)
+            .endVertex()
         poseStack.popPose()
     }
 }

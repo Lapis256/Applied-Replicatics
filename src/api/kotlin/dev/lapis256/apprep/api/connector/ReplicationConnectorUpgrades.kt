@@ -1,6 +1,5 @@
 package dev.lapis256.apprep.api.connector
 
-
 object ReplicationConnectorUpgrades {
     private var registeredSlotCount = 0
     private var frozen = false

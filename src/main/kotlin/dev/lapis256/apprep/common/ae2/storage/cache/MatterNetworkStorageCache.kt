@@ -8,18 +8,16 @@ import dev.lapis256.apprep.api.ae2.stack.MatterKey
 import dev.lapis256.apprep.api.util.ResettableLazy
 import dev.lapis256.apprep.common.logic.ReplicationConnectorLogicHost
 import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet
-import kotlin.math.roundToLong
-
 
 class MatterNetworkStorageCache(
-    private val matterNetwork: MatterNetwork
+    private val matterNetwork: MatterNetwork,
 ) {
     private fun collectTanks(): ObjectLinkedOpenHashSet<MatterTank> {
-        val loadedSuppliers = matterNetwork.matterStacksHolders
-            .filter { it.level.isLoaded(it.pos) }
-            .mapNotNull { it.level.getBlockEntity(it.pos) as? IMatterTanksSupplier }
-            .filterNot { it is ReplicationConnectorLogicHost }
-            .sortedBy(IMatterTanksSupplier::getPriority)
+        val loadedSuppliers =
+            matterNetwork.matterStacksHolders
+                .filter { it.level.isLoaded(it.pos) }
+                .mapNotNull { it.level.getBlockEntity(it.pos) as? IMatterTanksSupplier }
+                .filterNot { it is ReplicationConnectorLogicHost }
 
         return loadedSuppliers
             .flatMap(IMatterTanksSupplier::getTanks)
@@ -36,7 +34,7 @@ class MatterNetworkStorageCache(
                 .forEach { tank ->
                     val matterStack = tank.matter
                     val key = MatterKey.of(matterStack.matterType)
-                    this[key] += matterStack.amount.roundToLong()
+                    this[key] += matterStack.amount.toLong()
                 }
         }
 
