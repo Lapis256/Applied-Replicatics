@@ -176,6 +176,7 @@ dependencies {
 
     implementation(kotlin("reflect"))
     jarJar(libs.mixinextras.forge.get())
+    annotationProcessor(libs.mixinextras.common)
     annotationProcessor(variantOf(libs.mixin, "processor"))
 
     configurations[apiSourceSet.implementationConfigurationName].extendsFrom(configurations.implementation.get())
